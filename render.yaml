@@ -1,4 +1,4 @@
-﻿services:
+services:
   # -------------------------------------------------------------------------
   # 1. FastAPI Backend Web Service
   # -------------------------------------------------------------------------
@@ -20,8 +20,9 @@
   # -------------------------------------------------------------------------
   # 2. React / Vite Frontend Static Site
   # -------------------------------------------------------------------------
-  - type: static
+  - type: web
     name: landslide-guard-frontend
+    runtime: static
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
     branch: main
