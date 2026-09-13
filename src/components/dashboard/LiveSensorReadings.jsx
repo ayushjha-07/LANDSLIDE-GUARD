@@ -379,198 +379,117 @@ export const LiveSensorReadings = ({
         })}
       </div>
 
-      {/* 4. Second Information Row: 4 Analytical Panels */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mt-5 w-full min-w-0">
-        
-        {/* PANEL 1: Current Environmental Condition */}
-        <div className="flex flex-col justify-between rounded-2xl p-4 bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/70 shadow-2xs">
-          <div>
-            <div className="flex items-center gap-2.5 mb-1">
-              <div className="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/40 flex items-center justify-center shrink-0">
-                <Leaf className="w-4 h-4" />
-              </div>
-              <div>
-                <h3 className="text-xs font-bold text-slate-800 dark:text-white">
-                  Current Environmental Condition
-                </h3>
-                <p className="text-[11px] text-slate-400 dark:text-slate-500">
-                  Overall sensor readings indicate
-                </p>
+      {/* 4. Compact Environmental Summary (Single Sleek Horizontal Card) */}
+      <div className="mt-4 rounded-2xl p-4 bg-slate-50/80 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 shadow-2xs">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center divide-y md:divide-y-0 md:divide-x divide-slate-200/70 dark:divide-slate-700/60">
+          
+          {/* LEFT SECTION: Current Environmental Condition (col-span-5) */}
+          <div className="md:col-span-5 md:pr-4 flex flex-col justify-between">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="w-6 h-6 rounded-full bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-3.5 h-3.5" />
+              </span>
+              <span className="text-xs font-bold text-slate-800 dark:text-white">
+                Current Environmental Condition
+              </span>
+            </div>
+
+            <div className="flex items-baseline gap-2.5 my-1">
+              <span className="text-2xl font-bold font-heading text-emerald-700 dark:text-emerald-400">
+                STABLE
+              </span>
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">
+                All monitored parameters are currently within their prototype normal ranges.
+              </span>
+            </div>
+
+            {/* Small Horizontal Indicators */}
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-1.5 text-[11px] text-slate-600 dark:text-slate-300 font-medium">
+              <span className="inline-flex items-center gap-1">
+                Soil <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Normal
+              </span>
+              <span className="text-slate-300 dark:text-slate-700">•</span>
+              <span className="inline-flex items-center gap-1">
+                Rain <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Normal
+              </span>
+              <span className="text-slate-300 dark:text-slate-700">•</span>
+              <span className="inline-flex items-center gap-1">
+                Tilt <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Stable
+              </span>
+              <span className="text-slate-300 dark:text-slate-700">•</span>
+              <span className="inline-flex items-center gap-1">
+                Vibration <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Normal
+              </span>
+            </div>
+          </div>
+
+          {/* CENTER SECTION: Overall Risk Score (col-span-4) */}
+          <div className="md:col-span-4 pt-3 md:pt-0 md:px-4 flex items-center justify-start gap-3.5">
+            {/* Circular Ring */}
+            <div className="relative w-16 h-16 shrink-0 flex items-center justify-center">
+              <svg className="w-full h-full -rotate-90" viewBox="0 0 80 80">
+                <circle
+                  cx="40"
+                  cy="40"
+                  r={radius}
+                  className="stroke-slate-200 dark:stroke-slate-700"
+                  strokeWidth="7"
+                  fill="transparent"
+                />
+                <circle
+                  cx="40"
+                  cy="40"
+                  r={radius}
+                  stroke={gaugeColor}
+                  strokeWidth="7"
+                  strokeDasharray={`${filledLength} ${circumference}`}
+                  strokeDashoffset={0}
+                  strokeLinecap="round"
+                  fill="transparent"
+                  className="transition-all duration-700 ease-out"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span className="text-base font-bold font-mono text-slate-900 dark:text-white leading-none">
+                  {riskScore}
+                </span>
+                <span className="text-[9px] text-slate-400 dark:text-slate-500 mt-0.5">
+                  / 100
+                </span>
               </div>
             </div>
 
-            {/* Stable Badge Box */}
-            <div className="bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-100/80 dark:border-emerald-800/40 rounded-xl p-3.5 flex items-center gap-3 my-3">
-              <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                <ShieldCheck className="w-5 h-5" />
+            <div>
+              <div className="text-xs font-bold text-slate-800 dark:text-white">
+                Overall Risk Score
               </div>
-              <div>
-                <div className="text-lg sm:text-xl font-bold font-heading text-emerald-800 dark:text-emerald-300 leading-tight">
-                  Stable
-                </div>
-                <div className="text-[11px] text-emerald-700/90 dark:text-emerald-400 font-medium">
-                  No immediate risk detected
-                </div>
+              <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-400 mt-0.5 uppercase tracking-wide">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                SAFE
+              </div>
+              <div className="text-[10px] text-slate-400 dark:text-slate-500 mt-1">
+                Scale: 0–25 Safe • 26–50 Warning
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 font-medium pt-1">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-            <span>All parameters within normal range</span>
+          {/* RIGHT SECTION: Last Updated & Data Information (col-span-3) */}
+          <div className="md:col-span-3 pt-3 md:pt-0 md:pl-4 space-y-1.5 text-xs">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-slate-400 dark:text-slate-500 text-[11px]">Last Updated:</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-200 text-[11px]">Just now</span>
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-slate-400 dark:text-slate-500 text-[11px]">Update Frequency:</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-200 text-[11px]">3 seconds</span>
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-slate-400 dark:text-slate-500 text-[11px]">Data Source:</span>
+              <span className="font-semibold text-slate-800 dark:text-slate-200 text-[11px]">IoT Sensors (LoRa)</span>
+            </div>
           </div>
+
         </div>
-
-        {/* PANEL 2: Environmental Index / Risk Score Gauge */}
-        <div className="flex flex-col justify-between rounded-2xl p-4 bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/70 shadow-2xs">
-          <div>
-            <div className="flex items-center gap-2.5 mb-2">
-              <div className="w-8 h-8 rounded-full bg-sky-50 dark:bg-sky-950/50 text-sky-600 dark:text-sky-400 border border-sky-100 dark:border-sky-800/40 flex items-center justify-center shrink-0">
-                <BarChart3 className="w-4 h-4" />
-              </div>
-              <div>
-                <h3 className="text-xs font-bold text-slate-800 dark:text-white">
-                  Environmental Index
-                </h3>
-                <p className="text-[11px] text-slate-400 dark:text-slate-500">
-                  Composite indicator from all sensors
-                </p>
-              </div>
-            </div>
-
-            {/* Gauge + Scale Grid */}
-            <div className="flex items-center justify-between gap-3 my-2">
-              {/* Circular Ring */}
-              <div className="relative w-20 h-20 sm:w-22 sm:h-22 flex items-center justify-center shrink-0">
-                <svg className="w-full h-full -rotate-90" viewBox="0 0 80 80">
-                  <circle
-                    cx="40"
-                    cy="40"
-                    r={radius}
-                    className="stroke-slate-100 dark:stroke-slate-700/60"
-                    strokeWidth="7"
-                    fill="transparent"
-                  />
-                  <circle
-                    cx="40"
-                    cy="40"
-                    r={radius}
-                    stroke={gaugeColor}
-                    strokeWidth="7"
-                    strokeDasharray={`${filledLength} ${circumference}`}
-                    strokeDashoffset={0}
-                    strokeLinecap="round"
-                    fill="transparent"
-                    className="transition-all duration-700 ease-out"
-                  />
-                </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-                  <span className="text-xl font-bold font-mono text-slate-900 dark:text-white leading-none">
-                    {riskScore}
-                  </span>
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
-                    / 100
-                  </span>
-                </div>
-              </div>
-
-              {/* Scale Legend */}
-              <div className="space-y-1 text-[11px] font-medium text-slate-600 dark:text-slate-300">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-                  <span>0 – 25 <span className="text-slate-400">(Safe)</span></span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
-                  <span>26 – 50 <span className="text-slate-400">(Moderate)</span></span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-orange-500 shrink-0" />
-                  <span>51 – 75 <span className="text-slate-400">(Elevated)</span></span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-rose-500 shrink-0" />
-                  <span>76 – 100 <span className="text-slate-400">(Critical)</span></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* PANEL 3: Last Updated Telemetry */}
-        <div className="flex flex-col justify-between rounded-2xl p-4 bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/70 shadow-2xs">
-          <div>
-            <div className="flex items-center gap-2.5 mb-1">
-              <div className="w-8 h-8 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-800/40 flex items-center justify-center shrink-0">
-                <Clock className="w-4 h-4" />
-              </div>
-              <div>
-                <h3 className="text-xs font-bold text-slate-800 dark:text-white">
-                  Last Updated
-                </h3>
-                <p className="text-[11px] text-slate-400 dark:text-slate-500">
-                  Most recent sensor data
-                </p>
-              </div>
-            </div>
-
-            {/* Timestamp Feature Box */}
-            <div className="bg-amber-50/50 dark:bg-amber-950/25 border border-amber-100/70 dark:border-amber-800/40 rounded-xl p-3 text-center my-3">
-              <div className="text-lg font-bold font-heading text-slate-900 dark:text-white leading-tight">
-                Just now
-              </div>
-              <div className="text-[11px] text-slate-500 dark:text-slate-400 font-mono mt-0.5">
-                {formattedTimestamp}
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 pt-1">
-            <Zap className="w-4 h-4 text-amber-500 shrink-0" />
-            <span className="text-[11px]">Update Frequency: <strong className="text-slate-800 dark:text-white font-semibold">3 seconds</strong></span>
-          </div>
-        </div>
-
-        {/* PANEL 4: Data Information */}
-        <div className="flex flex-col justify-between rounded-2xl p-4 bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/70 shadow-2xs">
-          <div>
-            <div className="flex items-center gap-2.5 mb-1">
-              <div className="w-8 h-8 rounded-full bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-400 border border-purple-100 dark:border-purple-800/40 flex items-center justify-center shrink-0">
-                <Database className="w-4 h-4" />
-              </div>
-              <div>
-                <h3 className="text-xs font-bold text-slate-800 dark:text-white">
-                  Data Information
-                </h3>
-                <p className="text-[11px] text-slate-400 dark:text-slate-500">
-                  Sensor network details
-                </p>
-              </div>
-            </div>
-
-            {/* 3 Information Rows (Stacked like reference) */}
-            <div className="space-y-2.5 my-3 text-xs">
-              <div className="flex items-center gap-2.5 text-slate-600 dark:text-slate-300">
-                <RadioTower className="w-4 h-4 text-purple-500 shrink-0" />
-                <span className="text-slate-400 dark:text-slate-500 text-[11px]">Data Source:</span>
-                <span className="font-semibold text-slate-800 dark:text-slate-200 ml-auto text-[11px]">IoT Sensors (LoRa)</span>
-              </div>
-              
-              <div className="flex items-center gap-2.5 text-slate-600 dark:text-slate-300">
-                <MapPin className="w-4 h-4 text-sky-500 shrink-0" />
-                <span className="text-slate-400 dark:text-slate-500 text-[11px]">Location:</span>
-                <span className="font-semibold text-slate-800 dark:text-slate-200 ml-auto text-[11px]">Mountain Region</span>
-              </div>
-
-              <div className="flex items-center gap-2.5 text-slate-600 dark:text-slate-300">
-                <FileText className="w-4 h-4 text-slate-400 shrink-0" />
-                <span className="text-slate-400 dark:text-slate-500 text-[11px]">Parameters:</span>
-                <span className="font-semibold text-slate-800 dark:text-slate-200 ml-auto text-[11px]">6 Environmental Sensors</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
 
       {/* 5. Bottom Prototype Disclaimer & Landslide Guard Branding Strip */}

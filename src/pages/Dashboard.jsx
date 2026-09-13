@@ -5,6 +5,7 @@ import TopKpiGrid from '../components/dashboard/TopKpiGrid';
 import CurrentRiskCard from '../components/dashboard/CurrentRiskCard';
 import AiPredictionCard from '../components/dashboard/AiPredictionCard';
 import LiveSensorReadings from '../components/dashboard/LiveSensorReadings';
+import SensorStatusCard from '../components/dashboard/SensorStatusCard';
 import EnvironmentalTrendsCard from '../components/dashboard/EnvironmentalTrendsCard';
 import GroundStabilityCard from '../components/dashboard/GroundStabilityCard';
 import LiveMonitoringMapCard from '../components/dashboard/LiveMonitoringMapCard';
@@ -58,11 +59,14 @@ export const Dashboard = () => {
         />
       </div>
 
-      {/* 5. LIVE SENSOR READINGS (6 Parameter Cards) */}
+      {/* 5. LIVE SENSOR READINGS (6 Parameter Cards + Compact Environmental Summary) */}
       <LiveSensorReadings 
         sensorValues={sensorValues} 
         sparklines={sparklines} 
       />
+
+      {/* 5B. SENSOR STATUS (Full-Width Geotechnical Health & Connectivity Matrix) */}
+      <SensorStatusCard nodes={nodes} />
 
       {/* 6 & 7. ENVIRONMENTAL TRENDS & GROUND STABILITY */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 w-full min-w-0">

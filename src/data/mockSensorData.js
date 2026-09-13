@@ -256,7 +256,7 @@ export const INITIAL_CANONICAL_NODES_DATA = [
     device: {
       controller: "ESP32",
       communication: "LoRa",
-      battery: { value: 78, unit: "%" },
+      battery: { value: 79, unit: "%" },
       signal: { rssi: -75, unit: "dBm" },
       snr: 8.0,
       lastSeen: "Just now",
@@ -444,9 +444,9 @@ export const INITIAL_CANONICAL_NODES_DATA = [
     device: {
       controller: "ESP32",
       communication: "LoRa",
-      battery: { value: 86, unit: "%" },
-      signal: { rssi: -69, unit: "dBm" },
-      snr: 9.4,
+      battery: { value: 96, unit: "%" },
+      signal: { rssi: -64, unit: "dBm" },
+      snr: 9.8,
       lastSeen: "Just now",
       packets: { received: 1492, successRate: 99.8 }
     },
