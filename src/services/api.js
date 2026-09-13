@@ -6,8 +6,10 @@
 
 import { MOCK_METRICS, MOCK_SENSORS, MOCK_ALERTS, MOCK_DEVICES, SYSTEM_INFO } from '../data/mockData';
 
-const RAW_API_BASE = import.meta.env.VITE_API_BASE_URL || '';
-export const API_BASE_URL = RAW_API_BASE ? RAW_API_BASE.replace(/\/+$/, '') : '/api/v1';
+const RAW_API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '');
+export const API_BASE_URL = RAW_API_BASE
+  ? (RAW_API_BASE.endsWith('/api/v1') ? RAW_API_BASE : `${RAW_API_BASE}/api/v1`)
+  : '/api/v1';
 
 /**
  * Universal safe fetcher with JSON parsing and fallback error handling

@@ -50,6 +50,7 @@ def root():
         "docs": "/docs"
     }
 
+@app.get("/health", tags=["System"])
 @app.get("/api/v1/health", tags=["System"])
 def health_check():
     return {
