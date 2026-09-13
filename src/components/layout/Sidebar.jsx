@@ -13,11 +13,14 @@ import {
   ChevronLeft,
   ChevronRight,
   Radio,
-  Leaf
+  Leaf,
+  CheckCircle2,
+  ShieldCheck,
+  Share2
 } from 'lucide-react';
 import { BrandIcon, BrandLogo } from '../common/BrandLogo';
 import { SYSTEM_INFO } from '../../data/mockData';
-import sidebarMountainFooter from '../../assets/sidebar_mountain_footer.jpg';
+import sidebarHimalayanWaterfall from '../../assets/sidebar_himalayan_waterfall.jpg';
 
 const NAV_ITEMS = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -153,57 +156,163 @@ export const Sidebar = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* System & LoRa Hardware Status Card + Full-Bleed Himalayan Mountain Footer */}
-        <div className="border-t border-[#E2E8F0] dark:border-[#2D3748] min-w-0 flex flex-col justify-end">
-          {/* Full LoRa status card: Mobile, Desktop, and Expanded Tablet */}
-          <div className={`p-3 pb-2.5 min-w-0 ${!isTabletExpanded ? 'block md:hidden lg:block' : 'block'}`}>
-            <div className="p-3 rounded-xl bg-[#F7FAFC] dark:bg-[#1A202C] border border-[#E2E8F0] dark:border-[#2D3748] space-y-1.5">
+        {/* Redesigned Bottom Section: Network Health & Large Himalayan Safety Visual Footer */}
+        <div className="min-w-0 flex flex-col justify-end p-2.5 sm:p-3 pt-1 space-y-2.5">
+          
+          {/* 1. NETWORK HEALTH CARD: Full view on Mobile, Desktop, and Expanded Tablet */}
+          <div className={`min-w-0 ${!isTabletExpanded ? 'block md:hidden lg:block' : 'block'}`}>
+            <div className="p-3 rounded-2xl bg-[#091b15]/90 dark:bg-[#071712]/90 border border-emerald-500/25 backdrop-blur-md shadow-lg shadow-black/20 text-white space-y-2.5 transition-all hover:border-emerald-500/40">
+              
+              {/* Header: Title & Action */}
               <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-nature-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-nature-500" />
-                  </span>
-                  <span className="font-medium text-[#2D3748] dark:text-slate-200">LoRa Gateway</span>
+                <div className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-slate-100 font-heading text-[11px]">
+                  <Activity className="w-3.5 h-3.5 text-[#34D399]" />
+                  <span>Network Health</span>
                 </div>
-                <span className="text-[10.5px] font-mono font-medium text-forest-600 dark:text-nature-400 bg-forest-50 dark:bg-forest-950/60 px-1.5 py-0.5 rounded">
-                  868.1 MHz
-                </span>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
               </div>
-              <div className="flex items-center justify-between text-[11px] text-[#718096] dark:text-slate-400 pt-1 border-t border-[#E2E8F0] dark:border-[#2D3748]/60">
-                <span>Nodes: <strong className="text-[#2D3748] dark:text-slate-200">14/16 Online</strong></span>
-                <span className="text-forest-600 dark:text-nature-400 font-medium">Ready</span>
+
+              {/* Gateway Online Status & Mini LoRa Antenna Graphic */}
+              <div className="flex items-center justify-between gap-2">
+                <div>
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-white">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                    </span>
+                    <span>Gateway Online</span>
+                  </div>
+                  <div className="text-[10px] font-mono text-slate-400 pl-3.5 mt-0.5">
+                    EDGE-GW-01
+                  </div>
+                </div>
+
+                {/* Mini LoRa Gateway SVG graphic */}
+                <div className="relative w-11 h-9 flex-shrink-0 flex items-center justify-center">
+                  <svg viewBox="0 0 44 36" fill="none" className="w-full h-full" aria-hidden="true">
+                    <path d="M14 11 A10 10 0 0 1 30 11" stroke="#34D399" strokeWidth="1.6" strokeLinecap="round" opacity="0.9" />
+                    <path d="M9 6 A16 16 0 0 1 35 6" stroke="#34D399" strokeWidth="1.4" strokeLinecap="round" opacity="0.55" />
+                    <line x1="22" y1="13" x2="22" y2="25" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" />
+                    <circle cx="22" cy="13" r="1.6" fill="#34D399" />
+                    <rect x="16" y="25" width="12" height="8" rx="1.5" fill="#1e293b" stroke="#475569" strokeWidth="1" />
+                    <circle cx="19" cy="29" r="0.8" fill="#10B981" />
+                    <circle cx="22" cy="29" r="0.8" fill="#38bdf8" />
+                  </svg>
+                </div>
               </div>
+
+              {/* Canonical Project Stats: 14/16 Nodes Online & 98.6% Packet Success */}
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-emerald-500/15">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 flex-shrink-0">
+                    <Share2 className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-white font-mono leading-tight">
+                      {SYSTEM_INFO?.connectedNodes || 14} / {SYSTEM_INFO?.totalNodes || 16}
+                    </div>
+                    <div className="text-[9.5px] text-slate-400 leading-tight">
+                      Nodes Online
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 flex-shrink-0">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-bold text-white font-mono leading-tight">
+                      98.6%
+                    </div>
+                    <div className="text-[9.5px] text-slate-400 leading-tight">
+                      Packet Success
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Status Action Pill */}
+              <div className="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-emerald-950/60 border border-emerald-500/25 text-[10.5px] text-emerald-300">
+                <div className="flex items-center gap-1.5">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="font-semibold">Network Stable</span>
+                </div>
+                <ChevronRight className="w-3 h-3 text-emerald-400/80" />
+              </div>
+
             </div>
           </div>
 
-          {/* Compact Icon Indicator: Tablet default */}
-          <div className={`py-3 flex justify-center ${!isTabletExpanded ? 'hidden md:flex lg:hidden' : 'hidden'}`} title="LoRa Gateway: 14/16 Online">
-            <div className="w-10 h-10 rounded-xl bg-forest-50 dark:bg-forest-950/60 border border-forest-200 dark:border-forest-800 flex items-center justify-center text-forest-600 dark:text-nature-400 relative">
-              <Radio className="w-4 h-4" />
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-nature-500" />
+          {/* Compact Indicators: Tablet default (collapsed 80px) */}
+          <div className={`py-2 space-y-2 flex flex-col items-center ${!isTabletExpanded ? 'hidden md:flex lg:hidden' : 'hidden'}`}>
+            <div 
+              className="w-11 h-11 rounded-xl bg-[#091b15]/90 border border-emerald-500/30 flex items-center justify-center text-emerald-400 relative cursor-pointer hover:border-emerald-400" 
+              title="Network Health: 14/16 Nodes Online (98.6% Packet Success)"
+            >
+              <Activity className="w-5 h-5" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            </div>
+            <div 
+              className="w-11 h-11 rounded-xl bg-emerald-950/70 border border-emerald-500/30 flex items-center justify-center text-[#34D399] cursor-pointer hover:border-emerald-400" 
+              title="Himalayan Safety: Safer Mountains, Stronger Communities"
+            >
+              <Leaf className="w-5 h-5" />
             </div>
           </div>
 
-          {/* Full-Bleed Himalayan Mountain Landscape Footer */}
-          <div className={`relative w-full h-22 overflow-hidden select-none ${!isTabletExpanded ? 'block md:hidden lg:block' : 'block'}`}>
+          {/* 2. LARGE HIMALAYAN SAFETY VISUAL FOOTER CARD: Full-bleed waterfall landscape */}
+          <div className={`relative rounded-2xl overflow-hidden shadow-xl border border-emerald-900/40 select-none group min-h-[180px] lg:min-h-[210px] flex flex-col justify-between p-3.5 text-white ${!isTabletExpanded ? 'block md:hidden lg:block' : 'block'}`}>
+            
+            {/* Full realistic Himalayan mountain waterfall photograph */}
             <img 
-              src={sidebarMountainFooter} 
-              alt="Himalayan Safety" 
-              className="w-full h-full object-cover object-bottom"
+              src={sidebarHimalayanWaterfall} 
+              alt="Himalayan Safety Landscape" 
+              className="absolute inset-0 w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
             />
-            {/* Smooth gradient blend into sidebar background */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/45 to-transparent dark:from-[#0E131F] dark:via-[#0E131F]/50 dark:to-transparent" />
-            <div className="absolute inset-0 flex items-end p-3 sm:p-3.5">
-              <div className="flex items-center gap-2 text-left">
-                <Leaf className="w-4 h-4 text-emerald-400 flex-shrink-0 drop-shadow-sm" />
-                <div className="leading-tight">
-                  <p className="text-[11px] font-bold text-white tracking-wide drop-shadow-xs">Himalayan Safety</p>
-                  <p className="text-[9px] text-slate-200 font-medium drop-shadow-xs">Our Shared Responsibility</p>
-                </div>
+
+            {/* Dark forest green & deep navy gradient overlay for guaranteed text legibility */}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/95 via-slate-950/65 to-[#06241b]/70" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#06241b]/60 via-transparent to-black/40" />
+
+            {/* Content: Brand Title & Environmental Mission */}
+            <div className="relative z-10 space-y-1.5">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/25 border border-emerald-400/40 flex items-center justify-center text-[#34D399] shadow-md backdrop-blur-xs">
+                <Leaf className="w-4.5 h-4.5 fill-[#34D399]/30" />
+              </div>
+              
+              <div>
+                <h3 className="text-sm font-black font-heading text-white tracking-tight leading-tight">
+                  Himalayan <span className="text-[#34D399]">Safety</span>
+                </h3>
+                <p className="text-[10px] text-emerald-200/90 font-medium leading-tight mt-0.5">
+                  Our Shared Responsibility
+                </p>
+              </div>
+
+              <div className="w-8 h-0.5 bg-gradient-to-r from-[#34D399] to-transparent my-1.5" />
+
+              <div className="text-[8.5px] font-black uppercase tracking-wider text-slate-300 font-heading leading-tight space-y-0.5">
+                <div>Safer Mountains</div>
+                <div className="text-emerald-300">Stronger Communities</div>
               </div>
             </div>
+
+            {/* Bottom Cursive Script Flourish over the waterfall / river */}
+            <div className="relative z-10 pt-2 select-none">
+              <div className="font-serif italic text-[11px] font-bold text-emerald-100/95 leading-tight drop-shadow-sm">
+                Protect • Preserve
+              </div>
+              <div className="font-serif italic text-[11px] font-bold text-[#34D399] leading-tight drop-shadow-sm">
+                Build Safer Tomorrows
+              </div>
+              <svg className="w-20 h-1.5 text-[#34D399] mt-0.5" viewBox="0 0 80 6" fill="none" aria-hidden="true">
+                <path d="M2 4 C25 1, 55 5, 78 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+              </svg>
+            </div>
+
           </div>
+
         </div>
       </aside>
     </>
