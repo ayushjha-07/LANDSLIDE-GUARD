@@ -44,6 +44,7 @@ import 'leaflet/dist/leaflet.css';
 import { useSensorContext } from '../../context/SensorContext';
 import { useTheme } from '../../hooks/useTheme';
 import heroHimalayasImg from '../../assets/hero_himalayas.jpg';
+import aiTerrainRiskMapImg from '../../assets/ai_terrain_risk_map.jpg';
 
 // Canonical cluster coordinates in the Kullu - Manali - Beas Valley monitoring corridor
 const LOCAL_GEO_COORDS = {
@@ -291,6 +292,7 @@ export const AiPredictionCard = ({
 
   const [forecastHorizon, setForecastHorizon] = useState('24h');
   const [selectedSensorFilter, setSelectedSensorFilter] = useState('all');
+  const [showMapModal, setShowMapModal] = useState(false);
   const mapRef = useRef(null);
 
   // Dynamic formatted timestamp
@@ -402,7 +404,7 @@ export const AiPredictionCard = ({
 
             {/* Right Group: Model Active & Architecture Pills */}
             <div className="flex items-center gap-1.5 shrink-0">
-              <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-medium text-slate-400 dark:text-slate-500 pr-1 whitespace-nowrap">
+              <span className="hidden xl:inline-flex items-center gap-1 text-[10px] font-medium text-slate-400 dark:text-slate-500 pr-1 whitespace-nowrap">
                 <Clock className="w-3 h-3" />
                 <span>Last updated: {formattedTimestamp}</span>
               </span>
@@ -665,113 +667,42 @@ export const AiPredictionCard = ({
 
         {/* PART 4: Terrain Risk Map — AI Analysis (xl:col-span-3) */}
         <div className="xl:col-span-3 p-3 sm:p-3.5 rounded-2xl bg-white dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-800 shadow-2xs flex flex-col justify-between min-w-0">
-          <div>
-            <div className="flex items-center justify-between gap-2 mb-2">
-              <div className="flex items-center gap-1.5 min-w-0">
-                <Layers className="w-3.5 h-3.5 text-sky-500" />
-                <span className="text-xs font-bold text-slate-800 dark:text-white font-heading truncate">
-                  Terrain Risk Map
-                </span>
-                <span className="text-[10px] text-slate-400 font-medium">
-                  (AI Analysis)
-                </span>
-              </div>
-              <button 
-                type="button" 
-                className="w-5 h-5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-white flex items-center justify-center transition-colors cursor-pointer"
-                title="Fullscreen map"
-              >
-                <Maximize2 className="w-3 h-3" />
-              </button>
+          <div className="flex-1 flex flex-col justify-between mb-2">
+            {/* Header: TrendingUp icon, Title & Subtitle */}
+            <div className="flex items-center gap-1.5 mb-2.5">
+              <TrendingUp className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400 stroke-[2.2]" />
+              <span className="text-xs font-bold text-slate-800 dark:text-white font-heading">
+                Terrain Risk Map
+              </span>
+              <span className="text-[10.5px] text-slate-400 font-medium">
+                (AI Analysis)
+              </span>
             </div>
 
-            {/* Leaflet Terrain Map with Multi-Tier Heatmap Overlay */}
-            <div className="relative w-full h-[180px] sm:h-[190px] rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
-              <MapContainer
-                ref={mapRef}
-                center={initialCenter}
-                zoom={initialZoom}
-                minZoom={8}
-                maxZoom={18}
-                scrollWheelZoom={false}
-                zoomControl={false}
-                attributionControl={false}
-                className="w-full h-full z-10"
+            {/* Exact Reference Terrain Risk Orthophoto with AI Hazard Heatmap Corridor */}
+            <div className="relative w-full flex-1 min-h-[185px] rounded-xl overflow-hidden border border-slate-200/80 dark:border-slate-700/80 shadow-2xs group select-none bg-slate-950">
+              <img 
+                src={aiTerrainRiskMapImg} 
+                alt="Terrain Risk Map (AI Analysis)" 
+                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
+              />
+              
+              {/* Expand Fullscreen Button in Top-Right matching reference exactly */}
+              <button 
+                type="button" 
+                onClick={() => setShowMapModal(true)}
+                className="absolute top-2 right-2 z-10 w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-white/95 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 shadow-md border border-slate-200/70 dark:border-slate-700/70 flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer"
+                title="Expand Terrain Risk Map"
               >
-                {/* Esri World Imagery Basemap */}
-                <TileLayer
-                  url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                  maxZoom={18}
-                />
-
-                {/* AI Risk Surface Heatmap Layers */}
-                <Polygon
-                  positions={AI_SURFACE_LOW}
-                  pathOptions={{
-                    color: '#10b981',
-                    fillColor: '#10b981',
-                    fillOpacity: 0.18,
-                    weight: 1
-                  }}
-                />
-                <Polygon
-                  positions={AI_SURFACE_MODERATE}
-                  pathOptions={{
-                    color: '#eab308',
-                    fillColor: '#eab308',
-                    fillOpacity: 0.25,
-                    weight: 1.2
-                  }}
-                />
-                <Polygon
-                  positions={AI_SURFACE_ELEVATED}
-                  pathOptions={{
-                    color: '#f97316',
-                    fillColor: '#f97316',
-                    fillOpacity: 0.35,
-                    weight: 1.5
-                  }}
-                />
-                <Polygon
-                  positions={AI_SURFACE_HIGH}
-                  pathOptions={{
-                    color: '#ef4444',
-                    fillColor: '#ef4444',
-                    fillOpacity: 0.45,
-                    weight: 1.8
-                  }}
-                />
-
-                {/* Node Markers */}
-                {nodes.map(node => {
-                  const geo = LOCAL_GEO_COORDS[node.id];
-                  const lat = geo ? geo[0] : (node.latitude ?? 32.25);
-                  const lng = geo ? geo[1] : (node.longitude ?? 77.18);
-                  const icon = createAiMapMarker(node);
-
-                  return (
-                    <Marker key={node.id} position={[lat, lng]} icon={icon}>
-                      <Popup>
-                        <div className="text-[11px] p-0.5">
-                          <strong>{node.id}</strong>: {node.location?.name || node.name}
-                        </div>
-                      </Popup>
-                    </Marker>
-                  );
-                })}
-              </MapContainer>
-
-              {/* Heatmap Overlay Label */}
-              <div className="absolute top-2 left-2 z-[400] px-2 py-0.5 rounded-md bg-slate-900/85 text-white text-[8px] font-mono font-semibold backdrop-blur-md pointer-events-none select-none">
-                AI Risk Surface
-              </div>
+                <Maximize2 className="w-3.5 h-3.5" />
+              </button>
             </div>
           </div>
 
-          {/* Bottom Gradient Scale Bar */}
+          {/* Bottom Gradient Scale Bar matching reference */}
           <div className="mt-2 pt-1 border-t border-slate-100 dark:border-slate-800">
-            <div className="h-1.5 w-full rounded-full bg-gradient-to-r from-emerald-500 via-amber-400 to-rose-500" />
-            <div className="flex items-center justify-between text-[9px] font-medium text-slate-400 dark:text-slate-500 mt-1">
+            <div className="h-2 w-full rounded-full bg-gradient-to-r from-emerald-500 via-yellow-400 via-orange-500 to-rose-600 shadow-2xs" />
+            <div className="flex items-center justify-between text-[9.5px] font-medium text-slate-400 dark:text-slate-500 mt-1">
               <span>Low Risk</span>
               <span>High Risk</span>
             </div>
@@ -1240,6 +1171,54 @@ export const AiPredictionCard = ({
       <div className="pt-2 text-[9px] text-slate-400 dark:text-slate-500 text-center leading-tight">
         Prototype AI analysis. Predictions are for research/demo purposes and should not be interpreted as guaranteed landslide forecasts.
       </div>
+
+      {/* Expanded Fullscreen Map Modal */}
+      {showMapModal && (
+        <div 
+          className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6"
+          onClick={() => setShowMapModal(false)}
+        >
+          <div 
+            className="relative w-full max-w-4xl bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden p-4 sm:p-6 flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-sky-500" />
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white font-heading">
+                  Terrain Risk Map (AI Analysis) — High Resolution Orthophoto
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowMapModal(false)}
+                className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center text-sm font-bold transition-colors cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="relative w-full aspect-square sm:aspect-[4/3] max-h-[65vh] rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-inner bg-slate-950">
+              <img 
+                src={aiTerrainRiskMapImg} 
+                alt="Terrain Risk Map High Res" 
+                className="w-full h-full object-cover object-center"
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500">
+              <div className="flex items-center gap-2 w-full sm:w-64">
+                <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">Low</span>
+                <div className="h-2 flex-1 rounded-full bg-gradient-to-r from-emerald-500 via-yellow-400 via-orange-500 to-rose-600" />
+                <span className="text-[10px] font-semibold text-rose-600 dark:text-rose-400">High</span>
+              </div>
+              <span className="text-[11px] text-slate-400">
+                AI Deep Learning Hazard Surface · Multi-band Satellite Telemetry
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
