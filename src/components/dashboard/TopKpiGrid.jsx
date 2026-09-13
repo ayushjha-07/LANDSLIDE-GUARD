@@ -74,7 +74,7 @@ export const TopKpiGrid = ({ sensorValues, riskAssessment, nodes = [] }) => {
         </div>
 
         {/* Micro Visual: Signal Bars on Left + Real Field Station Cutout on Right */}
-        <div className="relative pt-2 flex items-end justify-between min-h-[46px] border-t border-slate-100 dark:border-slate-800/60">
+        <div className="relative pt-2 flex items-end justify-between min-h-[46px]">
           {/* Signal bars */}
           <div className="flex items-end gap-1 pb-1">
             <div className="w-1.5 h-[10px] rounded-t-xs bg-emerald-500" />
@@ -125,7 +125,7 @@ export const TopKpiGrid = ({ sensorValues, riskAssessment, nodes = [] }) => {
         </div>
 
         {/* Micro Visual: Smooth SVG Risk Wave */}
-        <div className="relative pt-2 min-h-[46px] flex items-end border-t border-slate-100 dark:border-slate-800/60 overflow-hidden">
+        <div className="relative pt-2 min-h-[46px] flex items-end overflow-hidden">
           <svg className="w-full h-8 overflow-visible" viewBox="0 0 120 30" preserveAspectRatio="none">
             <defs>
               <linearGradient id="riskWaveGrad" x1="0" y1="0" x2="0" y2="1">
@@ -177,7 +177,7 @@ export const TopKpiGrid = ({ sensorValues, riskAssessment, nodes = [] }) => {
         </div>
 
         {/* Micro Visual: Rainfall Bar Histogram */}
-        <div className="pt-2 min-h-[46px] flex items-end justify-between gap-1 border-t border-slate-100 dark:border-slate-800/60">
+        <div className="pt-2 min-h-[46px] flex items-end justify-between gap-1">
           {[20, 35, 45, 30, 50, 40, 65, 90, 100, 75, 45, 25].map((height, idx) => (
             <div 
               key={idx} 
@@ -217,7 +217,7 @@ export const TopKpiGrid = ({ sensorValues, riskAssessment, nodes = [] }) => {
         </div>
 
         {/* Micro Visual: Smooth Green Ascending Sparkline */}
-        <div className="relative pt-2 min-h-[46px] flex items-end border-t border-slate-100 dark:border-slate-800/60 overflow-hidden">
+        <div className="relative pt-2 min-h-[46px] flex items-end overflow-hidden">
           <svg className="w-full h-8 overflow-visible" viewBox="0 0 120 30" preserveAspectRatio="none">
             <defs>
               <linearGradient id="moistWaveGrad" x1="0" y1="0" x2="0" y2="1">
@@ -275,7 +275,7 @@ export const TopKpiGrid = ({ sensorValues, riskAssessment, nodes = [] }) => {
         </div>
 
         {/* Micro Visual: Alert Activity Histogram Spikes */}
-        <div className="pt-2 min-h-[46px] flex items-end justify-between gap-1 border-t border-slate-100 dark:border-slate-800/60">
+        <div className="pt-2 min-h-[46px] flex items-end justify-between gap-1">
           {[15, 25, 10, 45, 70, 30, 20, 60, 95, 80, 55, 75, 40, 25].map((height, idx) => (
             <div 
               key={idx} 
@@ -315,7 +315,7 @@ export const TopKpiGrid = ({ sensorValues, riskAssessment, nodes = [] }) => {
         </div>
 
         {/* Micro Visual: Signal Bars on Left + LoRa Gateway Station Cutout on Right */}
-        <div className="relative pt-2 flex items-end justify-between min-h-[46px] border-t border-slate-100 dark:border-slate-800/60">
+        <div className="relative pt-2 flex items-end justify-between min-h-[46px]">
           {/* Signal bars */}
           <div className="flex items-end gap-1 pb-1">
             <div className="w-1.5 h-[8px] rounded-t-xs bg-sky-500" />

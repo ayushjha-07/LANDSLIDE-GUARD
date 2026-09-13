@@ -381,7 +381,7 @@ export const LiveSensorReadings = ({
 
       {/* 4. Compact Environmental Summary (Single Sleek Horizontal Card) */}
       <div className="mt-4 rounded-2xl p-4 bg-slate-50/80 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 shadow-2xs">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center divide-y md:divide-y-0 md:divide-x divide-slate-200/70 dark:divide-slate-700/60">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center md:divide-x divide-slate-200/70 dark:divide-slate-700/60">
           
           {/* LEFT SECTION: Current Environmental Condition (col-span-5) */}
           <div className="md:col-span-5 md:pr-4 flex flex-col justify-between">
@@ -493,7 +493,7 @@ export const LiveSensorReadings = ({
       </div>
 
       {/* 5. Bottom Prototype Disclaimer & Landslide Guard Branding Strip */}
-      <div className="mt-5 pt-3.5 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-slate-500 dark:text-slate-400 bg-sky-50/50 dark:bg-sky-950/20 border border-sky-100/60 dark:border-sky-900/30 rounded-xl px-4 py-2.5">
+      <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-slate-500 dark:text-slate-400 bg-sky-50/50 dark:bg-sky-950/20 border border-sky-100/60 dark:border-sky-900/30 rounded-xl px-4 py-2.5">
         <div className="flex items-center gap-2 text-center sm:text-left">
           <Info className="w-4 h-4 text-sky-500 shrink-0" />
           <span className="text-[11px] leading-tight">

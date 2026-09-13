@@ -405,7 +405,7 @@ export const CurrentRiskCard = ({
           </div>
 
           {/* Row 3: Meta breadcrumb on Left, Slogan on Right */}
-          <div className="pt-1.5 mt-0.5 border-t border-slate-200/50 dark:border-slate-700/40 text-[10.5px] sm:text-[11px] text-slate-400 dark:text-slate-500 flex items-center justify-between gap-2">
+          <div className="pt-1 mt-0.5 text-[10.5px] sm:text-[11px] text-slate-400 dark:text-slate-500 flex items-center justify-between gap-2">
             <span className="truncate">
               Monitoring mountain slopes <span className="mx-1 text-slate-300 dark:text-slate-700">|</span> Protecting communities <span className="mx-1 text-slate-300 dark:text-slate-700">|</span> Powered by IoT & AI
             </span>
@@ -607,7 +607,7 @@ export const CurrentRiskCard = ({
         <div className="md:col-span-5 flex flex-col justify-between space-y-2.5 min-w-0">
           
           {/* 1. Risk Level Header & Link */}
-          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-1">
+          <div className="flex items-center justify-between pb-1">
             <span className="text-[11px] font-bold font-mono tracking-wider text-slate-400 dark:text-slate-500 uppercase">
               Risk Level
             </span>
@@ -757,7 +757,7 @@ export const CurrentRiskCard = ({
       {/* ========================================================================= */}
       {/* 3. BOTTOM SUMMARY ROW (Trend | Prediction Window | Factor of Safety | Monitored Area) */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3.5 pt-1">
         
         {/* Column 1: Trend */}
         <div className="flex items-center gap-2 p-2 rounded-xl bg-slate-50/50 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-800/60 min-w-0">

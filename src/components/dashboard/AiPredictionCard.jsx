@@ -426,7 +426,7 @@ export const AiPredictionCard = ({
           </div>
 
           {/* Row 3: Meta breadcrumb on Left, Slogan on Right */}
-          <div className="pt-1.5 mt-0.5 border-t border-slate-200/50 dark:border-slate-700/40 text-[10.5px] sm:text-[11px] text-slate-400 dark:text-slate-500 flex items-center justify-between gap-2">
+          <div className="pt-1 mt-0.5 text-[10.5px] sm:text-[11px] text-slate-400 dark:text-slate-500 flex items-center justify-between gap-2">
             <span className="truncate">
               Analyzing real-time sensor data <span className="mx-1 text-slate-300 dark:text-slate-700">|</span> Predicting landslide probability <span className="mx-1 text-slate-300 dark:text-slate-700">|</span> Powered by RF + LSTM / GRU
             </span>
@@ -540,7 +540,7 @@ export const AiPredictionCard = ({
           </div>
 
           {/* Model Confidence / Signal Strength */}
-          <div className="pt-2 border-t border-slate-100 dark:border-slate-800">
+          <div className="pt-2">
             <div className="flex items-baseline justify-between mb-1">
               <span className="text-base font-extrabold font-mono text-emerald-600 dark:text-emerald-400 leading-none">
                 87%
@@ -700,7 +700,7 @@ export const AiPredictionCard = ({
           </div>
 
           {/* Bottom Gradient Scale Bar matching reference */}
-          <div className="mt-2 pt-1 border-t border-slate-100 dark:border-slate-800">
+          <div className="mt-2 pt-1">
             <div className="h-2 w-full rounded-full bg-gradient-to-r from-emerald-500 via-yellow-400 via-orange-500 to-rose-600 shadow-2xs" />
             <div className="flex items-center justify-between text-[9.5px] font-medium text-slate-400 dark:text-slate-500 mt-1">
               <span>Low Risk</span>
@@ -770,7 +770,7 @@ export const AiPredictionCard = ({
                     <path d="M 0 16 Q 20 8 40 14 T 70 6 T 100 12" />
                   </svg>
                 </div>
-                <div className="flex items-center justify-between text-[9px] pt-1 border-t border-emerald-100/60 dark:border-emerald-900/40">
+                <div className="flex items-center justify-between text-[9px] pt-1">
                   <span className="inline-flex items-center gap-1 text-slate-400">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                     Live
@@ -804,7 +804,7 @@ export const AiPredictionCard = ({
                   <div className="w-1.5 h-3.5 bg-sky-500 rounded-xs" />
                   <div className="w-1.5 h-2 bg-sky-500 rounded-xs" />
                 </div>
-                <div className="flex items-center justify-between text-[9px] pt-1 border-t border-sky-100/60 dark:border-sky-900/40">
+                <div className="flex items-center justify-between text-[9px] pt-1">
                   <span className="inline-flex items-center gap-1 text-slate-400">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                     Live
@@ -834,7 +834,7 @@ export const AiPredictionCard = ({
                     <path d="M 0 18 L 25 14 L 50 16 L 75 10 L 100 12" />
                   </svg>
                 </div>
-                <div className="flex items-center justify-between text-[9px] pt-1 border-t border-amber-100/60 dark:border-amber-900/40">
+                <div className="flex items-center justify-between text-[9px] pt-1">
                   <span className="inline-flex items-center gap-1 text-slate-400">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                     Live
@@ -865,7 +865,7 @@ export const AiPredictionCard = ({
                     <path d="M 0 12 Q 25 12 35 4 T 50 20 T 65 8 T 100 12" />
                   </svg>
                 </div>
-                <div className="flex items-center justify-between text-[9px] pt-1 border-t border-orange-100/60 dark:border-orange-900/40">
+                <div className="flex items-center justify-between text-[9px] pt-1">
                   <span className="inline-flex items-center gap-1 text-slate-400">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                     Live
@@ -896,7 +896,7 @@ export const AiPredictionCard = ({
                     <path d="M 0 14 Q 30 18 50 10 T 80 12 T 100 8" />
                   </svg>
                 </div>
-                <div className="flex items-center justify-between text-[9px] pt-1 border-t border-rose-100/60 dark:border-rose-900/40">
+                <div className="flex items-center justify-between text-[9px] pt-1">
                   <span className="inline-flex items-center gap-1 text-slate-400">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                     Live
@@ -927,7 +927,7 @@ export const AiPredictionCard = ({
                     <path d="M 0 10 Q 25 6 50 14 T 75 8 T 100 12" />
                   </svg>
                 </div>
-                <div className="flex items-center justify-between text-[9px] pt-1 border-t border-purple-100/60 dark:border-purple-900/40">
+                <div className="flex items-center justify-between text-[9px] pt-1">
                   <span className="inline-flex items-center gap-1 text-slate-400">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                     Live
@@ -1206,7 +1206,7 @@ export const AiPredictionCard = ({
               />
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 text-xs text-slate-500">
               <div className="flex items-center gap-2 w-full sm:w-64">
                 <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">Low</span>
                 <div className="h-2 flex-1 rounded-full bg-gradient-to-r from-emerald-500 via-yellow-400 via-orange-500 to-rose-600" />

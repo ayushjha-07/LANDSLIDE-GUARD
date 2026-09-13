@@ -457,7 +457,7 @@ export const SensorStatusCard = ({ nodes: propNodes, system: propSystem }) => {
                   </div>
 
                   {/* Middle Section: 3 Telemetry Metrics */}
-                  <div className="grid grid-cols-3 gap-1 mt-3 pt-2.5 border-t border-slate-200/60 dark:border-slate-750/60 items-center text-center">
+                  <div className="grid grid-cols-3 gap-1 mt-2.5 pt-1 items-center text-center">
                     
                     {/* Battery */}
                     <div className="flex flex-col items-center">
@@ -513,7 +513,7 @@ export const SensorStatusCard = ({ nodes: propNodes, system: propSystem }) => {
                 </div>
 
                 {/* Bottom Row: Timestamp */}
-                <div className="mt-2.5 pt-2 border-t border-slate-200/60 dark:border-slate-750/60 flex items-center gap-1.5 text-[11px] text-slate-400 dark:text-slate-500">
+                <div className="mt-2.5 pt-1 flex items-center gap-1.5 text-[11px] text-slate-400 dark:text-slate-500">
                   <Clock className="w-3.5 h-3.5 shrink-0" />
                   <span>
                     {isOnline ? 'Last update: Just now' : (node.device?.lastSeen ? `Last seen: ${node.device.lastSeen.replace(/\s*minutes?\s*ago/i, 'm ago')}` : 'Last seen: 18m ago')}

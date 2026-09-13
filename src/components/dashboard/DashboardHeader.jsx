@@ -68,7 +68,7 @@ export const DashboardHeader = ({ lastUpdatedText, isRefreshing, onRefresh }) =>
         </div>
 
         {/* Row C: Metadata Row & Telemetry Refresh pill */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-slate-100/90 dark:border-slate-800/60 min-w-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1.5 min-w-0">
           {/* Metadata indicators */}
           <div className="flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-2 text-[11.5px] sm:text-xs font-medium text-slate-600 dark:text-slate-300">
             <div className="flex items-center gap-1.5">
