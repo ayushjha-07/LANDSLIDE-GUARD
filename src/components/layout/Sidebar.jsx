@@ -12,10 +12,12 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
-  Radio
+  Radio,
+  Leaf
 } from 'lucide-react';
 import { BrandIcon, BrandLogo } from '../common/BrandLogo';
 import { SYSTEM_INFO } from '../../data/mockData';
+import sidebarMountainFooter from '../../assets/sidebar_mountain_footer.jpg';
 
 const NAV_ITEMS = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -109,7 +111,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
                   min-h-[44px] flex items-center rounded-xl text-xs md:text-sm font-medium transition-all duration-200 group
                   ${!isTabletExpanded ? 'justify-start md:justify-center lg:justify-between px-3 md:px-0 lg:px-3.5' : 'justify-between px-3.5'}
                   ${isActive 
-                    ? 'bg-forest-600 text-white dark:bg-forest-700 dark:text-white shadow-sm' 
+                    ? 'bg-[#0e4a3b] text-white shadow-sm font-semibold hover:bg-[#0c4335]' 
                     : 'text-[#4A5568] dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-[#1A202C] dark:hover:text-white'
                   }
                 `}
@@ -181,10 +183,23 @@ export const Sidebar = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          <div className={`mt-2 text-center ${!isTabletExpanded ? 'block md:hidden lg:block' : 'block'}`}>
-            <p className="text-[10px] text-[#718096] dark:text-slate-400 font-bold uppercase tracking-wider truncate">
-              Safer Mountains, Stronger Communities
-            </p>
+          <div className={`mt-2.5 ${!isTabletExpanded ? 'block md:hidden lg:block' : 'block'}`}>
+            <div className="relative rounded-xl overflow-hidden border border-[#E2E8F0] dark:border-[#2D3748] shadow-xs group">
+              <img 
+                src={sidebarMountainFooter} 
+                alt="Himalayan Safety" 
+                className="w-full h-14 object-cover object-center group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent flex items-end p-2">
+                <div className="flex items-center gap-1.5 text-left">
+                  <Leaf className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                  <div className="leading-tight">
+                    <p className="text-[10px] font-bold text-white tracking-wide">Himalayan Safety</p>
+                    <p className="text-[8.5px] text-slate-300 font-medium">Our Shared Responsibility</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </aside>

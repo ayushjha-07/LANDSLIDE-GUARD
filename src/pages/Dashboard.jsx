@@ -45,6 +45,7 @@ export const Dashboard = () => {
       <TopKpiGrid 
         sensorValues={sensorValues} 
         riskAssessment={riskAssessment} 
+        nodes={nodes}
       />
 
       {/* 3 & 4. PRIMARY RISK ASSESSMENT & AI RISK ANALYSIS WORKSPACES */}

@@ -57,18 +57,18 @@ export const UserMenu = () => {
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        <div className="w-8 h-8 rounded-full bg-forest-600 dark:bg-forest-700 text-white flex items-center justify-center font-bold text-xs shadow-sm ring-2 ring-forest-500/20 flex-shrink-0 font-mono">
+        <div className="w-8 h-8 rounded-full bg-[#10233F] dark:bg-[#1a2e4c] text-white flex items-center justify-center font-bold text-xs shadow-sm ring-1 ring-slate-200 dark:ring-slate-700 flex-shrink-0">
           {displayInitials}
         </div>
-        <div className="hidden xl:block text-left pr-1 min-w-0">
+        <div className="hidden lg:block text-left pr-1 min-w-0">
           <div className="text-xs font-semibold text-[#1A202C] dark:text-slate-100 truncate">
             {displayName}
           </div>
-          <div className="text-[10px] text-forest-600 dark:text-nature-400 font-medium truncate">
+          <div className="text-[10.5px] text-[#718096] dark:text-slate-400 font-normal truncate">
             {displayRole}
           </div>
         </div>
-        <ChevronDown className={`hidden xl:block w-3.5 h-3.5 text-[#718096] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`hidden lg:block w-3.5 h-3.5 text-[#718096] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {/* Dropdown Menu */}
