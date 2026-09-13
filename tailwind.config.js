@@ -85,6 +85,9 @@ export default {
           amber: '#f59e0b',
           orange: '#ea580c',
           red: '#dc2626',
+        },
+        slate: {
+          850: '#162032',
         }
       },
       boxShadow: {

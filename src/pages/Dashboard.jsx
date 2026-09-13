@@ -47,8 +47,8 @@ export const Dashboard = () => {
         riskAssessment={riskAssessment} 
       />
 
-      {/* 3 & 4. PRIMARY RISK ASSESSMENT & AI TIME HORIZONS */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 w-full min-w-0">
+      {/* 3 & 4. PRIMARY RISK ASSESSMENT & AI RISK ANALYSIS WORKSPACES */}
+      <div className="space-y-6 w-full min-w-0">
         <CurrentRiskCard 
           riskAssessment={riskAssessment} 
           sensorValues={sensorValues} 
@@ -56,6 +56,7 @@ export const Dashboard = () => {
         <AiPredictionCard 
           riskAssessment={riskAssessment} 
           sensorValues={sensorValues} 
+          nodes={nodes}
         />
       </div>
 
