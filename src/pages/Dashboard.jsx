@@ -72,7 +72,7 @@ export const Dashboard = () => {
       <SensorStatusCard nodes={nodes} />
 
       {/* 6 & 7. ENVIRONMENTAL TRENDS & GROUND STABILITY */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 w-full min-w-0 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-2 items-stretch gap-5 sm:gap-6 w-full min-w-0">
         <EnvironmentalTrendsCard 
           envSeries={envSeries} 
           sensorValues={sensorValues} 

@@ -239,32 +239,8 @@ export const GroundStabilityCard = ({ stabilitySeries, sensorValues, className =
   const gaugeOffset = gaugeCircumference - (gaugePct / 100) * gaugeCircumference;
 
   return (
-    <div className={`relative rounded-2xl bg-white dark:bg-[#0c1410] border border-stone-200/90 dark:border-stone-800/80 shadow-xs overflow-hidden transition-all duration-300 ${className}`}>
-      
-      {/* 1. Subtle Himalayan Mountain Crest Background (top right) */}
-      <div
-        className="absolute top-0 right-0 w-full sm:w-3/4 md:w-2/3 h-52 pointer-events-none z-0 opacity-20 dark:opacity-15 bg-right-top bg-no-repeat bg-cover mix-blend-multiply dark:mix-blend-screen"
-        style={{
-          backgroundImage: `url(${heroHimalayas})`,
-          maskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%)',
-          WebkitMaskImage: 'linear-gradient(to bottom left, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%)'
-        }}
-      />
-
-      {/* Script Motto in Top Right (hidden on mobile to prevent overlap) */}
-      <div className="hidden sm:block absolute top-3 sm:top-4 right-4 sm:right-6 pointer-events-none z-10 select-none text-right">
-        <span className="font-serif italic text-xs sm:text-[13px] font-semibold tracking-wide text-stone-500/70 dark:text-stone-400/60 block leading-tight">
-          Monitoring
-        </span>
-        <span className="font-serif italic text-xs sm:text-[13px] font-semibold tracking-wide text-stone-500/70 dark:text-stone-400/60 block leading-tight">
-          Stable Slopes
-        </span>
-        <span className="font-serif italic text-xs sm:text-[13px] font-semibold tracking-wide text-stone-500/70 dark:text-stone-400/60 block leading-tight">
-          for Safer Tomorrows
-        </span>
-      </div>
-
-      <div className="relative z-10 p-4 sm:p-6">
+    <div className={`relative rounded-2xl bg-white dark:bg-[#0c1410] border border-stone-200/90 dark:border-stone-800/80 shadow-xs overflow-hidden transition-all duration-300 h-full min-h-full flex flex-col justify-between ${className}`}>
+      <div className="relative z-10 p-4 sm:p-6 flex flex-col flex-1 justify-between">
 
         {/* 2. HEADER */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 pb-2">
