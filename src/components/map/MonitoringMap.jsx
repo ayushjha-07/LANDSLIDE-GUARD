@@ -80,8 +80,8 @@ export const MonitoringMap = ({
   const isDashboard = variant === 'dashboard';
   const isAlerts = variant === 'alerts';
 
-  // Support controlled or uncontrolled layer state - alerts variant defaults to satellite
-  const [internalLayer, setInternalLayer] = useState(isAlerts ? 'satellite' : 'terrain');
+  // Default to real high-altitude Himalayan aerial satellite view matching the reference images
+  const [internalLayer, setInternalLayer] = useState('satellite');
   const currentLayer = layer !== null && layer !== undefined ? layer : internalLayer;
   const [hasTileError, setHasTileError] = useState(false);
 
@@ -134,6 +134,9 @@ export const MonitoringMap = ({
 
   return (
     <div className={`relative w-full rounded-2xl overflow-hidden border border-stone-800 bg-[#0c1310] shadow-2xl min-w-0 ${className}`}>
+      {/* Subtle Natural Atmospheric Haze Overlay (inspired by reference images) */}
+      <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-stone-950/25 via-stone-950/10 to-transparent pointer-events-none z-[350]" />
+
       {/* ALERTS VARIANT GIS OVERLAYS (matching primary reference) */}
       {isAlerts && (
         <>

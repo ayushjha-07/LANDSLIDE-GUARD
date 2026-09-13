@@ -33,7 +33,7 @@ export {
 export const HIMACHAL_ZOOM = HIMACHAL_FULL_ZOOM;
 
 export const MapControls = ({ 
-  currentLayer = 'terrain', 
+  currentLayer = 'satellite', 
   onLayerChange,
   nodeFilter = 'all',
   onNodeFilterChange,
@@ -59,7 +59,7 @@ export const MapControls = ({
     e.stopPropagation();
     map.closePopup();
     map.flyTo(HIMACHAL_CENTER, HIMACHAL_ZOOM, { duration: 1.0 });
-    if (onLayerChange) onLayerChange('terrain');
+    if (onLayerChange) onLayerChange('satellite');
     if (onResetView) onResetView();
   };
 
@@ -80,8 +80,24 @@ export const MapControls = ({
         }}
         className="leaflet-top leaflet-left !top-3 !left-3 !right-3 z-[1000] pointer-events-auto select-none flex items-center justify-between gap-2 flex-wrap"
       >
-        {/* Left: Layer Selector Pill Group [Terrain] [Standard] [Satellite] */}
+        {/* Left: Layer Selector Pill Group [Map] [Terrain] [Satellite] */}
         <div className="flex items-center rounded-xl bg-[#0f172a]/95 dark:bg-[#0b1319]/95 border border-stone-800 shadow-xl p-1 backdrop-blur-md gap-1">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onLayerChange('standard');
+            }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              currentLayer === 'standard'
+                ? 'bg-[#10b981] text-white shadow-md'
+                : 'text-stone-300 hover:text-white hover:bg-white/10'
+            }`}
+            title="Standard OpenStreetMap (Roads, Rivers & Towns)"
+          >
+            Map
+          </button>
+
           <button
             type="button"
             onClick={(e) => {
@@ -102,22 +118,6 @@ export const MapControls = ({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              onLayerChange('standard');
-            }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-              currentLayer === 'standard'
-                ? 'bg-[#10b981] text-white shadow-md'
-                : 'text-stone-300 hover:text-white hover:bg-white/10'
-            }`}
-            title="Standard OpenStreetMap (Roads, Rivers & Towns)"
-          >
-            Standard
-          </button>
-
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
               onLayerChange('satellite');
             }}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
@@ -125,7 +125,7 @@ export const MapControls = ({
                 ? 'bg-[#10b981] text-white shadow-md'
                 : 'text-stone-300 hover:text-white hover:bg-white/10'
             }`}
-            title="Satellite Aerial Imagery with Places & Roads"
+            title="Himalayan Aerial Satellite (80–90° Top-Down Drone/Satellite View)"
           >
             Satellite
           </button>
@@ -242,7 +242,7 @@ export const MapControls = ({
  * Displays compact layer switch, prototype disclaimer, compact legend, and corner zoom buttons.
  */
 export const DashboardMapControls = ({ 
-  currentLayer = 'terrain', 
+  currentLayer = 'satellite', 
   onLayerChange,
   nodeFilter = 'all',
   onNodeFilterChange,
@@ -263,6 +263,7 @@ export const DashboardMapControls = ({
   const handleReset = (e) => {
     e.stopPropagation();
     map.flyTo(HIMACHAL_CENTER, HIMACHAL_DASHBOARD_ZOOM, { duration: 1.0 });
+    if (onLayerChange) onLayerChange('satellite');
     if (onResetView) onResetView();
   };
 
@@ -279,24 +280,8 @@ export const DashboardMapControls = ({
         className="leaflet-top leaflet-left !top-3 !left-3 !right-3 z-[1000] pointer-events-auto select-none flex items-center justify-between gap-2 flex-wrap"
       >
         <div className="flex items-center gap-1.5 flex-wrap">
-          {/* Basemap 3-Way Toggle [Terrain] [Standard] [Satellite] */}
+          {/* Basemap 3-Way Toggle [Map] [Terrain] [Satellite] */}
           <div className="flex items-center rounded-xl bg-[#0f172a]/95 border border-stone-800 shadow-lg p-0.5 backdrop-blur-md gap-0.5">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (onLayerChange) onLayerChange('terrain');
-              }}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
-                currentLayer === 'terrain'
-                  ? 'bg-[#10b981] text-white shadow-xs'
-                  : 'text-stone-300 hover:text-white hover:bg-white/10'
-              }`}
-              title="Natural Himalayan Topographic Terrain (Contours & Shading)"
-            >
-              Terrain
-            </button>
-
             <button
               type="button"
               onClick={(e) => {
@@ -310,7 +295,23 @@ export const DashboardMapControls = ({
               }`}
               title="Standard OpenStreetMap (Roads, Rivers & Towns)"
             >
-              Standard
+              Map
+            </button>
+
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onLayerChange) onLayerChange('terrain');
+              }}
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+                currentLayer === 'terrain'
+                  ? 'bg-[#10b981] text-white shadow-xs'
+                  : 'text-stone-300 hover:text-white hover:bg-white/10'
+              }`}
+              title="Topographic Terrain (Himachal Contours & Shading)"
+            >
+              Terrain
             </button>
 
             <button
@@ -324,7 +325,7 @@ export const DashboardMapControls = ({
                   ? 'bg-[#10b981] text-white shadow-xs'
                   : 'text-stone-300 hover:text-white hover:bg-white/10'
               }`}
-              title="Satellite Aerial Imagery with Places & Roads"
+              title="Himalayan Aerial Satellite (80–90° Top-Down Drone/Satellite View)"
             >
               Satellite
             </button>

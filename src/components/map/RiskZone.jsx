@@ -55,7 +55,7 @@ export const RiskZone = ({ node }) => {
             Estimated buffer: ~{radius}m around {node.location?.name || 'Station'}
           </span>
           <span className="text-[9px] text-amber-700 italic block mt-0.5">
-            Prototype demonstration zone — not an official hazard boundary
+            Simulated prototype demonstration area &mdash; not an official landslide hazard boundary
           </span>
         </div>
       </Tooltip>

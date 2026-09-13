@@ -22,7 +22,7 @@ export const MonitoringMapPage = () => {
   const [nodeFilter, setNodeFilter] = useState('all');
   const [riskFilter, setRiskFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [currentLayer, setCurrentLayer] = useState('terrain');
+  const [currentLayer, setCurrentLayer] = useState('satellite');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchTarget, setSearchTarget] = useState(null);
 
@@ -60,7 +60,7 @@ export const MonitoringMapPage = () => {
     setNodeFilter('all');
     setRiskFilter('all');
     setStatusFilter('all');
-    setCurrentLayer('terrain');
+    setCurrentLayer('satellite');
     setSelectedNodeId(null);
     setSearchQuery('');
     setSearchTarget({ lat: HIMACHAL_CENTER[0], lng: HIMACHAL_CENTER[1], zoom: HIMACHAL_FULL_ZOOM });
