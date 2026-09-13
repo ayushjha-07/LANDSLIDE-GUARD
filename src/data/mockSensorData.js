@@ -210,9 +210,9 @@ export const INITIAL_CANONICAL_NODES_DATA = [
       predictionWindow: "6h"
     },
     readings: {
-      soilMoisture: { value: 41.0, unit: "%", trend: "stable" },
-      rainfall: { value: 11.0, unit: "mm", trend: "decreasing" },
-      tilt: { value: 1.8, unit: "°", trend: "stable" },
+      soilMoisture: { value: 38.0, unit: "%", trend: "stable" },
+      rainfall: { value: 8.0, unit: "mm", trend: "decreasing" },
+      tilt: { value: 1.2, unit: "°", trend: "stable" },
       vibration: { value: 0.03, unit: "g", trend: "stable" },
       temperature: { value: 20.8, unit: "°C", trend: "stable" },
       humidity: { value: 74.0, unit: "%", trend: "stable" }
@@ -246,9 +246,9 @@ export const INITIAL_CANONICAL_NODES_DATA = [
       predictionWindow: "6h"
     },
     readings: {
-      soilMoisture: { value: 68.0, unit: "%", trend: "increasing" },
-      rainfall: { value: 21.0, unit: "mm", trend: "increasing" },
-      tilt: { value: 3.4, unit: "°", trend: "increasing" },
+      soilMoisture: { value: 64.0, unit: "%", trend: "increasing" },
+      rainfall: { value: 24.0, unit: "mm", trend: "increasing" },
+      tilt: { value: 3.6, unit: "°", trend: "increasing" },
       vibration: { value: 0.07, unit: "g", trend: "increasing" },
       temperature: { value: 22.1, unit: "°C", trend: "stable" },
       humidity: { value: 78.0, unit: "%", trend: "increasing" }
@@ -256,7 +256,7 @@ export const INITIAL_CANONICAL_NODES_DATA = [
     device: {
       controller: "ESP32",
       communication: "LoRa",
-      battery: { value: 79, unit: "%" },
+      battery: { value: 78, unit: "%" },
       signal: { rssi: -75, unit: "dBm" },
       snr: 8.0,
       lastSeen: "Just now",
@@ -282,7 +282,7 @@ export const INITIAL_CANONICAL_NODES_DATA = [
       predictionWindow: "6h"
     },
     readings: {
-      soilMoisture: { value: 39.0, unit: "%", trend: "stable" },
+      soilMoisture: { value: 38.0, unit: "%", trend: "stable" },
       rainfall: { value: 9.0, unit: "mm", trend: "decreasing" },
       tilt: { value: 1.5, unit: "°", trend: "stable" },
       vibration: { value: 0.02, unit: "g", trend: "stable" },
@@ -398,9 +398,9 @@ export const INITIAL_CANONICAL_NODES_DATA = [
       predictionWindow: "6h"
     },
     readings: {
-      soilMoisture: { value: 40.0, unit: "%", trend: "stable" },
-      rainfall: { value: 10.0, unit: "mm", trend: "stable" },
-      tilt: { value: 1.7, unit: "°", trend: "stable" },
+      soilMoisture: { value: 45.0, unit: "%", trend: "stable" },
+      rainfall: { value: 14.0, unit: "mm", trend: "stable" },
+      tilt: { value: 2.1, unit: "°", trend: "stable" },
       vibration: { value: 0.03, unit: "g", trend: "stable" },
       temperature: { value: 21.2, unit: "°C", trend: "stable" },
       humidity: { value: 73.0, unit: "%", trend: "stable" }
@@ -434,7 +434,7 @@ export const INITIAL_CANONICAL_NODES_DATA = [
       predictionWindow: "6h"
     },
     readings: {
-      soilMoisture: { value: 41.0, unit: "%", trend: "stable" },
+      soilMoisture: { value: 40.0, unit: "%", trend: "stable" },
       rainfall: { value: 11.0, unit: "mm", trend: "stable" },
       tilt: { value: 1.7, unit: "°", trend: "stable" },
       vibration: { value: 0.02, unit: "g", trend: "stable" },
@@ -444,8 +444,8 @@ export const INITIAL_CANONICAL_NODES_DATA = [
     device: {
       controller: "ESP32",
       communication: "LoRa",
-      battery: { value: 96, unit: "%" },
-      signal: { rssi: -64, unit: "dBm" },
+      battery: { value: 86, unit: "%" },
+      signal: { rssi: -69, unit: "dBm" },
       snr: 9.4,
       lastSeen: "Just now",
       packets: { received: 1492, successRate: 99.8 }

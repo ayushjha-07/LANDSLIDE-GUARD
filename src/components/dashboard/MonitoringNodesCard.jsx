@@ -1,25 +1,198 @@
 import React, { useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
+  Layers, 
+  Wifi, 
+  ShieldCheck, 
+  AlertCircle, 
+  AlertTriangle, 
   Droplets, 
   CloudRain, 
-  Activity, 
   Battery, 
-  Radio, 
-  ArrowUpRight, 
+  Clock, 
   ArrowRight
 } from 'lucide-react';
 import kulluValleyImg from '../../assets/kullu_valley_aerial.jpg';
 
 /**
- * MonitoringNodesCard
- * 
- * Professional Himalayan environmental IoT monitoring panel combining:
- * 1. Upper-right photographic aerial view of the Kullu–Manali valley at ~25-30% opacity with forest-green gradient.
- * 2. Header with compact network statistics (8 Total, 7 Online, 5 Safe, 1 Warning, 1 High Risk, 1 Offline).
- * 3. Compact visual sensor node cards with telemetry icons (Soil, Rain, Tilt, Battery, LoRa RSSI).
- * 4. High-risk visual prominence for NODE-05 (Mountain Zone C).
- * 5. Interactive node selection linked with the Live Monitoring Map.
+ * 1. LoRa / IoT Communication Tower Icon
+ * Professional lattice transmission mast with concentric wireless signal waves.
+ */
+export const LoraTowerIcon = ({ className = "w-8 h-8 text-stone-100" }) => (
+  <svg
+    viewBox="0 0 36 36"
+    fill="none"
+    stroke="currentColor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden="true"
+  >
+    {/* Central Antenna Mast */}
+    <line x1="18" y1="3" x2="18" y2="13" strokeWidth="2.4" />
+    <circle cx="18" cy="3" r="1.5" fill="currentColor" />
+
+    {/* Structural Tower Legs */}
+    <path d="M13.5 32 L17 13 L19 13 L22.5 32" strokeWidth="2" />
+
+    {/* Horizontal Struts */}
+    <line x1="14.8" y1="26.5" x2="21.2" y2="26.5" strokeWidth="1.6" />
+    <line x1="16.2" y1="20" x2="19.8" y2="20" strokeWidth="1.6" />
+
+    {/* Diagonal Cross Lattice */}
+    <line x1="16.2" y1="20" x2="21.2" y2="26.5" strokeWidth="1.2" strokeOpacity="0.85" />
+    <line x1="19.8" y1="20" x2="14.8" y2="26.5" strokeWidth="1.2" strokeOpacity="0.85" />
+    <line x1="15" y1="26.5" x2="22" y2="32" strokeWidth="1.2" strokeOpacity="0.7" />
+    <line x1="21" y1="26.5" x2="14" y2="32" strokeWidth="1.2" strokeOpacity="0.7" />
+
+    {/* Concentric Wireless Radio Wave Arcs (Inner) */}
+    <path d="M12 6 A 8.5 8.5 0 0 0 12 16" strokeWidth="2" />
+    <path d="M24 6 A 8.5 8.5 0 0 1 24 16" strokeWidth="2" />
+
+    {/* Concentric Wireless Radio Wave Arcs (Outer) */}
+    <path d="M7 3 A 14 14 0 0 0 7 19" strokeWidth="2" strokeOpacity="0.8" />
+    <path d="M29 3 A 14 14 0 0 1 29 19" strokeWidth="2" strokeOpacity="0.8" />
+  </svg>
+);
+
+/**
+ * 2. Himalayan Mountain Identity Badge for Each Node Card
+ * Circular identity icon with bold twin Himalayan mountain peaks in crisp snow white,
+ * colored outer border and subtle glow matching node risk.
+ */
+export const MountainNodeBadge = ({ risk = 'safe', className = "w-11 h-11 sm:w-12 sm:h-12" }) => {
+  const styles = {
+    safe: {
+      border: 'border-emerald-500',
+      glow: 'shadow-[0_0_14px_rgba(16,185,129,0.35)]',
+      bg: 'from-[#082a1d] via-[#051a12] to-[#03110c]',
+      mountainLeft: '#059669',
+      mountainRight: '#10b981',
+    },
+    warning: {
+      border: 'border-amber-500',
+      glow: 'shadow-[0_0_14px_rgba(245,158,11,0.35)]',
+      bg: 'from-[#2e1a05] via-[#1c1102] to-[#0c0801]',
+      mountainLeft: '#d97706',
+      mountainRight: '#f59e0b',
+    },
+    'high-risk': {
+      border: 'border-red-500',
+      glow: 'shadow-[0_0_18px_rgba(239,68,68,0.45)]',
+      bg: 'from-[#38090d] via-[#210507] to-[#120304]',
+      mountainLeft: '#dc2626',
+      mountainRight: '#ef4444',
+    },
+    offline: {
+      border: 'border-stone-600',
+      glow: 'shadow-none',
+      bg: 'from-[#1e2326] via-[#14181a] to-[#0c0e10]',
+      mountainLeft: '#52525b',
+      mountainRight: '#71717a',
+    }
+  };
+
+  const c = styles[risk] || styles.safe;
+
+  return (
+    <div 
+      className={`relative flex items-center justify-center rounded-full border-2 ${c.border} ${c.glow} bg-gradient-to-br ${c.bg} flex-shrink-0 select-none overflow-hidden ${className}`}
+    >
+      <svg
+        viewBox="0 0 32 32"
+        fill="none"
+        className="w-full h-full p-1"
+        aria-hidden="true"
+      >
+        {/* Left Secondary Peak */}
+        <path d="M5 23 L12 12 L19 23 Z" fill={c.mountainLeft} />
+        {/* Left Peak Snow Cap */}
+        <path d="M12 12 L9.5 16 L14.5 16 Z" fill="#ffffff" />
+
+        {/* Right Primary Himalayan Peak */}
+        <path d="M12 23 L21 8 L29 23 Z" fill={c.mountainRight} />
+        {/* Right Peak Snow Cap */}
+        <path d="M21 8 L17.5 14 L20.5 13.2 L22 14.5 L25 14 Z" fill="#ffffff" />
+      </svg>
+    </div>
+  );
+};
+
+/**
+ * 3. Mountain Wireframe Icon for Header Slogan
+ */
+export const MountainWireframeIcon = ({ className = "w-5 h-5 text-emerald-400" }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden="true"
+  >
+    <path d="M3 20 L10 7 L14 14 L17 9 L21 20 Z" />
+    <path d="M10 7 L7 12 L10 13 L14 14" strokeOpacity="0.6" />
+    <path d="M17 9 L15 13 L17 14 L19 14" strokeOpacity="0.6" />
+  </svg>
+);
+
+/**
+ * 4. Tilt Inclinometer Icon
+ */
+export const TiltIcon = ({ className = "w-3.5 h-3.5 text-cyan-400" }) => (
+  <svg 
+    viewBox="0 0 16 16" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="1.6" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className} 
+    aria-hidden="true"
+  >
+    <polygon points="8 2 14 14 2 14" />
+    <line x1="8" y1="7" x2="8" y2="11" strokeWidth="1.2" />
+  </svg>
+);
+
+/**
+ * 5. Dynamic 4-Bar Signal RSSI Icon
+ */
+export const SignalBarsIcon = ({ rssi = -70, isOffline = false, className = "w-3.5 h-3.5" }) => {
+  let bars = 4;
+  let color = "text-emerald-400";
+
+  if (isOffline) {
+    bars = 0;
+    color = "text-stone-500";
+  } else if (rssi >= -70) {
+    bars = 4;
+    color = "text-emerald-400";
+  } else if (rssi >= -78) {
+    bars = 3;
+    color = "text-emerald-400";
+  } else if (rssi >= -85) {
+    bars = 2;
+    color = "text-amber-400";
+  } else {
+    bars = 1;
+    color = "text-red-400";
+  }
+
+  return (
+    <svg viewBox="0 0 16 16" fill="currentColor" className={`${className} ${color}`} aria-hidden="true">
+      <rect x="1" y="11" width="2.2" height="4" rx="0.5" opacity={bars >= 1 ? 1 : 0.25} />
+      <rect x="4.5" y="8" width="2.2" height="7" rx="0.5" opacity={bars >= 2 ? 1 : 0.25} />
+      <rect x="8" y="5" width="2.2" height="10" rx="0.5" opacity={bars >= 3 ? 1 : 0.25} />
+      <rect x="11.5" y="2" width="2.2" height="13" rx="0.5" opacity={bars >= 4 ? 1 : 0.25} />
+    </svg>
+  );
+};
+
+/**
+ * MonitoringNodesCard Component
  */
 export const MonitoringNodesCard = ({ 
   nodes = [], 
@@ -29,7 +202,7 @@ export const MonitoringNodesCard = ({
 }) => {
   const navigate = useNavigate();
 
-  // Compute live compact statistics from nodes
+  // Compute live statistics matching canonical definitions
   const stats = useMemo(() => {
     let total = nodes.length || 8;
     let online = 0;
@@ -58,7 +231,6 @@ export const MonitoringNodesCard = ({
       }
     });
 
-    // Fallback defaults if node array is initializing
     if (nodes.length === 0) {
       total = 8;
       online = 7;
@@ -73,104 +245,130 @@ export const MonitoringNodesCard = ({
 
   return (
     <div 
-      className={`relative overflow-hidden rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-[#0f1712] shadow-sm hover:shadow-md transition-all duration-200 min-w-0 flex flex-col justify-between ${className}`}
+      className={`relative overflow-hidden rounded-2xl border border-emerald-950/70 bg-[#06120e] dark:bg-[#06120e] shadow-xl hover:shadow-2xl transition-all duration-200 min-w-0 flex flex-col justify-between text-white ${className}`}
     >
-      {/* 1. UPPER BACKGROUND VISUAL: Real Kullu–Manali Himalayan Valley Aerial Photograph */}
+      {/* 1. UPPER BACKGROUND VISUAL: Real Kullu-Manali Himalayan Valley Aerial Visual */}
       <div 
-        className="absolute top-0 right-0 w-full sm:w-[85%] h-52 sm:h-56 overflow-hidden pointer-events-none z-0 select-none"
+        className="absolute top-0 right-0 w-full h-72 sm:h-80 overflow-hidden pointer-events-none z-0 select-none"
         aria-hidden="true"
       >
         <img 
           src={kulluValleyImg} 
           alt="Kullu-Manali Himalayan Valley" 
-          className="w-full h-full object-cover object-[center_35%] opacity-30 dark:opacity-25 filter contrast-105"
+          className="w-full h-full object-cover object-[center_35%] opacity-35 filter contrast-110 saturate-105"
           loading="lazy"
         />
         {/* Subtle Dark Forest-Green Gradient Scrims for 100% Readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/40 via-emerald-950/60 to-white dark:to-[#0f1712]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/85 to-transparent dark:from-[#0f1712] dark:via-[#0f1712]/80 dark:to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/30 via-[#06120e]/65 to-[#06120e]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#06120e] via-[#06120e]/80 to-transparent" />
       </div>
 
-      {/* 2. PANEL HEADER & COMPACT METRICS */}
-      <div className="relative z-10 p-4 sm:p-5 pb-3">
-        {/* Title and Top Action */}
-        <div className="flex items-start justify-between gap-3 min-w-0 pb-2 border-b border-stone-100/80 dark:border-stone-800/60">
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <h3 className="text-base sm:text-lg font-bold font-heading text-stone-900 dark:text-white tracking-tight">
+      {/* 2. PANEL HEADER & TOP SECTION */}
+      <div className="relative z-10 p-4 sm:p-5 pb-2">
+        {/* Header Row */}
+        <div className="flex items-start justify-between gap-3 min-w-0 pb-3">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            {/* Professional LoRa / IoT Communication Tower Icon */}
+            <div className="flex-shrink-0 p-1.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xs">
+              <LoraTowerIcon className="w-8 h-8 sm:w-9 sm:h-9 text-stone-100" />
+            </div>
+
+            <div className="min-w-0">
+              <h3 className="text-lg sm:text-xl font-bold font-heading text-white tracking-tight leading-tight">
                 Monitoring Nodes
               </h3>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Live Mesh
-              </span>
+              <p className="text-xs text-emerald-200/70 mt-0.5 font-sans">
+                8 IoT stations across Himalayan slope sectors
+              </p>
             </div>
-            <p className="text-xs text-stone-500 dark:text-stone-300 mt-0.5">
-              8 IoT stations across Himalayan slope sectors
-            </p>
           </div>
 
+          {/* Top Right: View All Sensors Action */}
           <Link 
             to="/sensors" 
-            className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:underline inline-flex items-center gap-1 flex-shrink-0 transition-colors py-1 px-1.5 rounded-lg hover:bg-emerald-500/10"
+            className="text-xs font-semibold text-stone-200 hover:text-white inline-flex items-center gap-1.5 flex-shrink-0 transition-all py-1.5 px-3 rounded-full border border-stone-700/60 bg-stone-900/60 backdrop-blur-md hover:bg-stone-800/80"
             title="Open comprehensive sensor telemetry view"
           >
             <span>View All Sensors</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        {/* Compact Statistics Row: 8 Total, 7 Online, 5 Safe, 1 Warning, 1 High Risk, 1 Offline */}
-        <div className="mt-3 flex items-center gap-1.5 sm:gap-2 flex-wrap text-[11px]">
-          {/* Total */}
-          <div className="px-2 py-0.5 rounded-lg bg-stone-100/90 dark:bg-stone-800/80 backdrop-blur-xs border border-stone-200/80 dark:border-stone-700/70 text-stone-700 dark:text-stone-300 font-medium flex items-center gap-1 shadow-2xs">
-            <span className="font-bold text-stone-900 dark:text-white">{stats.total}</span>
-            <span>Total Nodes</span>
+        {/* 3. STATISTIC CARDS (3x2 Grid) + RIGHT-SIDE VALLEY SLOGAN */}
+        <div className="mt-1 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pb-2">
+          {/* 3x2 Stat Cards Grid */}
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-2 flex-1 max-w-sm sm:max-w-md">
+            {/* 1. Total Nodes */}
+            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-[#09171f]/85 border border-cyan-900/40 backdrop-blur-md min-w-0">
+              <div className="flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400 flex-shrink-0" />
+                <span className="text-base sm:text-lg font-bold text-cyan-400 leading-none">{stats.total}</span>
+              </div>
+              <span className="text-[10px] sm:text-[10.5px] text-stone-300 font-medium whitespace-nowrap mt-1 leading-tight">Total Nodes</span>
+            </div>
+
+            {/* 2. Online */}
+            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-[#071d15]/85 border border-emerald-900/40 backdrop-blur-md min-w-0">
+              <div className="flex items-center gap-1.5">
+                <Wifi className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 flex-shrink-0" />
+                <span className="text-base sm:text-lg font-bold text-emerald-400 leading-none">{stats.online}</span>
+              </div>
+              <span className="text-[10px] sm:text-[10.5px] text-stone-300 font-medium whitespace-nowrap mt-1 leading-tight">Online</span>
+            </div>
+
+            {/* 3. Safe */}
+            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-[#071d15]/85 border border-emerald-900/40 backdrop-blur-md min-w-0">
+              <div className="flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 flex-shrink-0" />
+                <span className="text-base sm:text-lg font-bold text-emerald-400 leading-none">{stats.safe}</span>
+              </div>
+              <span className="text-[10px] sm:text-[10.5px] text-stone-300 font-medium whitespace-nowrap mt-1 leading-tight">Safe</span>
+            </div>
+
+            {/* 4. High Risk */}
+            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-[#1e0e10]/85 border border-red-900/40 backdrop-blur-md min-w-0">
+              <div className="flex items-center gap-1.5">
+                <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-400 flex-shrink-0" />
+                <span className="text-base sm:text-lg font-bold text-red-400 leading-none">{stats.highRisk}</span>
+              </div>
+              <span className="text-[10px] sm:text-[10.5px] text-stone-300 font-medium whitespace-nowrap mt-1 leading-tight">High Risk</span>
+            </div>
+
+            {/* 5. Offline */}
+            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-[#141719]/85 border border-stone-800/60 backdrop-blur-md min-w-0">
+              <div className="flex items-center gap-1.5">
+                <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-stone-400 flex-shrink-0" />
+                <span className="text-base sm:text-lg font-bold text-stone-300 leading-none">{stats.offline}</span>
+              </div>
+              <span className="text-[10px] sm:text-[10.5px] text-stone-400 font-medium whitespace-nowrap mt-1 leading-tight">Offline</span>
+            </div>
+
+            {/* 6. Warning */}
+            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-[#1c1508]/85 border border-amber-900/40 backdrop-blur-md min-w-0">
+              <div className="flex items-center gap-1.5">
+                <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 flex-shrink-0" />
+                <span className="text-base sm:text-lg font-bold text-amber-400 leading-none">{stats.warning}</span>
+              </div>
+              <span className="text-[10px] sm:text-[10.5px] text-stone-300 font-medium whitespace-nowrap mt-1 leading-tight">Warning</span>
+            </div>
           </div>
 
-          {/* Online */}
-          <div className="px-2 py-0.5 rounded-lg bg-emerald-500/10 dark:bg-emerald-950/40 backdrop-blur-xs border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-medium flex items-center gap-1.5 shadow-2xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            <span className="font-bold">{stats.online}</span>
-            <span>Online</span>
-          </div>
-
-          {/* Safe */}
-          <div className="px-2 py-0.5 rounded-lg bg-emerald-500/10 dark:bg-emerald-950/30 backdrop-blur-xs border border-emerald-500/25 text-emerald-700 dark:text-emerald-400 font-medium flex items-center gap-1.5 shadow-2xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-            <span className="font-bold">{stats.safe}</span>
-            <span>Safe</span>
-          </div>
-
-          {/* Warning */}
-          <div className="px-2 py-0.5 rounded-lg bg-amber-500/10 dark:bg-amber-950/40 backdrop-blur-xs border border-amber-500/30 text-amber-700 dark:text-amber-300 font-medium flex items-center gap-1.5 shadow-2xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-            <span className="font-bold">{stats.warning}</span>
-            <span>Warning</span>
-          </div>
-
-          {/* High Risk */}
-          <div className="px-2 py-0.5 rounded-lg bg-red-500/10 dark:bg-red-950/40 backdrop-blur-xs border border-red-500/30 text-red-700 dark:text-red-300 font-medium flex items-center gap-1.5 shadow-2xs">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
-            </span>
-            <span className="font-bold">{stats.highRisk}</span>
-            <span>High Risk</span>
-          </div>
-
-          {/* Offline */}
-          <div className="px-2 py-0.5 rounded-lg bg-stone-100/90 dark:bg-stone-800/80 backdrop-blur-xs border border-stone-200/80 dark:border-stone-700/70 text-stone-500 dark:text-stone-400 font-medium flex items-center gap-1.5 shadow-2xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-stone-400" />
-            <span className="font-bold">{stats.offline}</span>
-            <span>Offline</span>
+          {/* Right-Side Valley Slogan with Mountain Outline */}
+          <div className="hidden sm:flex flex-col justify-center items-end text-right pl-2 pr-1 select-none flex-shrink-0">
+            <div className="text-[11px] sm:text-xs font-medium italic text-emerald-100/90 tracking-wide font-serif">
+              Real-time Monitoring
+            </div>
+            <div className="text-[11px] sm:text-xs font-medium italic text-emerald-200/80 flex items-center gap-1.5 justify-end font-serif mt-0.5">
+              <span>for a Safer Tomorrow</span>
+              <MountainWireframeIcon className="w-4 h-4 text-emerald-400 inline" />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* 3. SCROLLABLE NODE CARDS LIST */}
+      {/* 4. SCROLLABLE NODE CARDS LIST */}
       <div className="relative z-10 px-4 sm:px-5 pb-3">
-        <div className="overflow-y-auto max-h-[385px] sm:max-h-[415px] space-y-2 pr-1 custom-scrollbar">
+        <div className="overflow-y-auto max-h-[385px] sm:max-h-[420px] space-y-2.5 pr-1 custom-scrollbar">
           {nodes.map(node => {
             const isOffline = node.status?.toLowerCase() === 'offline';
             const riskLevel = node.riskLevel || node.risk?.level || (typeof node.risk === 'string' ? node.risk : 'safe');
@@ -182,146 +380,184 @@ export const MonitoringNodesCard = ({
             const isSafe = !isOffline && !isHighRisk && !isWarning;
             const isSelected = selectedNodeId === node.id;
 
-            // Telemetry values
-            const soilVal = isOffline ? '—' : `${typeof node.readings?.soilMoisture?.value === 'number' ? Math.round(node.readings.soilMoisture.value) : (node.readings?.soilMoisture?.value ?? node.soil ?? 42)}%`;
-            const rainVal = isOffline ? '—' : `${typeof node.readings?.rainfall?.value === 'number' ? Math.round(node.readings.rainfall.value) : (node.readings?.rainfall?.value ?? node.rainfall ?? 12)}mm`;
-            const tiltVal = isOffline ? '—' : `${typeof node.readings?.tilt?.value === 'number' ? Number(node.readings.tilt.value).toFixed(1) : (node.readings?.tilt?.value ?? node.tilt ?? 1.8)}°`;
-            const battVal = `${node.device?.battery?.value ?? node.battery ?? 91}%`;
-            const signalVal = isOffline ? 'Offline' : (node.device?.signal?.rssi ? `${node.device.signal.rssi} dBm` : (node.signal || '-71 dBm'));
+            const riskKey = isOffline ? 'offline' : isHighRisk ? 'high-risk' : isWarning ? 'warning' : 'safe';
+
+            // Telemetry readings
+            const soilVal = isOffline ? '--' : `${typeof node.readings?.soilMoisture?.value === 'number' ? Math.round(node.readings.soilMoisture.value) : (node.readings?.soilMoisture?.value ?? node.soil ?? 42)}%`;
+            const rainVal = isOffline ? '--' : `${typeof node.readings?.rainfall?.value === 'number' ? Math.round(node.readings.rainfall.value) : (node.readings?.rainfall?.value ?? node.rainfall ?? 12)} mm`;
+            const tiltVal = isOffline ? '--' : `${typeof node.readings?.tilt?.value === 'number' ? Number(node.readings.tilt.value).toFixed(1) : (node.readings?.tilt?.value ?? node.tilt ?? 1.8)}°`;
+            const battVal = isOffline ? '--' : `${node.device?.battery?.value ?? node.battery ?? 91}%`;
+            const signalVal = isOffline ? '--' : (node.device?.signal?.rssi ? `${node.device.signal.rssi} dBm` : (node.signal || '-71 dBm'));
+            const rssiNum = node.device?.signal?.rssi ?? (typeof node.signal === 'string' ? parseInt(node.signal, 10) : -71);
             const locationName = node.location?.name || node.locationName || (typeof node.location === 'string' ? node.location : 'Himalayan Slope');
+
+            // Telemetry icon accent colors
+            const iconColor = isOffline 
+              ? 'text-stone-500' 
+              : isHighRisk 
+                ? 'text-red-400' 
+                : isWarning 
+                  ? 'text-amber-400' 
+                  : 'text-emerald-400';
+
+            const rainColor = isOffline 
+              ? 'text-stone-500' 
+              : isHighRisk 
+                ? 'text-red-400' 
+                : 'text-cyan-400';
+
+            const tiltColor = isOffline 
+              ? 'text-stone-500' 
+              : isHighRisk 
+                ? 'text-red-400' 
+                : isWarning 
+                  ? 'text-amber-400' 
+                  : 'text-cyan-400';
+
+            const battColor = isOffline 
+              ? 'text-stone-500' 
+              : isHighRisk 
+                ? 'text-red-400' 
+                : isWarning 
+                  ? 'text-amber-400' 
+                  : 'text-emerald-400';
 
             return (
               <div 
                 key={node.id}
                 data-node-id={node.id}
                 onClick={() => onSelectNode && onSelectNode(node)}
-                className={`group relative rounded-xl p-2.5 transition-all duration-200 cursor-pointer border ${
+                className={`group relative rounded-xl p-3 transition-all duration-200 cursor-pointer border flex items-center gap-3.5 ${
                   isSelected 
-                    ? 'bg-emerald-50/90 dark:bg-emerald-950/40 border-emerald-500 shadow-sm ring-1 ring-emerald-500/50' 
+                    ? 'bg-emerald-950/60 border-emerald-400 shadow-md ring-1 ring-emerald-400/60' 
                     : isHighRisk
-                      ? 'bg-red-50/70 dark:bg-red-950/20 border-red-400/60 dark:border-red-500/50 shadow-xs hover:border-red-500'
-                      : 'bg-stone-50/80 dark:bg-stone-900/60 backdrop-blur-xs border-stone-200/80 dark:border-stone-800/80 hover:bg-stone-100/80 dark:hover:bg-stone-900/90 hover:border-emerald-500/40'
+                      ? 'bg-gradient-to-r from-red-950/40 via-[#140b0d]/95 to-[#081511]/90 border-red-500/80 shadow-[0_0_16px_rgba(239,68,68,0.22)] hover:border-red-400'
+                      : isWarning
+                        ? 'bg-gradient-to-r from-amber-950/30 via-[#161208]/95 to-[#081511]/90 border-amber-500/60 shadow-[0_0_12px_rgba(245,158,11,0.15)] hover:border-amber-400'
+                        : isOffline
+                          ? 'bg-[#0d1214]/85 border-stone-800/80 hover:border-stone-700 text-stone-400'
+                          : 'bg-[#081612]/90 backdrop-blur-md border-emerald-900/40 hover:bg-[#0a1c17]/95 hover:border-emerald-500/50 shadow-xs'
                 }`}
               >
-                {/* Visual Highlight Ribbon for NODE-05 (High Risk) */}
-                {isHighRisk && (
-                  <div className="absolute top-0 left-0 bottom-0 w-1 bg-red-500 rounded-l-xl" />
-                )}
+                {/* LEFT: Large Circular Himalayan Mountain Identity Badge */}
+                <MountainNodeBadge risk={riskKey} className="w-11 h-11 sm:w-12 sm:h-12" />
 
-                {/* Line 1: Status Dot, Node ID · Location, and Risk Badge */}
-                <div className="flex items-center justify-between gap-2 min-w-0 pl-1">
-                  <div className="flex items-center gap-2 min-w-0">
-                    {/* Status Dot */}
-                    {isOffline ? (
-                      <span className="w-2.5 h-2.5 rounded-full bg-stone-400 flex-shrink-0" />
-                    ) : isHighRisk ? (
-                      <span className="relative flex h-2.5 w-2.5 flex-shrink-0">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
+                {/* RIGHT: Node Content Details */}
+                <div className="min-w-0 flex-1 flex flex-col justify-between gap-1.5">
+                  {/* Line 1: Header (Node ID • Location) + Badges (Online/Offline + Risk) */}
+                  <div className="flex items-center justify-between gap-2 min-w-0">
+                    <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                      <span className="font-mono font-bold text-xs sm:text-sm text-white tracking-tight whitespace-nowrap flex-shrink-0">
+                        {node.id}
                       </span>
-                    ) : isWarning ? (
-                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400 flex-shrink-0 shadow-2xs" />
-                    ) : (
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 flex-shrink-0 shadow-2xs" />
-                    )}
-
-                    <div className="font-extrabold text-xs text-stone-900 dark:text-stone-100 truncate flex items-center gap-1.5">
-                      <span className="font-mono tracking-tight">{node.id}</span>
-                      <span className="text-stone-400 dark:text-stone-500 text-[10px]">&bull;</span>
-                      <span className="font-medium text-stone-600 dark:text-stone-300 text-[11px] truncate">
+                      <span className="text-stone-500 text-xs flex-shrink-0">•</span>
+                      <span className="font-medium text-stone-200 text-[11px] sm:text-xs truncate">
                         {locationName}
+                      </span>
+                    </div>
+
+                    {/* Top Right Badges */}
+                    <div className="flex items-center gap-1.5 flex-shrink-0">
+                      {/* Online / Offline Status Badge */}
+                      <span className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full border ${
+                        isOffline 
+                          ? 'border-stone-700/50 bg-stone-800/60 text-stone-400' 
+                          : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
+                      }`}>
+                        {isOffline ? 'Offline' : 'Online'}
+                      </span>
+
+                      {/* Risk Level Badge */}
+                      <span className={`text-[11px] font-bold px-3 py-0.5 rounded-full ${
+                        isOffline 
+                          ? 'bg-stone-700 text-stone-200' 
+                          : isHighRisk 
+                            ? 'bg-red-600 text-white shadow-sm shadow-red-500/40' 
+                            : isWarning 
+                              ? 'bg-amber-500 text-stone-950' 
+                              : 'bg-emerald-500 text-stone-950'
+                      }`}>
+                        {isOffline ? 'Offline' : isHighRisk ? 'High Risk' : isWarning ? 'Warning' : 'Safe'}
                       </span>
                     </div>
                   </div>
 
-                  {/* Risk Badge */}
-                  <div className="flex-shrink-0">
-                    <span className={`text-[10px] uppercase tracking-wide font-bold px-2 py-0.5 rounded-full ${
-                      isOffline
-                        ? 'bg-stone-200/70 dark:bg-stone-800 text-stone-600 dark:text-stone-400 border border-stone-300/60 dark:border-stone-700'
-                        : isHighRisk
-                          ? 'bg-red-500/15 text-red-700 dark:text-red-400 border border-red-500/30 font-extrabold shadow-2xs'
-                          : isWarning
-                            ? 'bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/30 font-bold'
-                            : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 font-bold'
-                    }`}>
-                      {isOffline ? 'Offline' : isHighRisk ? 'HIGH RISK' : isWarning ? 'WARNING' : 'SAFE'}
-                    </span>
-                  </div>
-                </div>
+                  {/* Line 2: Telemetry Metrics with Professional Icons */}
+                  <div className="grid grid-cols-5 gap-1.5 text-xs py-0.5">
+                    {/* 1. Soil Moisture */}
+                    <div className="flex items-center gap-1.5 min-w-0" title={`Soil Moisture: ${soilVal}`}>
+                      <Droplets className={`w-3.5 h-3.5 ${iconColor} flex-shrink-0`} />
+                      <div className="min-w-0 leading-tight">
+                        <span className="text-[10px] text-stone-400 font-medium block">Soil</span>
+                        <span className="text-xs font-bold text-white font-mono block mt-0.5">{soilVal}</span>
+                      </div>
+                    </div>
 
-                {/* Line 2: Telemetry Metrics with Small Icons (Soil, Rain, Tilt, Battery) */}
-                <div className="mt-2 grid grid-cols-4 gap-1.5 text-[10.5px] pl-1 border-t border-stone-200/50 dark:border-stone-800/60 pt-1.5">
-                  {/* Soil Moisture */}
-                  <div className="flex items-center gap-1 text-stone-600 dark:text-stone-300 truncate" title={`Soil Moisture: ${soilVal}`}>
-                    <Droplets className="w-3 h-3 text-cyan-500 flex-shrink-0" />
-                    <span className="truncate">Soil <strong className="text-stone-900 dark:text-white font-mono">{soilVal}</strong></span>
-                  </div>
+                    {/* 2. Rainfall */}
+                    <div className="flex items-center gap-1.5 min-w-0" title={`Rainfall: ${rainVal}`}>
+                      <CloudRain className={`w-3.5 h-3.5 ${rainColor} flex-shrink-0`} />
+                      <div className="min-w-0 leading-tight">
+                        <span className="text-[10px] text-stone-400 font-medium block">Rainfall</span>
+                        <span className="text-xs font-bold text-white font-mono block mt-0.5">{rainVal}</span>
+                      </div>
+                    </div>
 
-                  {/* Rainfall */}
-                  <div className="flex items-center gap-1 text-stone-600 dark:text-stone-300 truncate" title={`Rainfall: ${rainVal}`}>
-                    <CloudRain className="w-3 h-3 text-blue-500 flex-shrink-0" />
-                    <span className="truncate">Rain <strong className="text-stone-900 dark:text-white font-mono">{rainVal}</strong></span>
-                  </div>
+                    {/* 3. Tilt */}
+                    <div className="flex items-center gap-1.5 min-w-0" title={`Ground Tilt: ${tiltVal}`}>
+                      <TiltIcon className={`w-3.5 h-3.5 ${tiltColor} flex-shrink-0`} />
+                      <div className="min-w-0 leading-tight">
+                        <span className="text-[10px] text-stone-400 font-medium block">Tilt</span>
+                        <span className="text-xs font-bold text-white font-mono block mt-0.5">{tiltVal}</span>
+                      </div>
+                    </div>
 
-                  {/* Tilt */}
-                  <div className="flex items-center gap-1 text-stone-600 dark:text-stone-300 truncate" title={`Ground Tilt: ${tiltVal}`}>
-                    <Activity className="w-3 h-3 text-amber-500 flex-shrink-0" />
-                    <span className="truncate">Tilt <strong className="text-stone-900 dark:text-white font-mono">{tiltVal}</strong></span>
-                  </div>
+                    {/* 4. Battery */}
+                    <div className="flex items-center gap-1.5 min-w-0" title={`Battery Level: ${battVal}`}>
+                      <Battery className={`w-3.5 h-3.5 ${battColor} flex-shrink-0`} />
+                      <div className="min-w-0 leading-tight">
+                        <span className="text-[10px] text-stone-400 font-medium block">Battery</span>
+                        <span className="text-xs font-bold text-white font-mono block mt-0.5">{battVal}</span>
+                      </div>
+                    </div>
 
-                  {/* Battery */}
-                  <div className="flex items-center gap-1 text-stone-600 dark:text-stone-300 truncate" title={`Battery Level: ${battVal}`}>
-                    <Battery className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
-                    <span className="truncate">Batt <strong className="text-stone-900 dark:text-white font-mono">{battVal}</strong></span>
-                  </div>
-                </div>
-
-                {/* Line 3: LoRa Telemetry RSSI & View Details Action */}
-                <div className="mt-1.5 flex items-center justify-between text-[10.5px] pl-1 pt-0.5">
-                  <div className="flex items-center gap-1.5 text-stone-500 dark:text-stone-400 font-mono">
-                    <Radio className="w-3 h-3 text-purple-400 flex-shrink-0" />
-                    <span>LoRa {signalVal}</span>
-                    {!isOffline && (
-                      <>
-                        <span className="text-stone-400">&bull;</span>
-                        <span className="text-[10px] text-stone-400 font-sans">{node.device?.lastSeen || 'Just now'}</span>
-                      </>
-                    )}
+                    {/* 5. LoRa Signal */}
+                    <div className="flex items-center gap-1.5 min-w-0" title={`Signal RSSI: ${signalVal}`}>
+                      <SignalBarsIcon rssi={rssiNum} isOffline={isOffline} className="w-3.5 h-3.5 flex-shrink-0" />
+                      <div className="min-w-0 leading-tight">
+                        <span className="text-[10px] text-stone-400 font-medium block">Signal</span>
+                        <span className="text-xs font-bold text-white font-mono block mt-0.5">{signalVal}</span>
+                      </div>
+                    </div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (onSelectNode) onSelectNode(node);
-                      navigate('/sensors');
-                    }}
-                    className="inline-flex items-center gap-1 text-[10.5px] font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:underline cursor-pointer group-hover:translate-x-0.5 transition-all"
-                  >
-                    <span>View Details</span>
-                    <ArrowRight className="w-3 h-3" />
-                  </button>
+                  {/* Line 3: Footer (Last Seen + View Details) */}
+                  <div className="flex items-center justify-between text-xs pt-1 border-t border-white/5">
+                    <div className="flex items-center gap-1.5 text-stone-400 text-[11px]">
+                      <Clock className="w-3 h-3 text-stone-400 flex-shrink-0" />
+                      <span>Last seen: {node.device?.lastSeen || (isOffline ? '18 minutes ago' : 'Just now')}</span>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (onSelectNode) onSelectNode(node);
+                        navigate('/sensors');
+                      }}
+                      className="inline-flex items-center gap-1 text-[11px] font-medium text-stone-300 hover:text-white cursor-pointer group-hover:translate-x-0.5 transition-all"
+                    >
+                      <span>View Details</span>
+                      <ArrowRight className="w-3 h-3 text-stone-400 group-hover:text-white" />
+                    </button>
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
       </div>
-
-      {/* 4. FOOTER: View All Sensors Action */}
-      <div className="relative z-10 px-5 py-3 border-t border-stone-100 dark:border-stone-800/80 bg-stone-50/50 dark:bg-stone-900/30 text-center">
-        <Link 
-          to="/sensors" 
-          className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:underline inline-flex items-center gap-1 transition-colors"
-        >
-          <span>View All Sensors</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </Link>
-      </div>
     </div>
   );
 };
 
 export default MonitoringNodesCard;
-
