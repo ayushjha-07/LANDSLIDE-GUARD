@@ -331,8 +331,10 @@ export const BrandLogo = ({
           <span className={guardColor}>GUARD</span>
         </div>
         {showTagline && (
-          <div className={`font-sans font-bold uppercase tracking-wider mt-1 opacity-90 truncate ${taglineClasses[size] || taglineClasses.md} ${taglineColor} select-none`}>
-            {customTagline}
+          <div className={`font-sans font-bold uppercase tracking-wider mt-0.5 opacity-90 leading-tight text-[8px] sm:text-[8.5px] ${taglineColor} select-none`}>
+            <span>SAFER MOUNTAINS, STRONGER</span>
+            <br />
+            <span>COMMUNITIES</span>
           </div>
         )}
       </div>

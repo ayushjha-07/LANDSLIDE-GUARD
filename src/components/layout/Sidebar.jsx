@@ -125,10 +125,10 @@ export const Sidebar = ({ isOpen, onClose }) => {
                       </span>
                     </div>
                     {item.badge && (
-                      <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold flex-shrink-0 ${!isTabletExpanded ? 'block md:hidden lg:block' : 'block'} ${
+                      <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0 shadow-2xs ${!isTabletExpanded ? 'flex md:hidden lg:flex' : 'flex'} ${
                         isActive 
                           ? 'bg-white/20 text-white dark:bg-white/20 dark:text-white' 
-                          : 'bg-orange-500/10 text-orange-600 dark:bg-orange-950/50 dark:text-orange-400'
+                          : 'bg-[#FFEDD5] text-[#EA580C] dark:bg-orange-500/25 dark:text-orange-300'
                       }`}>
                         {item.badge}
                       </span>
@@ -153,50 +153,53 @@ export const Sidebar = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* System & LoRa Hardware Status Card */}
-        <div className="p-3 lg:p-4 border-t border-[#E2E8F0] dark:border-[#2D3748] min-w-0">
-          {/* Full status card: Mobile, Desktop, and Expanded Tablet */}
-          <div className={`p-3.5 rounded-xl bg-[#F7FAFC] dark:bg-[#1A202C] border border-[#E2E8F0] dark:border-[#2D3748] space-y-2 min-w-0 ${!isTabletExpanded ? 'block md:hidden lg:block' : 'block'}`}>
-            <div className="flex items-center justify-between text-xs">
-              <div className="flex items-center gap-2">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-nature-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-nature-500" />
+        {/* System & LoRa Hardware Status Card + Full-Bleed Himalayan Mountain Footer */}
+        <div className="border-t border-[#E2E8F0] dark:border-[#2D3748] min-w-0 flex flex-col justify-end">
+          {/* Full LoRa status card: Mobile, Desktop, and Expanded Tablet */}
+          <div className={`p-3 pb-2.5 min-w-0 ${!isTabletExpanded ? 'block md:hidden lg:block' : 'block'}`}>
+            <div className="p-3 rounded-xl bg-[#F7FAFC] dark:bg-[#1A202C] border border-[#E2E8F0] dark:border-[#2D3748] space-y-1.5">
+              <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-nature-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-nature-500" />
+                  </span>
+                  <span className="font-medium text-[#2D3748] dark:text-slate-200">LoRa Gateway</span>
+                </div>
+                <span className="text-[10.5px] font-mono font-medium text-forest-600 dark:text-nature-400 bg-forest-50 dark:bg-forest-950/60 px-1.5 py-0.5 rounded">
+                  868.1 MHz
                 </span>
-                <span className="font-medium text-[#2D3748] dark:text-slate-200">LoRa Gateway</span>
               </div>
-              <span className="text-[11px] font-mono font-medium text-forest-600 dark:text-nature-400 bg-forest-50 dark:bg-forest-950/60 px-1.5 py-0.5 rounded">
-                868.1 MHz
-              </span>
-            </div>
-            <div className="flex items-center justify-between text-[11px] text-[#718096] dark:text-slate-400 pt-1 border-t border-[#E2E8F0] dark:border-[#2D3748]/60">
-              <span>Nodes: <strong className="text-[#2D3748] dark:text-slate-200">14/16 Online</strong></span>
-              <span className="text-forest-600 dark:text-nature-400 font-medium">Ready</span>
+              <div className="flex items-center justify-between text-[11px] text-[#718096] dark:text-slate-400 pt-1 border-t border-[#E2E8F0] dark:border-[#2D3748]/60">
+                <span>Nodes: <strong className="text-[#2D3748] dark:text-slate-200">14/16 Online</strong></span>
+                <span className="text-forest-600 dark:text-nature-400 font-medium">Ready</span>
+              </div>
             </div>
           </div>
 
           {/* Compact Icon Indicator: Tablet default */}
-          <div className={`flex justify-center ${!isTabletExpanded ? 'hidden md:flex lg:hidden' : 'hidden'}`} title="LoRa Gateway: 14/16 Online">
+          <div className={`py-3 flex justify-center ${!isTabletExpanded ? 'hidden md:flex lg:hidden' : 'hidden'}`} title="LoRa Gateway: 14/16 Online">
             <div className="w-10 h-10 rounded-xl bg-forest-50 dark:bg-forest-950/60 border border-forest-200 dark:border-forest-800 flex items-center justify-center text-forest-600 dark:text-nature-400 relative">
               <Radio className="w-4 h-4" />
               <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-nature-500" />
             </div>
           </div>
 
-          <div className={`mt-2.5 ${!isTabletExpanded ? 'block md:hidden lg:block' : 'block'}`}>
-            <div className="relative rounded-xl overflow-hidden border border-[#E2E8F0] dark:border-[#2D3748] shadow-xs group">
-              <img 
-                src={sidebarMountainFooter} 
-                alt="Himalayan Safety" 
-                className="w-full h-14 object-cover object-center group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent flex items-end p-2">
-                <div className="flex items-center gap-1.5 text-left">
-                  <Leaf className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                  <div className="leading-tight">
-                    <p className="text-[10px] font-bold text-white tracking-wide">Himalayan Safety</p>
-                    <p className="text-[8.5px] text-slate-300 font-medium">Our Shared Responsibility</p>
-                  </div>
+          {/* Full-Bleed Himalayan Mountain Landscape Footer */}
+          <div className={`relative w-full h-22 overflow-hidden select-none ${!isTabletExpanded ? 'block md:hidden lg:block' : 'block'}`}>
+            <img 
+              src={sidebarMountainFooter} 
+              alt="Himalayan Safety" 
+              className="w-full h-full object-cover object-bottom"
+            />
+            {/* Smooth gradient blend into sidebar background */}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/45 to-transparent dark:from-[#0E131F] dark:via-[#0E131F]/50 dark:to-transparent" />
+            <div className="absolute inset-0 flex items-end p-3 sm:p-3.5">
+              <div className="flex items-center gap-2 text-left">
+                <Leaf className="w-4 h-4 text-emerald-400 flex-shrink-0 drop-shadow-sm" />
+                <div className="leading-tight">
+                  <p className="text-[11px] font-bold text-white tracking-wide drop-shadow-xs">Himalayan Safety</p>
+                  <p className="text-[9px] text-slate-200 font-medium drop-shadow-xs">Our Shared Responsibility</p>
                 </div>
               </div>
             </div>
