@@ -47,8 +47,10 @@ export const MonitoringMapPage = () => {
       setSelectedNodeId(val);
       const target = nodes.find(n => n.id === val);
       if (target) {
-        // Offset latitude slightly north (+0.038) so popup stays comfortably below top toolbar
-        setSearchTarget({ lat: target.latitude + 0.038, lng: target.longitude, zoom: 11.5 });
+        const lat = target.latitude ?? target.location?.latitude ?? 32.2417;
+        const lng = target.longitude ?? target.location?.longitude ?? 77.1892;
+        // Offset latitude slightly north (+0.02) so popup stays comfortably below top toolbar
+        setSearchTarget({ lat: lat + 0.02, lng, zoom: 12.8 });
       }
     } else {
       setSelectedNodeId(null);
@@ -67,7 +69,7 @@ export const MonitoringMapPage = () => {
   };
 
   const handleSelectPlace = (place) => {
-    setSearchTarget({ lat: place.lat, lng: place.lng, zoom: 11.0 });
+    setSearchTarget({ lat: place.lat, lng: place.lng, zoom: 12.5 });
     setSearchQuery(place.name);
   };
 
@@ -79,8 +81,14 @@ export const MonitoringMapPage = () => {
   };
 
   const handleSelectNode = (node) => {
+    if (!node) {
+      setSelectedNodeId(null);
+      return;
+    }
     setSelectedNodeId(node.id);
-    setSearchTarget({ lat: node.latitude + 0.038, lng: node.longitude, zoom: 11.5 });
+    const lat = node.latitude ?? node.location?.latitude ?? 32.2417;
+    const lng = node.longitude ?? node.location?.longitude ?? 77.1892;
+    setSearchTarget({ lat: lat + 0.02, lng, zoom: 12.8 });
   };
 
   const onlineCount = getOnlineNodeCount(nodes);

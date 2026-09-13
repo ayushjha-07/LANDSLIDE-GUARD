@@ -81,8 +81,10 @@ function createNodeDivIcon(node, isSelected) {
 }
 
 export const SensorMarker = ({ node, isSelected, onSelect, popupVariant = 'detailed', disablePopup = false }) => {
-  const navigate = useNavigate();
-  const position = [node.latitude, node.longitude];
+  const position = [
+    node.latitude ?? node.location?.latitude ?? 32.25,
+    node.longitude ?? node.location?.longitude ?? 77.18
+  ];
 
   const customIcon = useMemo(() => {
     return createNodeDivIcon(node, isSelected);

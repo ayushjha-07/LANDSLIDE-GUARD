@@ -74,11 +74,12 @@ export const MapControls = ({
       <div 
         ref={(el) => {
           if (el) {
-            L.DomEvent.disableClickPropagation(el);
             L.DomEvent.disableScrollPropagation(el);
           }
         }}
-        className="leaflet-top leaflet-left !top-3 !left-3 !right-3 z-[1000] pointer-events-auto select-none flex items-center justify-between gap-2 flex-wrap"
+        onMouseDown={(e) => e.stopPropagation()}
+        onDoubleClick={(e) => e.stopPropagation()}
+        className="absolute top-3 left-3 right-3 z-[1000] !pointer-events-auto select-none flex items-center justify-between gap-2 flex-wrap"
       >
         {/* Left: Layer Selector Pill Group [Map] [Terrain] [Satellite] */}
         <div className="flex items-center rounded-xl bg-[#0f172a]/95 dark:bg-[#0b1319]/95 border border-stone-800 shadow-xl p-1 backdrop-blur-md gap-1">
@@ -195,11 +196,12 @@ export const MapControls = ({
       <div 
         ref={(el) => {
           if (el) {
-            L.DomEvent.disableClickPropagation(el);
             L.DomEvent.disableScrollPropagation(el);
           }
         }}
-        className="leaflet-bottom leaflet-right !bottom-4 !right-3 z-[1000] pointer-events-auto select-none"
+        onMouseDown={(e) => e.stopPropagation()}
+        onDoubleClick={(e) => e.stopPropagation()}
+        className="absolute bottom-4 right-3 z-[1000] !pointer-events-auto select-none"
       >
         <div className="flex flex-col rounded-xl bg-[#0f172a]/95 dark:bg-[#0b1319]/95 border border-stone-800 shadow-xl overflow-hidden divide-y divide-stone-800 backdrop-blur-md">
           <button
@@ -273,11 +275,12 @@ export const DashboardMapControls = ({
       <div 
         ref={(el) => {
           if (el) {
-            L.DomEvent.disableClickPropagation(el);
             L.DomEvent.disableScrollPropagation(el);
           }
         }}
-        className="leaflet-top leaflet-left !top-3 !left-3 !right-3 z-[1000] pointer-events-auto select-none flex items-center justify-between gap-2 flex-wrap"
+        onMouseDown={(e) => e.stopPropagation()}
+        onDoubleClick={(e) => e.stopPropagation()}
+        className="absolute top-3 left-3 right-3 z-[1000] !pointer-events-auto select-none flex items-center justify-between gap-2 flex-wrap"
       >
         <div className="flex items-center gap-1.5 flex-wrap">
           {/* Basemap 3-Way Toggle [Map] [Terrain] [Satellite] */}
@@ -342,7 +345,7 @@ export const DashboardMapControls = ({
               className="px-2 py-1 rounded-lg bg-[#0f172a]/95 text-stone-200 border border-stone-800 text-[11px] font-semibold backdrop-blur-md shadow-xs focus:outline-none focus:ring-1 focus:ring-[#10b981] cursor-pointer"
               aria-label="Select Node"
             >
-              <option value="all">All Stations</option>
+              <option value="all">All Nodes</option>
               <option value="NODE-01">NODE-01 (Safe)</option>
               <option value="NODE-02">NODE-02 (Safe)</option>
               <option value="NODE-03">NODE-03 (Warning)</option>
@@ -369,11 +372,11 @@ export const DashboardMapControls = ({
       <div 
         ref={(el) => {
           if (el) {
-            L.DomEvent.disableClickPropagation(el);
             L.DomEvent.disableScrollPropagation(el);
           }
         }}
-        className="leaflet-bottom leaflet-left !bottom-3 !left-3 z-[1000] pointer-events-auto select-none"
+        onMouseDown={(e) => e.stopPropagation()}
+        className="absolute bottom-3 left-3 z-[1000] !pointer-events-auto select-none"
       >
         <div className="flex items-center gap-2.5 sm:gap-3 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#0f172a]/95 border border-stone-800 shadow-xl backdrop-blur-md text-[11px]">
           {MAP_LEGEND_ITEMS.map(item => (
@@ -389,11 +392,11 @@ export const DashboardMapControls = ({
       <div 
         ref={(el) => {
           if (el) {
-            L.DomEvent.disableClickPropagation(el);
             L.DomEvent.disableScrollPropagation(el);
           }
         }}
-        className="leaflet-bottom leaflet-right !bottom-3 !right-3 z-[1000] pointer-events-auto select-none"
+        onMouseDown={(e) => e.stopPropagation()}
+        className="absolute bottom-3 right-3 z-[1000] !pointer-events-auto select-none"
       >
         <div className="flex flex-col rounded-xl bg-[#0f172a]/95 border border-stone-800 shadow-xl overflow-hidden divide-y divide-stone-800 backdrop-blur-md">
           <button

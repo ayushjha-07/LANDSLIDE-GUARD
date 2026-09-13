@@ -40,15 +40,15 @@ function MapCameraController({ targetPosition, targetZoom, selectedNodeId, searc
       return;
     }
 
-    // Only fly if user explicitly searched or clicked another node
-    const nodeChanged = selectedNodeId && selectedNodeId !== prevSelectedNodeId.current;
-    const searchChanged = searchTarget && searchTarget !== prevSearchTarget.current;
+    // Fly if user searched, selected a node, or selected All Nodes / reset
+    const nodeChanged = selectedNodeId !== prevSelectedNodeId.current;
+    const searchChanged = searchTarget !== prevSearchTarget.current;
 
     if (nodeChanged || searchChanged) {
       prevSelectedNodeId.current = selectedNodeId;
       prevSearchTarget.current = searchTarget;
       if (targetPosition) {
-        map.flyTo(targetPosition, targetZoom || 10.5, {
+        map.flyTo(targetPosition, targetZoom || 12.0, {
           duration: 1.0
         });
       }
@@ -116,8 +116,10 @@ export const MonitoringMap = ({
     if (searchTarget && searchTarget.lat && searchTarget.lng) {
       return [searchTarget.lat, searchTarget.lng];
     }
-    if (selectedNode && selectedNode.latitude && selectedNode.longitude) {
-      return [selectedNode.latitude, selectedNode.longitude];
+    const nodeLat = selectedNode?.latitude ?? selectedNode?.location?.latitude;
+    const nodeLng = selectedNode?.longitude ?? selectedNode?.location?.longitude;
+    if (nodeLat && nodeLng) {
+      return [nodeLat, nodeLng];
     }
     return initialCenter;
   }, [searchTarget, selectedNode, initialCenter]);
@@ -127,7 +129,7 @@ export const MonitoringMap = ({
       return searchTarget.zoom;
     }
     if (selectedNode) {
-      return 11.5;
+      return 12.8;
     }
     return defaultZoom;
   }, [searchTarget, selectedNode, defaultZoom]);
