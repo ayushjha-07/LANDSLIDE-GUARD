@@ -15,6 +15,7 @@ import LoraNetworkCard from '../components/dashboard/LoraNetworkCard';
 import WeatherCard from '../components/dashboard/WeatherCard';
 import SystemHealthCard from '../components/dashboard/SystemHealthCard';
 import QuickActionsCard from '../components/dashboard/QuickActionsCard';
+import CommunitySafetyCard from '../components/dashboard/CommunitySafetyCard';
 
 export const Dashboard = () => {
   const { 
@@ -71,7 +72,7 @@ export const Dashboard = () => {
       <SensorStatusCard nodes={nodes} />
 
       {/* 6 & 7. ENVIRONMENTAL TRENDS & GROUND STABILITY */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 w-full min-w-0">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 w-full min-w-0 items-start">
         <EnvironmentalTrendsCard 
           envSeries={envSeries} 
           sensorValues={sensorValues} 
@@ -81,6 +82,12 @@ export const Dashboard = () => {
           sensorValues={sensorValues} 
         />
       </div>
+
+      {/* 7B. COMMUNITY SAFETY (Human-Centered Early Warning & Himalayan Resilience) */}
+      <CommunitySafetyCard 
+        nodes={nodes} 
+        riskAssessment={riskAssessment} 
+      />
 
       {/* 8. LIVE MONITORING MAP & SENSOR NODES INVENTORY */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 w-full min-w-0">
