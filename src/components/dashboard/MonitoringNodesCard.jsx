@@ -64,31 +64,31 @@ export const MountainNodeBadge = ({ risk = 'safe', className = "w-11 h-11 sm:w-1
   const styles = {
     safe: {
       border: 'border-emerald-500',
-      glow: 'shadow-[0_0_14px_rgba(16,185,129,0.35)]',
-      bg: 'from-[#082a1d] via-[#051a12] to-[#03110c]',
+      glow: 'shadow-[0_0_10px_rgba(16,185,129,0.25)]',
+      bg: 'bg-emerald-950/90 dark:bg-gradient-to-br dark:from-[#082a1d] dark:via-[#051a12] dark:to-[#03110c]',
       mountainLeft: '#059669',
       mountainRight: '#10b981',
     },
     warning: {
       border: 'border-amber-500',
-      glow: 'shadow-[0_0_14px_rgba(245,158,11,0.35)]',
-      bg: 'from-[#2e1a05] via-[#1c1102] to-[#0c0801]',
+      glow: 'shadow-[0_0_10px_rgba(245,158,11,0.25)]',
+      bg: 'bg-amber-950/90 dark:bg-gradient-to-br dark:from-[#2e1a05] dark:via-[#1c1102] dark:to-[#0c0801]',
       mountainLeft: '#d97706',
       mountainRight: '#f59e0b',
     },
     'high-risk': {
-      border: 'border-red-500',
-      glow: 'shadow-[0_0_18px_rgba(239,68,68,0.45)]',
-      bg: 'from-[#38090d] via-[#210507] to-[#120304]',
+      border: 'border-rose-500',
+      glow: 'shadow-[0_0_12px_rgba(239,68,68,0.35)]',
+      bg: 'bg-rose-950/90 dark:bg-gradient-to-br dark:from-[#38090d] dark:via-[#210507] dark:to-[#120304]',
       mountainLeft: '#dc2626',
       mountainRight: '#ef4444',
     },
     offline: {
-      border: 'border-stone-600',
+      border: 'border-slate-400 dark:border-stone-600',
       glow: 'shadow-none',
-      bg: 'from-[#1e2326] via-[#14181a] to-[#0c0e10]',
-      mountainLeft: '#52525b',
-      mountainRight: '#71717a',
+      bg: 'bg-slate-800/90 dark:bg-gradient-to-br dark:from-[#1e2326] dark:via-[#14181a] dark:to-[#0c0e10]',
+      mountainLeft: '#64748b',
+      mountainRight: '#94a3b8',
     }
   };
 
@@ -96,7 +96,7 @@ export const MountainNodeBadge = ({ risk = 'safe', className = "w-11 h-11 sm:w-1
 
   return (
     <div 
-      className={`relative flex items-center justify-center rounded-full border-2 ${c.border} ${c.glow} bg-gradient-to-br ${c.bg} flex-shrink-0 select-none overflow-hidden ${className}`}
+      className={`relative flex items-center justify-center rounded-full border-2 ${c.border} ${c.glow} ${c.bg} flex-shrink-0 select-none overflow-hidden ${className}`}
     >
       <svg
         viewBox="0 0 32 32"
@@ -162,23 +162,23 @@ export const TiltIcon = ({ className = "w-3.5 h-3.5 text-cyan-400" }) => (
  */
 export const SignalBarsIcon = ({ rssi = -70, isOffline = false, className = "w-3.5 h-3.5" }) => {
   let bars = 4;
-  let color = "text-emerald-400";
+  let color = "text-emerald-600 dark:text-emerald-400";
 
   if (isOffline) {
     bars = 0;
-    color = "text-stone-500";
+    color = "text-slate-400 dark:text-stone-500";
   } else if (rssi >= -70) {
     bars = 4;
-    color = "text-emerald-400";
+    color = "text-emerald-600 dark:text-emerald-400";
   } else if (rssi >= -78) {
     bars = 3;
-    color = "text-emerald-400";
+    color = "text-emerald-600 dark:text-emerald-400";
   } else if (rssi >= -85) {
     bars = 2;
-    color = "text-amber-400";
+    color = "text-amber-600 dark:text-amber-400";
   } else {
     bars = 1;
-    color = "text-red-400";
+    color = "text-rose-600 dark:text-red-400";
   }
 
   return (
@@ -245,7 +245,7 @@ export const MonitoringNodesCard = ({
 
   return (
     <div 
-      className={`relative overflow-hidden rounded-2xl border border-emerald-950/70 bg-[#06120e] dark:bg-[#06120e] shadow-xl hover:shadow-2xl transition-all duration-200 min-w-0 flex flex-col justify-between text-white ${className}`}
+      className={`relative overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-slate-800/80 bg-white dark:bg-slate-900/90 shadow-xs hover:shadow-md transition-all duration-200 min-w-0 flex flex-col justify-between text-slate-900 dark:text-white ${className}`}
     >
       {/* 1. UPPER BACKGROUND VISUAL: Real Kullu-Manali Himalayan Valley Aerial Visual */}
       <div 
@@ -255,12 +255,12 @@ export const MonitoringNodesCard = ({
         <img 
           src={kulluValleyImg} 
           alt="Kullu-Manali Himalayan Valley" 
-          className="w-full h-full object-cover object-[center_35%] opacity-35 filter contrast-110 saturate-105"
+          className="w-full h-full object-cover object-[center_35%] opacity-15 dark:opacity-25 mix-blend-multiply dark:mix-blend-luminosity filter contrast-105"
           loading="lazy"
         />
-        {/* Subtle Dark Forest-Green Gradient Scrims for 100% Readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/30 via-[#06120e]/65 to-[#06120e]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#06120e] via-[#06120e]/80 to-transparent" />
+        {/* Subtle Theme-Adaptive Gradient Scrims for 100% Readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/80 to-white dark:from-emerald-950/20 dark:via-slate-900/85 dark:to-slate-900" />
+        <div className="absolute inset-0 bg-gradient-to-r from-white via-white/70 to-transparent dark:from-slate-900 dark:via-slate-900/80 dark:to-transparent" />
       </div>
 
       {/* 2. PANEL HEADER & TOP SECTION */}
@@ -269,15 +269,15 @@ export const MonitoringNodesCard = ({
         <div className="flex items-start justify-between gap-3 min-w-0 pb-3">
           <div className="flex items-center gap-3 min-w-0 flex-1">
             {/* Professional LoRa / IoT Communication Tower Icon */}
-            <div className="flex-shrink-0 p-1.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-xs">
-              <LoraTowerIcon className="w-8 h-8 sm:w-9 sm:h-9 text-stone-100" />
+            <div className="flex-shrink-0 p-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200/80 dark:border-emerald-800/60 shadow-2xs">
+              <LoraTowerIcon className="w-8 h-8 sm:w-9 sm:h-9 text-emerald-600 dark:text-emerald-400" />
             </div>
 
             <div className="min-w-0">
-              <h3 className="text-lg sm:text-xl font-bold font-heading text-white tracking-tight leading-tight">
+              <h3 className="text-lg sm:text-xl font-bold font-heading text-slate-900 dark:text-white tracking-tight leading-tight">
                 Monitoring Nodes
               </h3>
-              <p className="text-xs text-emerald-200/70 mt-0.5 font-sans">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-sans">
                 8 IoT stations across Himalayan slope sectors
               </p>
             </div>
@@ -286,7 +286,7 @@ export const MonitoringNodesCard = ({
           {/* Top Right: View All Sensors Action */}
           <Link 
             to="/sensors" 
-            className="text-xs font-semibold text-stone-200 hover:text-white inline-flex items-center gap-1.5 flex-shrink-0 transition-all py-1.5 px-3 rounded-full border border-stone-700/60 bg-stone-900/60 backdrop-blur-md hover:bg-stone-800/80"
+            className="text-xs font-semibold text-slate-700 dark:text-stone-200 hover:text-emerald-700 dark:hover:text-white inline-flex items-center gap-1.5 flex-shrink-0 transition-all py-1.5 px-3 rounded-full border border-slate-200/80 dark:border-stone-700/60 bg-white/90 dark:bg-stone-900/60 backdrop-blur-md hover:bg-slate-100 dark:hover:bg-stone-800/80 shadow-2xs"
             title="Open comprehensive sensor telemetry view"
           >
             <span>View All Sensors</span>
@@ -299,68 +299,68 @@ export const MonitoringNodesCard = ({
           {/* 3x2 Stat Cards Grid */}
           <div className="grid grid-cols-3 gap-1.5 sm:gap-2 flex-1 max-w-sm sm:max-w-md">
             {/* 1. Total Nodes */}
-            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-[#09171f]/85 border border-cyan-900/40 backdrop-blur-md min-w-0">
+            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-cyan-50/80 dark:bg-cyan-950/40 border border-cyan-200/80 dark:border-cyan-800/50 backdrop-blur-md min-w-0 shadow-2xs">
               <div className="flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-400 flex-shrink-0" />
-                <span className="text-base sm:text-lg font-bold text-cyan-400 leading-none">{stats.total}</span>
+                <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-cyan-600 dark:text-cyan-400 flex-shrink-0" />
+                <span className="text-base sm:text-lg font-bold font-mono text-cyan-700 dark:text-cyan-400 leading-none">{stats.total}</span>
               </div>
-              <span className="text-[10px] sm:text-[10.5px] text-stone-300 font-medium whitespace-nowrap mt-1 leading-tight">Total Nodes</span>
+              <span className="text-[10px] sm:text-[10.5px] text-slate-600 dark:text-stone-300 font-medium whitespace-nowrap mt-1 leading-tight">Total Nodes</span>
             </div>
 
             {/* 2. Online */}
-            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-[#071d15]/85 border border-emerald-900/40 backdrop-blur-md min-w-0">
+            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/50 backdrop-blur-md min-w-0 shadow-2xs">
               <div className="flex items-center gap-1.5">
-                <Wifi className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 flex-shrink-0" />
-                <span className="text-base sm:text-lg font-bold text-emerald-400 leading-none">{stats.online}</span>
+                <Wifi className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                <span className="text-base sm:text-lg font-bold font-mono text-emerald-700 dark:text-emerald-400 leading-none">{stats.online}</span>
               </div>
-              <span className="text-[10px] sm:text-[10.5px] text-stone-300 font-medium whitespace-nowrap mt-1 leading-tight">Online</span>
+              <span className="text-[10px] sm:text-[10.5px] text-slate-600 dark:text-stone-300 font-medium whitespace-nowrap mt-1 leading-tight">Online</span>
             </div>
 
             {/* 3. Safe */}
-            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-[#071d15]/85 border border-emerald-900/40 backdrop-blur-md min-w-0">
+            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/50 backdrop-blur-md min-w-0 shadow-2xs">
               <div className="flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 flex-shrink-0" />
-                <span className="text-base sm:text-lg font-bold text-emerald-400 leading-none">{stats.safe}</span>
+                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                <span className="text-base sm:text-lg font-bold font-mono text-emerald-700 dark:text-emerald-400 leading-none">{stats.safe}</span>
               </div>
-              <span className="text-[10px] sm:text-[10.5px] text-stone-300 font-medium whitespace-nowrap mt-1 leading-tight">Safe</span>
+              <span className="text-[10px] sm:text-[10.5px] text-slate-600 dark:text-stone-300 font-medium whitespace-nowrap mt-1 leading-tight">Safe</span>
             </div>
 
             {/* 4. High Risk */}
-            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-[#1e0e10]/85 border border-red-900/40 backdrop-blur-md min-w-0">
+            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-rose-50/80 dark:bg-rose-950/40 border border-rose-200/80 dark:border-rose-800/50 backdrop-blur-md min-w-0 shadow-2xs">
               <div className="flex items-center gap-1.5">
-                <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-400 flex-shrink-0" />
-                <span className="text-base sm:text-lg font-bold text-red-400 leading-none">{stats.highRisk}</span>
+                <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-600 dark:text-rose-400 flex-shrink-0" />
+                <span className="text-base sm:text-lg font-bold font-mono text-rose-700 dark:text-rose-400 leading-none">{stats.highRisk}</span>
               </div>
-              <span className="text-[10px] sm:text-[10.5px] text-stone-300 font-medium whitespace-nowrap mt-1 leading-tight">High Risk</span>
+              <span className="text-[10px] sm:text-[10.5px] text-slate-600 dark:text-stone-300 font-medium whitespace-nowrap mt-1 leading-tight">High Risk</span>
             </div>
 
             {/* 5. Offline */}
-            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-[#141719]/85 border border-stone-800/60 backdrop-blur-md min-w-0">
+            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-slate-100/80 dark:bg-slate-800/60 border border-slate-200/80 dark:border-stone-800/60 backdrop-blur-md min-w-0 shadow-2xs">
               <div className="flex items-center gap-1.5">
-                <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-stone-400 flex-shrink-0" />
-                <span className="text-base sm:text-lg font-bold text-stone-300 leading-none">{stats.offline}</span>
+                <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-500 dark:text-stone-400 flex-shrink-0" />
+                <span className="text-base sm:text-lg font-bold font-mono text-slate-700 dark:text-stone-300 leading-none">{stats.offline}</span>
               </div>
-              <span className="text-[10px] sm:text-[10.5px] text-stone-400 font-medium whitespace-nowrap mt-1 leading-tight">Offline</span>
+              <span className="text-[10px] sm:text-[10.5px] text-slate-500 dark:text-stone-400 font-medium whitespace-nowrap mt-1 leading-tight">Offline</span>
             </div>
 
             {/* 6. Warning */}
-            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-[#1c1508]/85 border border-amber-900/40 backdrop-blur-md min-w-0">
+            <div className="flex flex-col justify-center px-2 py-1.5 sm:px-2.5 sm:py-2 rounded-xl bg-amber-50/80 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/50 backdrop-blur-md min-w-0 shadow-2xs">
               <div className="flex items-center gap-1.5">
-                <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 flex-shrink-0" />
-                <span className="text-base sm:text-lg font-bold text-amber-400 leading-none">{stats.warning}</span>
+                <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+                <span className="text-base sm:text-lg font-bold font-mono text-amber-700 dark:text-amber-400 leading-none">{stats.warning}</span>
               </div>
-              <span className="text-[10px] sm:text-[10.5px] text-stone-300 font-medium whitespace-nowrap mt-1 leading-tight">Warning</span>
+              <span className="text-[10px] sm:text-[10.5px] text-slate-600 dark:text-stone-300 font-medium whitespace-nowrap mt-1 leading-tight">Warning</span>
             </div>
           </div>
 
           {/* Right-Side Valley Slogan with Mountain Outline */}
           <div className="hidden sm:flex flex-col justify-center items-end text-right pl-2 pr-1 select-none flex-shrink-0">
-            <div className="text-[11px] sm:text-xs font-medium italic text-emerald-100/90 tracking-wide font-serif">
+            <div className="text-[11px] sm:text-xs font-medium italic text-slate-700 dark:text-emerald-100/90 tracking-wide font-serif">
               Real-time Monitoring
             </div>
-            <div className="text-[11px] sm:text-xs font-medium italic text-emerald-200/80 flex items-center gap-1.5 justify-end font-serif mt-0.5">
+            <div className="text-[11px] sm:text-xs font-medium italic text-slate-500 dark:text-emerald-200/80 flex items-center gap-1.5 justify-end font-serif mt-0.5">
               <span>for a Safer Tomorrow</span>
-              <MountainWireframeIcon className="w-4 h-4 text-emerald-400 inline" />
+              <MountainWireframeIcon className="w-4 h-4 text-emerald-600 dark:text-emerald-400 inline" />
             </div>
           </div>
         </div>
@@ -393,34 +393,34 @@ export const MonitoringNodesCard = ({
 
             // Telemetry icon accent colors
             const iconColor = isOffline 
-              ? 'text-stone-500' 
+              ? 'text-slate-400 dark:text-stone-500' 
               : isHighRisk 
-                ? 'text-red-400' 
+                ? 'text-rose-600 dark:text-red-400' 
                 : isWarning 
-                  ? 'text-amber-400' 
-                  : 'text-emerald-400';
+                  ? 'text-amber-600 dark:text-amber-400' 
+                  : 'text-emerald-600 dark:text-emerald-400';
 
             const rainColor = isOffline 
-              ? 'text-stone-500' 
+              ? 'text-slate-400 dark:text-stone-500' 
               : isHighRisk 
-                ? 'text-red-400' 
-                : 'text-cyan-400';
+                ? 'text-rose-600 dark:text-red-400' 
+                : 'text-sky-600 dark:text-cyan-400';
 
             const tiltColor = isOffline 
-              ? 'text-stone-500' 
+              ? 'text-slate-400 dark:text-stone-500' 
               : isHighRisk 
-                ? 'text-red-400' 
+                ? 'text-rose-600 dark:text-red-400' 
                 : isWarning 
-                  ? 'text-amber-400' 
-                  : 'text-cyan-400';
+                  ? 'text-amber-600 dark:text-amber-400' 
+                  : 'text-sky-600 dark:text-cyan-400';
 
             const battColor = isOffline 
-              ? 'text-stone-500' 
+              ? 'text-slate-400 dark:text-stone-500' 
               : isHighRisk 
-                ? 'text-red-400' 
+                ? 'text-rose-600 dark:text-red-400' 
                 : isWarning 
-                  ? 'text-amber-400' 
-                  : 'text-emerald-400';
+                  ? 'text-amber-600 dark:text-amber-400' 
+                  : 'text-emerald-600 dark:text-emerald-400';
 
             return (
               <div 
@@ -429,14 +429,14 @@ export const MonitoringNodesCard = ({
                 onClick={() => onSelectNode && onSelectNode(node)}
                 className={`group relative rounded-xl p-3 transition-all duration-200 cursor-pointer border flex items-center gap-3.5 ${
                   isSelected 
-                    ? 'bg-emerald-950/60 border-emerald-400 shadow-md ring-1 ring-emerald-400/60' 
+                    ? 'bg-emerald-50/90 dark:bg-emerald-950/60 border-emerald-500 dark:border-emerald-400 shadow-md ring-1 ring-emerald-400/60' 
                     : isHighRisk
-                      ? 'bg-gradient-to-r from-red-950/40 via-[#140b0d]/95 to-[#081511]/90 border-red-500/80 shadow-[0_0_16px_rgba(239,68,68,0.22)] hover:border-red-400'
+                      ? 'bg-rose-50/70 dark:bg-gradient-to-r dark:from-red-950/40 dark:via-[#140b0d]/95 dark:to-[#081511]/90 border-rose-300 dark:border-red-500/80 shadow-[0_0_14px_rgba(239,68,68,0.15)] hover:border-rose-400 dark:hover:border-red-400'
                       : isWarning
-                        ? 'bg-gradient-to-r from-amber-950/30 via-[#161208]/95 to-[#081511]/90 border-amber-500/60 shadow-[0_0_12px_rgba(245,158,11,0.15)] hover:border-amber-400'
+                        ? 'bg-amber-50/70 dark:bg-gradient-to-r dark:from-amber-950/30 dark:via-[#161208]/95 dark:to-[#081511]/90 border-amber-300 dark:border-amber-500/60 shadow-[0_0_12px_rgba(245,158,11,0.12)] hover:border-amber-400 dark:hover:border-amber-400'
                         : isOffline
-                          ? 'bg-[#0d1214]/85 border-stone-800/80 hover:border-stone-700 text-stone-400'
-                          : 'bg-[#081612]/90 backdrop-blur-md border-emerald-900/40 hover:bg-[#0a1c17]/95 hover:border-emerald-500/50 shadow-xs'
+                          ? 'bg-slate-50/90 dark:bg-[#0d1214]/85 border-slate-200 dark:border-stone-800/80 hover:border-slate-300 dark:hover:border-stone-700 text-slate-400 dark:text-stone-400'
+                          : 'bg-slate-50/60 dark:bg-[#081612]/90 backdrop-blur-md border-slate-200/80 dark:border-emerald-900/40 hover:bg-slate-100/70 dark:hover:bg-[#0a1c17]/95 hover:border-emerald-500/50 shadow-2xs'
                 }`}
               >
                 {/* LEFT: Large Circular Himalayan Mountain Identity Badge */}
@@ -447,11 +447,11 @@ export const MonitoringNodesCard = ({
                   {/* Line 1: Header (Node ID • Location) + Badges (Online/Offline + Risk) */}
                   <div className="flex items-center justify-between gap-2 min-w-0">
                     <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                      <span className="font-mono font-bold text-xs sm:text-sm text-white tracking-tight whitespace-nowrap flex-shrink-0">
+                      <span className="font-mono font-bold text-xs sm:text-sm text-slate-900 dark:text-white tracking-tight whitespace-nowrap flex-shrink-0">
                         {node.id}
                       </span>
-                      <span className="text-stone-500 text-xs flex-shrink-0">•</span>
-                      <span className="font-medium text-stone-200 text-[11px] sm:text-xs truncate">
+                      <span className="text-slate-300 dark:text-stone-500 text-xs flex-shrink-0">•</span>
+                      <span className="font-medium text-slate-600 dark:text-stone-200 text-[11px] sm:text-xs truncate">
                         {locationName}
                       </span>
                     </div>
@@ -459,23 +459,23 @@ export const MonitoringNodesCard = ({
                     {/* Top Right Badges */}
                     <div className="flex items-center gap-1.5 flex-shrink-0">
                       {/* Online / Offline Status Badge */}
-                      <span className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full border ${
+                      <span className={`text-[10.5px] sm:text-[11px] font-semibold px-2 sm:px-2.5 py-0.5 rounded-full border ${
                         isOffline 
-                          ? 'border-stone-700/50 bg-stone-800/60 text-stone-400' 
-                          : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
+                          ? 'border-slate-300 dark:border-stone-700/50 bg-slate-100 dark:bg-stone-800/60 text-slate-500 dark:text-stone-400' 
+                          : 'border-emerald-300 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400'
                       }`}>
                         {isOffline ? 'Offline' : 'Online'}
                       </span>
 
                       {/* Risk Level Badge */}
-                      <span className={`text-[11px] font-bold px-3 py-0.5 rounded-full ${
+                      <span className={`text-[10.5px] sm:text-[11px] font-bold px-2.5 sm:px-3 py-0.5 rounded-full ${
                         isOffline 
-                          ? 'bg-stone-700 text-stone-200' 
+                          ? 'bg-slate-200 dark:bg-stone-700 text-slate-700 dark:text-stone-200' 
                           : isHighRisk 
-                            ? 'bg-red-600 text-white shadow-sm shadow-red-500/40' 
+                            ? 'bg-rose-600 text-white shadow-xs' 
                             : isWarning 
-                              ? 'bg-amber-500 text-stone-950' 
-                              : 'bg-emerald-500 text-stone-950'
+                              ? 'bg-amber-400 dark:bg-amber-500 text-slate-950 font-bold' 
+                              : 'bg-emerald-500 text-slate-950 font-bold'
                       }`}>
                         {isOffline ? 'Offline' : isHighRisk ? 'High Risk' : isWarning ? 'Warning' : 'Safe'}
                       </span>
@@ -488,8 +488,8 @@ export const MonitoringNodesCard = ({
                     <div className="flex items-center gap-1.5 min-w-0" title={`Soil Moisture: ${soilVal}`}>
                       <Droplets className={`w-3.5 h-3.5 ${iconColor} flex-shrink-0`} />
                       <div className="min-w-0 leading-tight">
-                        <span className="text-[10px] text-stone-400 font-medium block">Soil</span>
-                        <span className="text-xs font-bold text-white font-mono block mt-0.5">{soilVal}</span>
+                        <span className="text-[10px] text-slate-500 dark:text-stone-400 font-medium block">Soil</span>
+                        <span className="text-xs font-bold text-slate-900 dark:text-white font-mono block mt-0.5">{soilVal}</span>
                       </div>
                     </div>
 
@@ -497,8 +497,8 @@ export const MonitoringNodesCard = ({
                     <div className="flex items-center gap-1.5 min-w-0" title={`Rainfall: ${rainVal}`}>
                       <CloudRain className={`w-3.5 h-3.5 ${rainColor} flex-shrink-0`} />
                       <div className="min-w-0 leading-tight">
-                        <span className="text-[10px] text-stone-400 font-medium block">Rainfall</span>
-                        <span className="text-xs font-bold text-white font-mono block mt-0.5">{rainVal}</span>
+                        <span className="text-[10px] text-slate-500 dark:text-stone-400 font-medium block">Rainfall</span>
+                        <span className="text-xs font-bold text-slate-900 dark:text-white font-mono block mt-0.5">{rainVal}</span>
                       </div>
                     </div>
 
@@ -506,8 +506,8 @@ export const MonitoringNodesCard = ({
                     <div className="flex items-center gap-1.5 min-w-0" title={`Ground Tilt: ${tiltVal}`}>
                       <TiltIcon className={`w-3.5 h-3.5 ${tiltColor} flex-shrink-0`} />
                       <div className="min-w-0 leading-tight">
-                        <span className="text-[10px] text-stone-400 font-medium block">Tilt</span>
-                        <span className="text-xs font-bold text-white font-mono block mt-0.5">{tiltVal}</span>
+                        <span className="text-[10px] text-slate-500 dark:text-stone-400 font-medium block">Tilt</span>
+                        <span className="text-xs font-bold text-slate-900 dark:text-white font-mono block mt-0.5">{tiltVal}</span>
                       </div>
                     </div>
 
@@ -515,8 +515,8 @@ export const MonitoringNodesCard = ({
                     <div className="flex items-center gap-1.5 min-w-0" title={`Battery Level: ${battVal}`}>
                       <Battery className={`w-3.5 h-3.5 ${battColor} flex-shrink-0`} />
                       <div className="min-w-0 leading-tight">
-                        <span className="text-[10px] text-stone-400 font-medium block">Battery</span>
-                        <span className="text-xs font-bold text-white font-mono block mt-0.5">{battVal}</span>
+                        <span className="text-[10px] text-slate-500 dark:text-stone-400 font-medium block">Battery</span>
+                        <span className="text-xs font-bold text-slate-900 dark:text-white font-mono block mt-0.5">{battVal}</span>
                       </div>
                     </div>
 
@@ -524,16 +524,16 @@ export const MonitoringNodesCard = ({
                     <div className="flex items-center gap-1.5 min-w-0" title={`Signal RSSI: ${signalVal}`}>
                       <SignalBarsIcon rssi={rssiNum} isOffline={isOffline} className="w-3.5 h-3.5 flex-shrink-0" />
                       <div className="min-w-0 leading-tight">
-                        <span className="text-[10px] text-stone-400 font-medium block">Signal</span>
-                        <span className="text-xs font-bold text-white font-mono block mt-0.5">{signalVal}</span>
+                        <span className="text-[10px] text-slate-500 dark:text-stone-400 font-medium block">Signal</span>
+                        <span className="text-xs font-bold text-slate-900 dark:text-white font-mono block mt-0.5">{signalVal}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Line 3: Footer (Last Seen + View Details) */}
-                  <div className="flex items-center justify-between text-xs pt-1 border-t border-white/5">
-                    <div className="flex items-center gap-1.5 text-stone-400 text-[11px]">
-                      <Clock className="w-3 h-3 text-stone-400 flex-shrink-0" />
+                  <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-200/60 dark:border-white/5">
+                    <div className="flex items-center gap-1.5 text-slate-400 dark:text-stone-400 text-[11px]">
+                      <Clock className="w-3 h-3 text-slate-400 dark:text-stone-400 flex-shrink-0" />
                       <span>Last seen: {node.device?.lastSeen || (isOffline ? '18 minutes ago' : 'Just now')}</span>
                     </div>
 
@@ -544,10 +544,10 @@ export const MonitoringNodesCard = ({
                         if (onSelectNode) onSelectNode(node);
                         navigate('/sensors');
                       }}
-                      className="inline-flex items-center gap-1 text-[11px] font-medium text-stone-300 hover:text-white cursor-pointer group-hover:translate-x-0.5 transition-all"
+                      className="inline-flex items-center gap-1 text-[11px] font-medium text-slate-600 dark:text-stone-300 hover:text-emerald-600 dark:hover:text-white cursor-pointer group-hover:translate-x-0.5 transition-all"
                     >
                       <span>View Details</span>
-                      <ArrowRight className="w-3 h-3 text-stone-400 group-hover:text-white" />
+                      <ArrowRight className="w-3 h-3 text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-white" />
                     </button>
                   </div>
                 </div>
