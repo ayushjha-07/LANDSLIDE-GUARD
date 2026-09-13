@@ -12,26 +12,40 @@ import {
 /**
  * Generates custom HTML divIcon for Leaflet markers matching the reference image.
  * Features a teardrop GIS pin with risk color and a dark attached badge displaying "NODE-01", "NODE-02", etc.
+ * NODE-05 receives maximum visual prominence (High Risk red, double animated ping, and red radiant glow).
  */
 function createNodeDivIcon(node, isSelected) {
   const isOffline = node.status?.toLowerCase() === 'offline';
   const riskLevel = isOffline ? 'unknown' : (node.risk?.level?.toLowerCase() || (typeof node.risk === 'string' ? node.risk.toLowerCase() : 'safe'));
+  const isHighRisk = !isOffline && (riskLevel === 'critical' || riskLevel === 'high-risk' || riskLevel === 'high risk' || node.id === 'NODE-05');
+  const isWarning = !isOffline && (riskLevel === 'warning');
 
-  // Risk pin colors matching the reference image
+  // Risk pin colors matching the reference image and Earth & Data theme
   let pinColor = '#10b981'; // Green: Safe
   let pulseRing = '';
+  let badgeBorder = 'border-emerald-500/40';
+  let badgeIndicator = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>';
 
   if (isOffline) {
     pinColor = '#6b7280'; // Gray: Offline
-  } else if (riskLevel === 'critical' || riskLevel === 'high-risk' || riskLevel === 'high risk') {
+    badgeBorder = 'border-stone-600';
+    badgeIndicator = '<span class="w-1.5 h-1.5 rounded-full bg-stone-500"></span>';
+  } else if (isHighRisk) {
     pinColor = '#ef4444'; // Red: High Risk
-    pulseRing = '<div class="absolute -top-1 -left-1 w-9 h-9 rounded-full bg-red-500/35 animate-ping pointer-events-none"></div>';
-  } else if (riskLevel === 'warning') {
-    pinColor = '#f59e0b'; // Amber / Yellow: Warning
+    pulseRing = `
+      <div class="absolute -top-3 -left-3 w-14 h-14 rounded-full bg-red-500/35 animate-ping pointer-events-none"></div>
+      <div class="absolute -top-1.5 -left-1.5 w-10 h-10 rounded-full bg-red-500/40 blur-xs pointer-events-none"></div>
+    `;
+    badgeBorder = 'border-red-500/80 shadow-[0_0_12px_rgba(239,68,68,0.5)]';
+    badgeIndicator = '<span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>';
+  } else if (isWarning) {
+    pinColor = '#f59e0b'; // Amber: Warning
+    badgeBorder = 'border-amber-500/60 shadow-[0_0_8px_rgba(245,158,11,0.3)]';
+    badgeIndicator = '<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>';
   }
 
   const selectGlow = isSelected 
-    ? 'ring-2 ring-white ring-offset-2 ring-offset-black/50 scale-110 z-50 drop-shadow-xl' 
+    ? 'ring-2 ring-white ring-offset-2 ring-offset-black/60 scale-110 z-50 drop-shadow-2xl' 
     : 'hover:scale-105 drop-shadow-md';
 
   const html = `
@@ -50,8 +64,9 @@ function createNodeDivIcon(node, isSelected) {
       </div>
 
       <!-- Attached Sleek Dark Node ID Badge -->
-      <div class="-ml-1 pl-2 pr-2.5 py-0.5 rounded-r-md bg-[#0f172a]/95 text-white border border-[#334155]/90 text-[10px] font-mono font-bold tracking-tight shadow-md flex items-center backdrop-blur-xs whitespace-nowrap">
-        ${node.id}
+      <div class="-ml-1 pl-2 pr-2.5 py-0.5 rounded-r-md bg-[#0f172a]/95 text-white border ${badgeBorder} text-[10px] font-mono font-bold tracking-tight shadow-md flex items-center gap-1 backdrop-blur-xs whitespace-nowrap">
+        <span>${node.id}</span>
+        ${badgeIndicator}
       </div>
     </div>
   `;
@@ -120,6 +135,7 @@ export const SensorMarker = ({ node, isSelected, onSelect, popupVariant = 'detai
       ref={markerRef}
       position={position} 
       icon={customIcon}
+      zIndexOffset={node.id === 'NODE-05' || riskDisplay.includes('HIGH') ? 1500 : riskDisplay.includes('WARNING') ? 800 : isOffline ? 100 : 400}
       eventHandlers={{
         click: () => {
           if (onSelect) onSelect(node);

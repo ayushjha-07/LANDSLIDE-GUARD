@@ -28,6 +28,9 @@ export const Dashboard = () => {
     riskAssessment 
   } = useLiveDashboard();
 
+  const [selectedNodeId, setSelectedNodeId] = React.useState(null);
+  const selectedNode = React.useMemo(() => nodes.find(n => n.id === selectedNodeId) || null, [nodes, selectedNodeId]);
+
   return (
     <div className="space-y-6 max-w-[1600px] mx-auto pb-10 w-full min-w-0">
       {/* 1. DASHBOARD HEADER */}
@@ -43,17 +46,15 @@ export const Dashboard = () => {
         riskAssessment={riskAssessment} 
       />
 
-      {/* 3 & 4. CURRENT RISK HERO & AI PREDICTION */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 w-full min-w-0">
+      {/* 3 & 4. PRIMARY RISK ASSESSMENT & AI TIME HORIZONS */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 w-full min-w-0">
         <CurrentRiskCard 
-          sensorValues={sensorValues} 
           riskAssessment={riskAssessment} 
-          className="lg:col-span-7"
+          sensorValues={sensorValues} 
         />
         <AiPredictionCard 
-          sensorValues={sensorValues} 
           riskAssessment={riskAssessment} 
-          className="lg:col-span-5"
+          sensorValues={sensorValues} 
         />
       </div>
 
@@ -79,10 +80,14 @@ export const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 w-full min-w-0">
         <LiveMonitoringMapCard 
           nodes={nodes} 
+          selectedNode={selectedNode}
+          onSelectNode={(node) => setSelectedNodeId(node ? node.id : null)}
           className="lg:col-span-7"
         />
         <MonitoringNodesCard 
           nodes={nodes} 
+          selectedNodeId={selectedNodeId}
+          onSelectNode={(node) => setSelectedNodeId(node.id === selectedNodeId ? null : node.id)}
           className="lg:col-span-5"
         />
       </div>

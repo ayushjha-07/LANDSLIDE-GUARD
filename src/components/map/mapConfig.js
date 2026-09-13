@@ -4,46 +4,53 @@
  * disclaimers, and legends across Dashboard and dedicated Monitoring Map page.
  */
 
-// Regional center on Himachal Pradesh, covering Kangra to Kinnaur and Rohtang to Mandi
-export const HIMACHAL_CENTER = [32.00, 77.15];
+// Default region: Himachal Pradesh, focused on Kullu–Manali / Beas Valley corridor
+export const HIMACHAL_CENTER = [32.02, 77.18];
 
-// Default zoom levels
-export const HIMACHAL_FULL_ZOOM = 8.4;
-export const HIMACHAL_DASHBOARD_ZOOM = 8.2;
+// Default zoom levels - balanced to highlight Beas Valley while keeping surrounding Himachal geography visible
+export const HIMACHAL_FULL_ZOOM = 9.4;
+export const HIMACHAL_DASHBOARD_ZOOM = 9.2;
 export const CLUSTER_CENTER = [32.18, 77.18];
-export const CLUSTER_ZOOM = 10.5;
+export const CLUSTER_ZOOM = 11.2;
 
-// Real geographic basemap tile endpoints
-// Real geographic basemap tile endpoints
+// Real geographic basemap tile endpoints (100% legitimate map tiles)
 export const MAP_TILE_PROVIDERS = {
   terrain: {
+    id: 'terrain',
     name: 'Terrain',
+    title: 'Topographic Terrain (Esri World Topo)',
     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
     maxZoom: 18,
     hasOverlay: false,
     attribution: 'Tiles &copy; Esri &mdash; Source: USGS, Esri, TANA, DeLorme, Intermap, METI/NASA'
   },
-  satellite: {
-    name: 'Satellite',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    maxZoom: 18,
-    hasOverlay: true,
-    overlayUrl: 'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
-    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-  },
   standard: {
-    name: 'Map',
+    id: 'standard',
+    name: 'Standard',
+    title: 'Standard OpenStreetMap (Roads, Rivers & Towns)',
     url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     maxZoom: 19,
     hasOverlay: false,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  },
+  satellite: {
+    id: 'satellite',
+    name: 'Satellite',
+    title: 'Satellite Imagery with Places & Roads',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    maxZoom: 18,
+    hasOverlay: true,
+    overlayUrl: 'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
+    transportUrl: 'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}',
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
   }
 };
 
-// Map disclaimers
+// Map disclaimers - exact required wording
 export const MAP_DISCLAIMERS = {
-  dashboard: 'Prototype sensor locations',
-  full: 'Real geographic basemap. Sensor locations and risk data are simulated prototype data and do not represent deployed sensors or official landslide hazard boundaries.'
+  dashboard: 'Real geographic basemap. Sensor locations and risk data are simulated prototype data and do not represent deployed sensors or official hazard boundaries.',
+  full: 'Real geographic basemap. Sensor locations and risk data are simulated prototype data and do not represent deployed sensors or official hazard boundaries.',
+  short: 'Real basemap • Simulated prototype data'
 };
 
 // Compact & Full Legend items
@@ -56,6 +63,6 @@ export const MAP_LEGEND_ITEMS = [
 
 // Responsive container heights
 export const MAP_CONTAINER_HEIGHTS = {
-  dashboard: 'h-[320px] sm:h-[380px] md:h-[440px] lg:h-[480px]',
+  dashboard: 'h-[340px] sm:h-[400px] md:h-[460px] lg:h-[500px]',
   full: 'h-[520px] sm:h-[580px] md:h-[640px] lg:h-[700px] xl:h-[740px]'
 };

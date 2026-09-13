@@ -109,7 +109,7 @@ export const MapBottomSummary = ({
             Map Disclaimer
           </strong>
           <p className="text-[10px] text-stone-400 leading-tight">
-            Real geographic basemap. Prototype sensor locations and risk data are simulated for demonstration and are not official hazard boundaries.
+            Real geographic basemap. Sensor locations and risk data are simulated prototype data and do not represent deployed sensors or official hazard boundaries.
           </p>
           <span className="text-[10px] text-stone-500 block font-mono">
             &copy; OpenStreetMap contributors

@@ -260,11 +260,20 @@ export const MonitoringMap = ({
 
           {/* Place Names, Roads & Administrative Boundaries Overlay */}
           {tileConfig.hasOverlay && (
-            <TileLayer
-              key="hybrid-overlay"
-              url={tileConfig.overlayUrl}
-              maxZoom={18}
-            />
+            <>
+              <TileLayer
+                key="hybrid-overlay"
+                url={tileConfig.overlayUrl}
+                maxZoom={18}
+              />
+              {tileConfig.transportUrl && (
+                <TileLayer
+                  key="transport-overlay"
+                  url={tileConfig.transportUrl}
+                  maxZoom={18}
+                />
+              )}
+            </>
           )}
 
           {/* Metric Scale Indicator (Full map only) */}
@@ -272,15 +281,13 @@ export const MonitoringMap = ({
             <ScaleControl position="bottomleft" imperial={false} />
           )}
 
-          {/* Smooth Camera Controller (Full map search or Alerts node fly-to) */}
-          {(!isDashboard || isAlerts) && (
-            <MapCameraController 
-              targetPosition={cameraTarget} 
-              targetZoom={cameraZoom} 
-              selectedNodeId={selectedNode?.id}
-              searchTarget={searchTarget}
-            />
-          )}
+          {/* Smooth Camera Controller - centers map when a node is selected or searched */}
+          <MapCameraController 
+            targetPosition={cameraTarget} 
+            targetZoom={cameraZoom} 
+            selectedNodeId={selectedNode?.id}
+            searchTarget={searchTarget}
+          />
 
           {/* Map Controls: Dashboard Mode vs Full GIS Mode (Alerts mode uses streamlined overlays) */}
           {!isAlerts && (
@@ -288,6 +295,16 @@ export const MonitoringMap = ({
               <DashboardMapControls 
                 currentLayer={currentLayer}
                 onLayerChange={handleLayerChange}
+                nodeFilter={selectedNode?.id || nodeFilter || 'all'}
+                onNodeFilterChange={(val) => {
+                  if (onNodeFilterChange) onNodeFilterChange(val);
+                  if (val === 'all') {
+                    if (onSelectNode) onSelectNode(null);
+                  } else {
+                    const target = nodes.find(n => n.id === val);
+                    if (target && onSelectNode) onSelectNode(target);
+                  }
+                }}
                 onResetView={onResetView}
               />
             ) : (

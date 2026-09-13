@@ -80,24 +80,8 @@ export const MapControls = ({
         }}
         className="leaflet-top leaflet-left !top-3 !left-3 !right-3 z-[1000] pointer-events-auto select-none flex items-center justify-between gap-2 flex-wrap"
       >
-        {/* Left: Layer Selector Pill Group [Map] [Terrain] [Satellite] */}
+        {/* Left: Layer Selector Pill Group [Terrain] [Standard] [Satellite] */}
         <div className="flex items-center rounded-xl bg-[#0f172a]/95 dark:bg-[#0b1319]/95 border border-stone-800 shadow-xl p-1 backdrop-blur-md gap-1">
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onLayerChange('standard');
-            }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-              currentLayer === 'standard'
-                ? 'bg-[#10b981] text-white shadow-md'
-                : 'text-stone-300 hover:text-white hover:bg-white/10'
-            }`}
-            title="Standard Street / Geographic Map (OpenStreetMap)"
-          >
-            Map
-          </button>
-
           <button
             type="button"
             onClick={(e) => {
@@ -109,9 +93,25 @@ export const MapControls = ({
                 ? 'bg-[#10b981] text-white shadow-md'
                 : 'text-stone-300 hover:text-white hover:bg-white/10'
             }`}
-            title="Topographic Terrain Map (Himachal contours & mountain relief)"
+            title="Topographic Terrain Map (Himachal elevation relief & contours)"
           >
             Terrain
+          </button>
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onLayerChange('standard');
+            }}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              currentLayer === 'standard'
+                ? 'bg-[#10b981] text-white shadow-md'
+                : 'text-stone-300 hover:text-white hover:bg-white/10'
+            }`}
+            title="Standard OpenStreetMap (Roads, Rivers & Towns)"
+          >
+            Standard
           </button>
 
           <button
@@ -125,7 +125,7 @@ export const MapControls = ({
                 ? 'bg-[#10b981] text-white shadow-md'
                 : 'text-stone-300 hover:text-white hover:bg-white/10'
             }`}
-            title="Satellite Aerial Imagery (ESRI World Imagery)"
+            title="Satellite Aerial Imagery with Places & Roads"
           >
             Satellite
           </button>
@@ -241,10 +241,12 @@ export const MapControls = ({
  * Streamlined controls for the Dashboard version of MonitoringMap
  * Displays compact layer switch, prototype disclaimer, compact legend, and corner zoom buttons.
  */
-export const DashboardMapControls = ({
-  currentLayer = 'terrain',
+export const DashboardMapControls = ({ 
+  currentLayer = 'terrain', 
   onLayerChange,
-  onResetView
+  nodeFilter = 'all',
+  onNodeFilterChange,
+  onResetView 
 }) => {
   const map = useMap();
 
@@ -266,7 +268,7 @@ export const DashboardMapControls = ({
 
   return (
     <>
-      {/* 1. TOP-LEFT: Subtle Layer Toggle & Prototype Disclaimer */}
+      {/* 1. TOP-LEFT: Layer Toggles, Station Quick Selector & Prototype Disclaimer */}
       <div 
         ref={(el) => {
           if (el) {
@@ -274,45 +276,91 @@ export const DashboardMapControls = ({
             L.DomEvent.disableScrollPropagation(el);
           }
         }}
-        className="leaflet-top leaflet-left !top-3 !left-3 z-[1000] pointer-events-auto select-none flex items-center gap-2 flex-wrap"
+        className="leaflet-top leaflet-left !top-3 !left-3 !right-3 z-[1000] pointer-events-auto select-none flex items-center justify-between gap-2 flex-wrap"
       >
-        <div className="flex items-center rounded-xl bg-[#0f172a]/95 border border-stone-800 shadow-lg p-0.5 backdrop-blur-md gap-0.5">
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              if (onLayerChange) onLayerChange('terrain');
-            }}
-            className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
-              currentLayer === 'terrain'
-                ? 'bg-[#10b981] text-white shadow-xs'
-                : 'text-stone-300 hover:text-white hover:bg-white/10'
-            }`}
-            title="Natural Himalayan GIS Terrain"
-          >
-            Terrain
-          </button>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {/* Basemap 3-Way Toggle [Terrain] [Standard] [Satellite] */}
+          <div className="flex items-center rounded-xl bg-[#0f172a]/95 border border-stone-800 shadow-lg p-0.5 backdrop-blur-md gap-0.5">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onLayerChange) onLayerChange('terrain');
+              }}
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+                currentLayer === 'terrain'
+                  ? 'bg-[#10b981] text-white shadow-xs'
+                  : 'text-stone-300 hover:text-white hover:bg-white/10'
+              }`}
+              title="Natural Himalayan Topographic Terrain (Contours & Shading)"
+            >
+              Terrain
+            </button>
 
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              if (onLayerChange) onLayerChange('satellite');
-            }}
-            className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
-              currentLayer === 'satellite'
-                ? 'bg-[#10b981] text-white shadow-xs'
-                : 'text-stone-300 hover:text-white hover:bg-white/10'
-            }`}
-            title="Satellite Aerial Imagery"
-          >
-            Satellite
-          </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onLayerChange) onLayerChange('standard');
+              }}
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+                currentLayer === 'standard'
+                  ? 'bg-[#10b981] text-white shadow-xs'
+                  : 'text-stone-300 hover:text-white hover:bg-white/10'
+              }`}
+              title="Standard OpenStreetMap (Roads, Rivers & Towns)"
+            >
+              Standard
+            </button>
+
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onLayerChange) onLayerChange('satellite');
+              }}
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-all cursor-pointer ${
+                currentLayer === 'satellite'
+                  ? 'bg-[#10b981] text-white shadow-xs'
+                  : 'text-stone-300 hover:text-white hover:bg-white/10'
+              }`}
+              title="Satellite Aerial Imagery with Places & Roads"
+            >
+              Satellite
+            </button>
+          </div>
+
+          {/* Quick Station Dropdown */}
+          {onNodeFilterChange && (
+            <select
+              value={nodeFilter}
+              onChange={(e) => {
+                e.stopPropagation();
+                onNodeFilterChange(e.target.value);
+              }}
+              className="px-2 py-1 rounded-lg bg-[#0f172a]/95 text-stone-200 border border-stone-800 text-[11px] font-semibold backdrop-blur-md shadow-xs focus:outline-none focus:ring-1 focus:ring-[#10b981] cursor-pointer"
+              aria-label="Select Node"
+            >
+              <option value="all">All Stations</option>
+              <option value="NODE-01">NODE-01 (Safe)</option>
+              <option value="NODE-02">NODE-02 (Safe)</option>
+              <option value="NODE-03">NODE-03 (Warning)</option>
+              <option value="NODE-04">NODE-04 (Safe)</option>
+              <option value="NODE-05">NODE-05 (High Risk) ★</option>
+              <option value="NODE-06">NODE-06 (Offline)</option>
+              <option value="NODE-07">NODE-07 (Safe)</option>
+              <option value="NODE-08">NODE-08 (Safe)</option>
+            </select>
+          )}
         </div>
 
-        {/* Small unobtrusive disclaimer */}
-        <div className="hidden sm:inline-flex items-center px-2 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-stone-800 text-[10px] font-medium text-stone-300 shadow-xs">
-          <span>{MAP_DISCLAIMERS.dashboard}</span>
+        {/* Prototype disclaimer pill with full text on hover */}
+        <div 
+          className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-black/75 backdrop-blur-md border border-stone-800 text-[10px] font-medium text-amber-300/90 shadow-xs cursor-help"
+          title={MAP_DISCLAIMERS.dashboard}
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+          <span>Simulated Prototype Sensors</span>
         </div>
       </div>
 

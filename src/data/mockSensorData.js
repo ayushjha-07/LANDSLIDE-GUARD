@@ -271,7 +271,7 @@ export const INITIAL_CANONICAL_NODES_DATA = [
       name: "Lower Beas Transect",
       x: 30,
       y: 75,
-      latitude: 32.0800,
+      latitude: 31.8800,
       longitude: 77.1600
     },
     status: "online",
@@ -388,7 +388,7 @@ export const INITIAL_CANONICAL_NODES_DATA = [
       x: 50,
       y: 38,
       latitude: 31.9800,
-      longitude: 76.8200
+      longitude: 77.1200
     },
     status: "online",
     risk: {

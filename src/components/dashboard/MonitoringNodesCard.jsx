@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Card from '../common/Card';
 
-export const MonitoringNodesCard = ({ nodes, className = "" }) => {
+export const MonitoringNodesCard = ({ nodes, selectedNodeId = null, onSelectNode = null, className = "" }) => {
   return (
     <Card 
       title="Monitoring Nodes" 
@@ -19,7 +19,12 @@ export const MonitoringNodesCard = ({ nodes, className = "" }) => {
           <div 
             key={node.id}
             data-node-id={node.id}
-            className="py-2.5 px-2 rounded-xl flex items-center justify-between gap-2 hover:bg-stone-50/80 dark:hover:bg-forest-950/40 transition-colors"
+            onClick={() => onSelectNode && onSelectNode(node)}
+            className={`py-2.5 px-2.5 rounded-xl flex items-center justify-between gap-2 transition-all cursor-pointer ${
+              selectedNodeId === node.id
+                ? 'bg-emerald-500/15 dark:bg-emerald-500/20 ring-1 ring-emerald-500/50 shadow-xs'
+                : 'hover:bg-stone-50/80 dark:hover:bg-forest-950/40'
+            }`}
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
