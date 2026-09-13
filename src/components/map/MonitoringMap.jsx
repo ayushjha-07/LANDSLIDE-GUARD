@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { MapContainer, TileLayer, useMap, ScaleControl } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap, ScaleControl, Polygon } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import SensorMarker from './SensorMarker';
@@ -13,7 +13,16 @@ import {
   MAP_DISCLAIMERS
 } from './mapConfig';
 import MapControls, { DashboardMapControls } from './MapControls';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Compass, CloudRain } from 'lucide-react';
+
+// Elongated Himalayan mountain slope landslide hazard zone overlay for Kullu / Beas sector
+export const LANDSLIDE_PRONE_ZONE = [
+  [32.2580, 77.1700],
+  [32.2640, 77.2060],
+  [32.2460, 77.2220],
+  [32.2300, 77.2000],
+  [32.2340, 77.1720]
+];
 
 // Helper component to smoothly fly map to selected node or search location without overriding the initial wide view
 function MapCameraController({ targetPosition, targetZoom, selectedNodeId, searchTarget }) {
@@ -50,7 +59,7 @@ function MapCameraController({ targetPosition, targetZoom, selectedNodeId, searc
 }
 
 export const MonitoringMap = ({
-  variant = 'full', // 'full' | 'dashboard'
+  variant = 'full', // 'full' | 'dashboard' | 'alerts'
   nodes = [],
   selectedNode = null,
   onSelectNode = null,
@@ -69,9 +78,10 @@ export const MonitoringMap = ({
   className = ""
 }) => {
   const isDashboard = variant === 'dashboard';
+  const isAlerts = variant === 'alerts';
 
-  // Support controlled or uncontrolled layer state
-  const [internalLayer, setInternalLayer] = useState('terrain');
+  // Support controlled or uncontrolled layer state - alerts variant defaults to satellite
+  const [internalLayer, setInternalLayer] = useState(isAlerts ? 'satellite' : 'terrain');
   const currentLayer = layer !== null && layer !== undefined ? layer : internalLayer;
   const [hasTileError, setHasTileError] = useState(false);
 
@@ -83,12 +93,23 @@ export const MonitoringMap = ({
 
   // Real geographic tile layer configuration from centralized mapConfig
   const tileConfig = useMemo(() => {
-    return MAP_TILE_PROVIDERS[currentLayer] || MAP_TILE_PROVIDERS.terrain;
+    return MAP_TILE_PROVIDERS[currentLayer] || MAP_TILE_PROVIDERS.satellite;
   }, [currentLayer]);
 
+  // Support canonical alert nodes prioritization
+  const displayNodes = useMemo(() => {
+    if (isAlerts && nodes.length > 0) {
+      const alertNodeIds = ['NODE-05', 'NODE-03', 'NODE-02', 'NODE-07', 'Node 05', 'Node 03', 'Node 02', 'Node 07'];
+      const filtered = nodes.filter(n => alertNodeIds.includes(n.id) || alertNodeIds.includes(n.name));
+      return filtered.length > 0 ? filtered : nodes;
+    }
+    return nodes;
+  }, [nodes, isAlerts]);
+
   // Determine initial center and zoom
-  const defaultZoom = isDashboard ? HIMACHAL_DASHBOARD_ZOOM : HIMACHAL_FULL_ZOOM;
-  const containerHeight = height || (isDashboard ? MAP_CONTAINER_HEIGHTS.dashboard : MAP_CONTAINER_HEIGHTS.full);
+  const initialCenter = isAlerts ? [32.2417, 77.1892] : HIMACHAL_CENTER;
+  const defaultZoom = isAlerts ? 10.6 : (isDashboard ? HIMACHAL_DASHBOARD_ZOOM : HIMACHAL_FULL_ZOOM);
+  const containerHeight = height || (isAlerts ? 'h-[360px] sm:h-[440px] lg:h-full lg:min-h-[500px]' : isDashboard ? MAP_CONTAINER_HEIGHTS.dashboard : MAP_CONTAINER_HEIGHTS.full);
 
   // Determine camera target from either explicit search target or selected node
   const cameraTarget = useMemo(() => {
@@ -98,8 +119,8 @@ export const MonitoringMap = ({
     if (selectedNode && selectedNode.latitude && selectedNode.longitude) {
       return [selectedNode.latitude, selectedNode.longitude];
     }
-    return HIMACHAL_CENTER;
-  }, [searchTarget, selectedNode]);
+    return initialCenter;
+  }, [searchTarget, selectedNode, initialCenter]);
 
   const cameraZoom = useMemo(() => {
     if (searchTarget && searchTarget.zoom) {
@@ -108,11 +129,64 @@ export const MonitoringMap = ({
     if (selectedNode) {
       return 11.5;
     }
-    return HIMACHAL_FULL_ZOOM;
-  }, [searchTarget, selectedNode]);
+    return defaultZoom;
+  }, [searchTarget, selectedNode, defaultZoom]);
 
   return (
     <div className={`relative w-full rounded-2xl overflow-hidden border border-stone-800 bg-[#0c1310] shadow-2xl min-w-0 ${className}`}>
+      {/* ALERTS VARIANT GIS OVERLAYS (matching primary reference) */}
+      {isAlerts && (
+        <>
+          {/* Top-Left Location Indicator */}
+          <div className="absolute top-3 left-3 z-[400] px-3 py-2 rounded-xl bg-black/75 backdrop-blur-md border border-white/10 text-white shadow-lg pointer-events-none">
+            <div className="font-bold text-xs tracking-wide">Kullu</div>
+            <div className="text-[10px] text-stone-300">Himachal Pradesh</div>
+          </div>
+
+          {/* Top-Right Risk & Sensor Legend */}
+          <div className="absolute top-3 right-3 z-[400] px-3 py-2.5 rounded-xl bg-black/75 backdrop-blur-md border border-white/10 text-white shadow-lg space-y-1.5 pointer-events-none text-[10px]">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-500 shadow-sm flex-shrink-0" />
+              <span className="text-stone-200">High Risk Zone</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-sm flex-shrink-0" />
+              <span className="text-stone-200">Moderate Risk Zone</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm flex-shrink-0" />
+              <span className="text-stone-200">Sensor Node</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-3.5 h-0 border-t-2 border-dashed border-red-500 flex-shrink-0" />
+              <span className="text-stone-200">Landslide Prone Area</span>
+            </div>
+          </div>
+
+          {/* Bottom-Left Compass & Scale Indicator */}
+          <div className="absolute bottom-3 left-3 z-[400] flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-black/75 backdrop-blur-md border border-white/10 text-white shadow-lg pointer-events-none text-[10px]">
+            <div className="flex items-center gap-1">
+              <Compass className="w-3.5 h-3.5 text-white" />
+              <span className="font-bold font-mono">N</span>
+            </div>
+            <div className="h-3 w-px bg-white/20" />
+            <div className="flex items-center gap-1.5 font-mono text-[9px] text-stone-300">
+              <span>0</span>
+              <div className="w-8 h-1 bg-white/80 rounded-xs" />
+              <span>1 km</span>
+            </div>
+          </div>
+
+          {/* Bottom-Right Live Environmental Condition Tag */}
+          <div className="absolute bottom-3 right-3 z-[400] flex items-center gap-2 px-3 py-1.5 rounded-xl bg-black/75 backdrop-blur-md border border-white/10 text-white shadow-lg pointer-events-none text-xs">
+            <CloudRain className="w-4 h-4 text-sky-400 flex-shrink-0" />
+            <div>
+              <strong className="text-xs font-mono text-white">21°C</strong>
+              <span className="text-[10px] text-stone-300 ml-1">Light Rain</span>
+            </div>
+          </div>
+        </>
+      )}
       
       {/* TILE ERROR / OFFLINE FALLBACK BANNER */}
       {hasTileError && (
@@ -158,13 +232,14 @@ export const MonitoringMap = ({
       {/* Leaflet MapContainer */}
       <div className={`w-full ${containerHeight}`}>
         <MapContainer
-          center={HIMACHAL_CENTER}
+          center={initialCenter}
           zoom={defaultZoom}
           minZoom={7}
           maxZoom={18}
           scrollWheelZoom={false}
           className="w-full h-full z-10"
           zoomControl={false} // Managed via custom Controls
+          attributionControl={false}
         >
           {/* Active Basemap Tile Layer */}
           <TileLayer
@@ -193,12 +268,12 @@ export const MonitoringMap = ({
           )}
 
           {/* Metric Scale Indicator (Full map only) */}
-          {!isDashboard && (
+          {!isDashboard && !isAlerts && (
             <ScaleControl position="bottomleft" imperial={false} />
           )}
 
-          {/* Smooth Camera Controller (Full map search/node fly-to) */}
-          {!isDashboard && (
+          {/* Smooth Camera Controller (Full map search or Alerts node fly-to) */}
+          {(!isDashboard || isAlerts) && (
             <MapCameraController 
               targetPosition={cameraTarget} 
               targetZoom={cameraZoom} 
@@ -207,40 +282,57 @@ export const MonitoringMap = ({
             />
           )}
 
-          {/* Map Controls: Dashboard Mode vs Full GIS Mode */}
-          {isDashboard ? (
-            <DashboardMapControls 
-              currentLayer={currentLayer}
-              onLayerChange={handleLayerChange}
-              onResetView={onResetView}
-            />
-          ) : (
-            <MapControls 
-              currentLayer={currentLayer}
-              onLayerChange={handleLayerChange}
-              nodeFilter={nodeFilter}
-              onNodeFilterChange={onNodeFilterChange}
-              riskFilter={riskFilter}
-              onRiskFilterChange={onRiskFilterChange}
-              statusFilter={statusFilter}
-              onStatusFilterChange={onStatusFilterChange}
-              onResetView={onResetView}
+          {/* Map Controls: Dashboard Mode vs Full GIS Mode (Alerts mode uses streamlined overlays) */}
+          {!isAlerts && (
+            isDashboard ? (
+              <DashboardMapControls 
+                currentLayer={currentLayer}
+                onLayerChange={handleLayerChange}
+                onResetView={onResetView}
+              />
+            ) : (
+              <MapControls 
+                currentLayer={currentLayer}
+                onLayerChange={handleLayerChange}
+                nodeFilter={nodeFilter}
+                onNodeFilterChange={onNodeFilterChange}
+                riskFilter={riskFilter}
+                onRiskFilterChange={onRiskFilterChange}
+                statusFilter={statusFilter}
+                onStatusFilterChange={onStatusFilterChange}
+                onResetView={onResetView}
+              />
+            )
+          )}
+
+          {/* Landslide Prone Hazard Area Polygon (Alerts mode) */}
+          {isAlerts && (
+            <Polygon
+              positions={LANDSLIDE_PRONE_ZONE}
+              pathOptions={{
+                color: '#ef4444',
+                fillColor: '#ef4444',
+                fillOpacity: 0.32,
+                weight: 2,
+                dashArray: '6 4'
+              }}
             />
           )}
 
           {/* Prototype Risk Influence Zones (Low Opacity) */}
-          {showRiskZones && nodes.map(node => (
+          {showRiskZones && displayNodes.map(node => (
             <RiskZone key={`risk-zone-${node.id}`} node={node} />
           ))}
 
-          {/* 8 Sensor Nodes with Custom DivIcon and Popups */}
-          {nodes.map(node => (
+          {/* Sensor Nodes with Custom DivIcon and Popups */}
+          {displayNodes.map(node => (
             <SensorMarker
               key={`sensor-node-${node.id}`}
               node={node}
               isSelected={selectedNode?.id === node.id}
               onSelect={onSelectNode}
-              popupVariant={isDashboard ? 'compact' : 'detailed'}
+              popupVariant={isDashboard || isAlerts ? 'compact' : 'detailed'}
+              disablePopup={isAlerts}
             />
           ))}
         </MapContainer>

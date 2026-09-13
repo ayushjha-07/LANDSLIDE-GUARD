@@ -57,39 +57,43 @@ export const HOURLY_STABILITY_SERIES = [
 export const DASHBOARD_ALERTS = [
   {
     id: "ALT-01",
-    title: "Increased Soil Moisture",
-    node: "Node 03",
-    severity: "Warning",
-    timestamp: "2 min ago",
-    details: "Soil saturation reached 68% following rainfall runoff in drainage basin B.",
-    action: "Monitor incline displacement closely."
+    title: "Heavy Rainfall Detected",
+    node: "Node 05",
+    sector: "Central Slope Sector",
+    severity: "High Risk",
+    timestamp: "8 minutes ago",
+    details: "High rainfall intensity detected. Monitoring for potential slope instability.",
+    action: "Increase monitoring frequency and review the affected node."
   },
   {
     id: "ALT-02",
-    title: "Heavy Rainfall Detected",
-    node: "Node 05",
-    severity: "High Risk",
-    timestamp: "8 min ago",
-    details: "Cumulative rain gauge clocked 34 mm precipitation in Zone C.",
-    action: "LoRa siren standby activated."
+    title: "Increased Soil Moisture",
+    node: "Node 03",
+    sector: "Lower Ridge",
+    severity: "Warning",
+    timestamp: "2 minutes ago",
+    details: "Soil moisture above normal threshold after sustained rainfall.",
+    action: "Inspect drainage gully runoff channels and confirm RF telemetry link stability."
   },
   {
     id: "ALT-03",
     title: "Vibration Spike",
     node: "Node 02",
+    sector: "Hillside Road",
     severity: "Resolved",
-    timestamp: "24 min ago",
-    details: "Transient micro-seismic harmonic of 0.06g settled back to baseline 0.03g.",
+    timestamp: "24 minutes ago",
+    details: "Short-term vibration spike detected. No further abnormal activity observed.",
     action: "Routine confirmation logged."
   },
   {
     id: "ALT-04",
     title: "Tilt Variation",
     node: "Node 07",
+    sector: "Upper Slope",
     severity: "Resolved",
     timestamp: "1 hour ago",
-    details: "Minor thermal expansion shift of 0.15° normalized after solar peak.",
-    action: "Sensor calibrated."
+    details: "Minor tilt variation detected. Within safe limits.",
+    action: "Sensor zero-offset verified."
   },
 ];
 

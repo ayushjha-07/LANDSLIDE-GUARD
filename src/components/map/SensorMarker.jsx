@@ -65,7 +65,7 @@ function createNodeDivIcon(node, isSelected) {
   });
 }
 
-export const SensorMarker = ({ node, isSelected, onSelect, popupVariant = 'detailed' }) => {
+export const SensorMarker = ({ node, isSelected, onSelect, popupVariant = 'detailed', disablePopup = false }) => {
   const navigate = useNavigate();
   const position = [node.latitude, node.longitude];
 
@@ -82,11 +82,9 @@ export const SensorMarker = ({ node, isSelected, onSelect, popupVariant = 'detai
 
   let riskBadgeColor = 'bg-emerald-100 text-emerald-800 border-emerald-300';
   if (isOffline) {
-    riskBadgeColor = 'bg-stone-100 text-stone-700 border-stone-300';
-  } else if (riskDisplay.includes('CRITICAL')) {
-    riskBadgeColor = 'bg-red-100 text-red-800 border-red-300 font-bold';
-  } else if (riskDisplay.includes('HIGH RISK')) {
-    riskBadgeColor = 'bg-orange-100 text-orange-800 border-orange-300 font-bold';
+    riskBadgeColor = 'bg-stone-100 text-stone-600 border-stone-300';
+  } else if (riskDisplay.includes('HIGH') || riskDisplay.includes('CRITICAL')) {
+    riskBadgeColor = 'bg-red-100 text-red-800 border-red-300';
   } else if (riskDisplay.includes('WARNING')) {
     riskBadgeColor = 'bg-amber-100 text-amber-800 border-amber-300';
   }
@@ -105,7 +103,7 @@ export const SensorMarker = ({ node, isSelected, onSelect, popupVariant = 'detai
   const markerRef = React.useRef(null);
 
   React.useEffect(() => {
-    if (isSelected && markerRef.current) {
+    if (isSelected && markerRef.current && !disablePopup) {
       const timer = setTimeout(() => {
         if (markerRef.current) {
           markerRef.current.openPopup();
@@ -115,7 +113,7 @@ export const SensorMarker = ({ node, isSelected, onSelect, popupVariant = 'detai
     } else if (!isSelected && markerRef.current) {
       markerRef.current.closePopup();
     }
-  }, [isSelected]);
+  }, [isSelected, disablePopup]);
 
   return (
     <Marker 
@@ -128,14 +126,15 @@ export const SensorMarker = ({ node, isSelected, onSelect, popupVariant = 'detai
         }
       }}
     >
-      <Popup 
-        className="custom-leaflet-popup" 
-        minWidth={isCompact ? 220 : 270} 
-        maxWidth={isCompact ? 260 : 320}
-        autoPan={true}
-        autoPanPaddingTopLeft={[20, 85]}
-        autoPanPaddingBottomRight={[20, 20]}
-      >
+      {!disablePopup && (
+        <Popup 
+          className="custom-leaflet-popup" 
+          minWidth={isCompact ? 220 : 270} 
+          maxWidth={isCompact ? 260 : 320}
+          autoPan={true}
+          autoPanPaddingTopLeft={[20, 85]}
+          autoPanPaddingBottomRight={[20, 20]}
+        >
         <div className="p-1 space-y-2 text-stone-800 font-sans text-xs">
           
           {/* Header */}
@@ -225,6 +224,7 @@ export const SensorMarker = ({ node, isSelected, onSelect, popupVariant = 'detai
 
         </div>
       </Popup>
+      )}
     </Marker>
   );
 };

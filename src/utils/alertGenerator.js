@@ -63,7 +63,7 @@ export const getAlertTriggerInfo = (node, severity) => {
   }
 
   return {
-    title: "Geotechnical Parameter Drift",
+    title: "Sensor Threshold Deviation",
     details: `Automated threshold warning triggered in ${locName}.`,
     action: "Continue passive monitoring and inspect station link."
   };

@@ -87,11 +87,11 @@ export const Dashboard = () => {
         />
       </div>
 
-      {/* 9 & 10. RECENT ALERTS & LoRa NETWORK TELEMETRY */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6 w-full min-w-0">
-        <RecentAlertsCard />
-        <LoraNetworkCard />
-      </div>
+      {/* 9. RECENT ALERTS (Himalayan GIS Satellite Context & Operational Event Stream) */}
+      <RecentAlertsCard nodes={nodes} />
+
+      {/* 10. LoRa NETWORK TELEMETRY */}
+      <LoraNetworkCard />
 
       {/* 11, 12 & 13. WEATHER CONDITIONS, SYSTEM HEALTH & QUICK ACTIONS */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 w-full min-w-0">
