@@ -4,26 +4,25 @@
  * disclaimers, and legends across Dashboard and dedicated Monitoring Map page.
  */
 
-// Default region: Himachal Pradesh, focused on Kullu–Manali / Beas Valley corridor (80–90° top-down aerial viewpoint)
-export const HIMACHAL_CENTER = [32.16, 77.17];
+// Default region: Himachal Pradesh, focused closely on the Kullu–Manali / Beas Valley corridor (closer natural aerial viewpoint)
+export const HIMACHAL_CENTER = [32.22, 77.185];
 
-// Default zoom levels - high-altitude top-down drone/satellite aerial perspective
-export const HIMACHAL_FULL_ZOOM = 10.4;
-export const HIMACHAL_DASHBOARD_ZOOM = 10.2;
-export const CLUSTER_CENTER = [32.18, 77.18];
-export const CLUSTER_ZOOM = 11.2;
+// Default zoom levels - closer natural high-altitude aerial perspective showing forests, riverbed, and slopes
+export const HIMACHAL_FULL_ZOOM = 12.2;
+export const HIMACHAL_DASHBOARD_ZOOM = 12.0;
+export const CLUSTER_CENTER = [32.2417, 77.1892];
+export const CLUSTER_ZOOM = 13.2;
 
-// Real geographic basemap tile endpoints (100% legitimate map tiles)
+// Real geographic basemap tile endpoints (100% legitimate natural map tiles)
 export const MAP_TILE_PROVIDERS = {
   satellite: {
     id: 'satellite',
     name: 'Satellite',
-    title: 'Himalayan Aerial Satellite (80–90° Top-Down Drone/Satellite View)',
+    title: 'Himalayan Aerial Satellite (Natural Top-Down Photographic View)',
     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     maxZoom: 18,
     hasOverlay: true,
     overlayUrl: 'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',
-    transportUrl: 'https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}',
     attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
   },
   terrain: {
