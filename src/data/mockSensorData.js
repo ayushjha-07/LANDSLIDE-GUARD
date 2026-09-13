@@ -160,7 +160,7 @@ export const INITIAL_CANONICAL_NODES_DATA = [
     id: "NODE-01",
     name: "Node 01",
     location: {
-      name: "Dhauladhar West Sector",
+      name: "North Slope",
       x: 28,
       y: 32,
       latitude: 32.2200,
@@ -196,7 +196,7 @@ export const INITIAL_CANONICAL_NODES_DATA = [
     id: "NODE-02",
     name: "Node 02",
     location: {
-      name: "Rohtang Ridge",
+      name: "East Ridge",
       x: 62,
       y: 24,
       latitude: 32.3600,
@@ -210,10 +210,10 @@ export const INITIAL_CANONICAL_NODES_DATA = [
       predictionWindow: "6h"
     },
     readings: {
-      soilMoisture: { value: 48.0, unit: "%", trend: "stable" },
-      rainfall: { value: 16.0, unit: "mm", trend: "decreasing" },
-      tilt: { value: 2.1, unit: "°", trend: "stable" },
-      vibration: { value: 0.04, unit: "g", trend: "stable" },
+      soilMoisture: { value: 41.0, unit: "%", trend: "stable" },
+      rainfall: { value: 11.0, unit: "mm", trend: "decreasing" },
+      tilt: { value: 1.8, unit: "°", trend: "stable" },
+      vibration: { value: 0.03, unit: "g", trend: "stable" },
       temperature: { value: 20.8, unit: "°C", trend: "stable" },
       humidity: { value: 74.0, unit: "%", trend: "stable" }
     },
@@ -232,7 +232,7 @@ export const INITIAL_CANONICAL_NODES_DATA = [
     id: "NODE-03",
     name: "Node 03",
     location: {
-      name: "Mandi Gorge Corridor",
+      name: "Mountain Zone B",
       x: 45,
       y: 52,
       latitude: 31.6800,
@@ -268,7 +268,7 @@ export const INITIAL_CANONICAL_NODES_DATA = [
     id: "NODE-04",
     name: "Node 04",
     location: {
-      name: "Lower Beas Transect",
+      name: "South Slope",
       x: 30,
       y: 75,
       latitude: 31.8800,
@@ -340,7 +340,7 @@ export const INITIAL_CANONICAL_NODES_DATA = [
     id: "NODE-06",
     name: "Node 06",
     location: {
-      name: "Kinnaur Valley Transect",
+      name: "West Ridge",
       x: 18,
       y: 55,
       latitude: 31.5200,
@@ -384,7 +384,7 @@ export const INITIAL_CANONICAL_NODES_DATA = [
     id: "NODE-07",
     name: "Node 07",
     location: {
-      name: "Central Beas Sector",
+      name: "Central Slope",
       x: 50,
       y: 38,
       latitude: 31.9800,
@@ -398,9 +398,9 @@ export const INITIAL_CANONICAL_NODES_DATA = [
       predictionWindow: "6h"
     },
     readings: {
-      soilMoisture: { value: 45.0, unit: "%", trend: "stable" },
-      rainfall: { value: 14.0, unit: "mm", trend: "stable" },
-      tilt: { value: 1.9, unit: "°", trend: "stable" },
+      soilMoisture: { value: 40.0, unit: "%", trend: "stable" },
+      rainfall: { value: 10.0, unit: "mm", trend: "stable" },
+      tilt: { value: 1.7, unit: "°", trend: "stable" },
       vibration: { value: 0.03, unit: "g", trend: "stable" },
       temperature: { value: 21.2, unit: "°C", trend: "stable" },
       humidity: { value: 73.0, unit: "%", trend: "stable" }
@@ -420,7 +420,7 @@ export const INITIAL_CANONICAL_NODES_DATA = [
     id: "NODE-08",
     name: "Node 08",
     location: {
-      name: "Pin Valley Sector",
+      name: "North Ridge",
       x: 78,
       y: 30,
       latitude: 32.0500,
