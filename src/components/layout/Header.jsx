@@ -1,0 +1,208 @@
+import React, { useState } from 'react';
+import { useLocation, Link } from 'react-router-dom';
+import { 
+  Search, 
+  Bell, 
+  Menu, 
+  ChevronDown,
+  AlertTriangle,
+  X,
+  Radio,
+  User
+} from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
+import UserMenu from '../UserMenu';
+import { useAlertContext } from '../../context/AlertContext';
+import { MOCK_ALERTS } from '../../data/mockData';
+
+const ROUTE_TITLES = {
+  '/dashboard': { title: 'Dashboard', fullTitle: 'Operational Dashboard', subtitle: 'Real-time telemetry, risk analysis & system health' },
+  '/sensors': { title: 'Live Sensors', fullTitle: 'Live Geotechnical Sensors', subtitle: 'Borehole pore pressure, soil moisture & displacement telemetry' },
+  '/risk-analysis': { title: 'Risk Analysis', fullTitle: 'AI Risk Analysis', subtitle: 'Random Forest hazard classification & LSTM displacement predictions' },
+  '/map': { title: 'Monitoring Map', fullTitle: 'Himachal Pradesh Monitoring Map', subtitle: 'Real geographic map with prototype landslide-monitoring nodes' },
+  '/alerts': { title: 'Alerts', fullTitle: 'Early Warning Alerts', subtitle: 'Automated threshold dispatches & community hazard notifications' },
+  '/reports': { title: 'Reports', fullTitle: 'Reports & Analytics', subtitle: 'Historical monitoring data, risk trends and system performance insights' },
+  '/devices': { title: 'Devices', fullTitle: 'Hardware & LoRa Nodes', subtitle: 'ESP32 microcontroller telemetry, RSSI signal & battery metrics' },
+  '/settings': { title: 'Settings', fullTitle: 'System Settings', subtitle: 'Sensor calibration, alert triggers & network frequency' },
+  '/login': { title: 'Login', fullTitle: 'Operator Authentication', subtitle: 'Civil defense secure access portal' }
+};
+
+export const Header = ({ onOpenSidebar }) => {
+  const location = useLocation();
+  const [showSearchModal, setShowSearchModal] = useState(false);
+  const [showAlertsDropdown, setShowAlertsDropdown] = useState(false);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
+
+  const alertCtx = useAlertContext();
+  const activeAlerts = alertCtx?.activeAlerts || [];
+
+  const routeInfo = ROUTE_TITLES[location.pathname] || {
+    title: 'Landslide Guard',
+    fullTitle: 'Landslide Guard',
+    subtitle: 'AI-Powered Landslide Early Warning System'
+  };
+
+  return (
+    <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-3 sm:px-4 md:px-6 lg:px-8 
+      bg-white/95 dark:bg-[#0E131F]/95 backdrop-blur-md 
+      border-b border-[#E2E8F0] dark:border-[#2D3748] transition-colors duration-200 box-border w-full min-w-0"
+    >
+      {/* Left: Mobile/Tablet Hamburger + Dynamic Title */}
+      <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 mr-2">
+        {/* Hamburger button visible on mobile & small tablet (<1024px) */}
+        <button
+          type="button"
+          onClick={onOpenSidebar}
+          className="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center rounded-xl text-[#2D3748] hover:text-[#1A202C] dark:text-slate-300 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 border border-[#E2E8F0] dark:border-[#2D3748] lg:hidden flex-shrink-0"
+          aria-label="Open navigation drawer"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+
+        <div className="min-w-0 flex-1">
+          <h1 className="text-base sm:text-lg md:text-xl font-bold font-heading text-[#1A202C] dark:text-white truncate leading-tight">
+            <span className="sm:hidden">{routeInfo.title}</span>
+            <span className="hidden sm:inline">{routeInfo.fullTitle}</span>
+          </h1>
+          <p className="hidden md:block text-xs text-[#718096] dark:text-slate-400 truncate">
+            {routeInfo.subtitle}
+          </p>
+        </div>
+      </div>
+
+      {/* Right Controls: Search, Notification, ONE Theme Button, User Profile */}
+      <div className="flex items-center gap-1.5 sm:gap-2 md:gap-2.5 flex-shrink-0">
+        {/* Search button / trigger */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => {
+              setShowSearchModal(prev => !prev);
+              setShowAlertsDropdown(false);
+              setShowUserDropdown(false);
+            }}
+            className="min-w-[44px] min-h-[44px] px-2.5 sm:px-3 flex items-center justify-center gap-2 rounded-xl text-xs text-[#2D3748] dark:text-slate-300 bg-slate-50 dark:bg-[#1A202C] border border-[#E2E8F0] dark:border-[#2D3748] hover:border-forest-500 dark:hover:border-forest-400 transition-colors"
+            aria-label="Search telemetry & sensors"
+          >
+            <Search className="w-4 h-4 text-[#718096] dark:text-slate-400" />
+            <span className="hidden md:inline">Search...</span>
+            <kbd className="hidden xl:inline-block px-1.5 py-0.5 text-[10px] font-mono rounded bg-slate-200 dark:bg-slate-800 text-[#4A5568] dark:text-slate-300">
+              Ctrl K
+            </kbd>
+          </button>
+
+          {/* Quick search modal: responsive positioning, width never overflows viewport */}
+          {showSearchModal && (
+            <>
+              <div 
+                className="fixed inset-0 z-40 bg-black/20 sm:hidden"
+                onClick={() => setShowSearchModal(false)}
+              />
+              <div className="fixed sm:absolute right-4 sm:right-0 top-16 sm:top-auto sm:mt-2 w-[calc(100vw-32px)] sm:w-80 p-3 rounded-2xl bg-white dark:bg-[#1A202C] border border-[#E2E8F0] dark:border-[#2D3748] shadow-xl z-50">
+                <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#E2E8F0] dark:border-[#2D3748]/60 sm:hidden">
+                  <span className="text-xs font-semibold text-[#1A202C] dark:text-white">Search System</span>
+                  <button 
+                    onClick={() => setShowSearchModal(false)} 
+                    className="p-1 text-slate-400 hover:text-slate-600 min-w-[32px] min-h-[32px] flex items-center justify-center"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-[#0E131F] border border-[#E2E8F0] dark:border-[#2D3748]">
+                  <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                  <input 
+                    type="text" 
+                    placeholder="Filter sensors, LoRa nodes, sectors..." 
+                    className="w-full bg-transparent text-xs text-[#1A202C] dark:text-white focus:outline-none placeholder:text-slate-400"
+                    autoFocus
+                  />
+                </div>
+                <div className="mt-2.5 px-1 text-[11px] text-[#718096] dark:text-slate-400">
+                  Quick links: <span className="font-mono text-forest-600 dark:text-nature-400 cursor-pointer hover:underline">LG-NODE-01</span>, <span className="font-mono text-forest-600 dark:text-nature-400 cursor-pointer hover:underline">Inclinometer</span>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Notifications Popover */}
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => {
+              setShowAlertsDropdown(prev => !prev);
+              setShowSearchModal(false);
+              setShowUserDropdown(false);
+            }}
+            className="relative min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center rounded-xl text-[#2D3748] dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-[#E2E8F0] dark:border-[#2D3748] transition-colors"
+            aria-label="Early Warning Notifications"
+            title="System Alerts & Warnings"
+          >
+            <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span className="absolute top-2.5 right-2.5 flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500" />
+            </span>
+          </button>
+
+          {/* Notifications dropdown with mobile viewport containment */}
+          {showAlertsDropdown && (
+            <>
+              <div 
+                className="fixed inset-0 z-40 bg-black/20 sm:hidden"
+                onClick={() => setShowAlertsDropdown(false)}
+              />
+              <div className="fixed sm:absolute right-4 sm:right-0 top-16 sm:top-auto sm:mt-2 w-[calc(100vw-32px)] sm:w-80 md:w-96 rounded-2xl bg-white dark:bg-[#1A202C] border border-[#E2E8F0] dark:border-[#2D3748] shadow-xl z-50 overflow-hidden max-h-[80vh] flex flex-col">
+                <div className="p-3.5 border-b border-[#E2E8F0] dark:border-[#2D3748]/60 flex items-center justify-between flex-shrink-0">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 text-orange-500" />
+                    <span className="text-xs font-semibold font-heading text-[#1A202C] dark:text-white">Active Early Warnings</span>
+                  </div>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-600 dark:text-orange-400 font-medium">
+                    {activeAlerts.length} Pending
+                  </span>
+                </div>
+                <div className="divide-y divide-[#E2E8F0] dark:divide-[#2D3748]/40 overflow-y-auto max-h-72">
+                  {activeAlerts.length > 0 ? (
+                    activeAlerts.map(alert => (
+                      <div key={alert.id} className="p-3 hover:bg-slate-50 dark:hover:bg-[#0E131F]/40 text-left transition-colors">
+                        <div className="flex items-center justify-between text-[11px] mb-1">
+                          <span className="font-semibold text-[#1A202C] dark:text-white">{alert.title}</span>
+                          <span className="text-slate-400 text-[10px] font-mono">{alert.timestamp}</span>
+                        </div>
+                        <p className="text-[11px] text-[#718096] dark:text-slate-300 leading-relaxed">
+                          <strong className="font-mono text-forest-600 dark:text-nature-400">{alert.node}:</strong> {alert.details}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-xs text-[#718096] dark:text-slate-400">
+                      No pending early warnings.
+                    </div>
+                  )}
+                </div>
+                <div className="p-2 border-t border-[#E2E8F0] dark:border-[#2D3748]/60 text-center bg-slate-50/50 dark:bg-[#0E131F]/30">
+                  <Link 
+                    to="/alerts" 
+                    onClick={() => setShowAlertsDropdown(false)}
+                    className="text-xs text-forest-600 dark:text-nature-400 font-semibold hover:underline"
+                  >
+                    Open Alert Center &rarr;
+                  </Link>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* EXACTLY ONE THEME BUTTON (44x44px touch target) */}
+        <ThemeToggle />
+
+        {/* User Profile Menu with Session Management */}
+        <UserMenu />
+      </div>
+    </header>
+  );
+};
+
+export default Header;
