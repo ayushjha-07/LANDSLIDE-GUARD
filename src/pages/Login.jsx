@@ -20,6 +20,7 @@ import ThemeToggle from '../components/layout/ThemeToggle';
 import { useAuth, DEMO_CREDENTIALS } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import himalayasBg from '../assets/himalayas.jpg';
+import BrandLogo, { BrandIcon } from '../components/common/BrandLogo';
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -132,25 +133,21 @@ export const Login = () => {
         <div className="lg:col-span-6 xl:col-span-7 space-y-6 text-left">
           
           {/* Brand Header */}
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-forest-900/60 border border-nature-500/30 text-nature-300 text-xs font-semibold backdrop-blur-md shadow-xs">
-              <Mountain className="w-4 h-4 text-nature-400" />
+          <div className="space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-forest-900/60 border border-[#39B86A]/30 text-[#86efac] text-xs font-semibold backdrop-blur-md shadow-xs">
+              <ShieldCheck className="w-4 h-4 text-[#39B86A]" />
               <span>Autonomous Geotechnical Early Warning</span>
             </div>
 
-            {/* Brand Name: Landslide in off-white/white, Guard in natural green */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold font-heading tracking-tight drop-shadow-md">
-              <span className="text-white">Landslide</span>{' '}
-              <span className="text-nature-400">Guard</span>
-            </h1>
-
-            {/* Sub-tagline */}
-            <h3 className="text-sm sm:text-base font-semibold font-mono tracking-wider text-nature-200">
-              Monitor &bull; Predict &bull; Prevent
-            </h3>
+            <BrandLogo 
+              variant="horizontal" 
+              theme="dark" 
+              size="xl" 
+              showTagline={true} 
+            />
 
             <p className="text-xs sm:text-sm text-stone-300 font-medium">
-              AI-Powered Landslide Early Warning System
+              AI-Powered Landslide Early Warning System Using Real-Time IoT Telemetry
             </p>
           </div>
 
@@ -193,9 +190,12 @@ export const Login = () => {
             
             {/* Login Card Header */}
             <div className="mb-5">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-[11px] text-nature-300 font-semibold mb-2">
-                <ShieldCheck className="w-3.5 h-3.5 text-nature-400" />
-                <span>Operator Console</span>
+              <div className="flex items-center justify-between mb-3">
+                <BrandIcon mode="dark" className="w-9 h-10" />
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-[11px] text-[#86efac] font-semibold">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#39B86A]" />
+                  <span>Operator Console</span>
+                </div>
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold font-heading text-white">
                 Welcome Back

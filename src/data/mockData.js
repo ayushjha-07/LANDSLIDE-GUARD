@@ -1,6 +1,6 @@
-﻿export const SYSTEM_INFO = {
+export const SYSTEM_INFO = {
   appName: "Landslide Guard",
-  tagline: "Monitor • Predict • Prevent",
+  tagline: "Safer Mountains, Stronger Communities",
   subtitle: "AI & Deep Learning Based IoT Landslide Early Warning System Using LoRa",
   version: "1.0.0-foundation",
   gatewayStatus: "Online",

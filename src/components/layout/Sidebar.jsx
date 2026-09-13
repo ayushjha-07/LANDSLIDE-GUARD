@@ -182,8 +182,8 @@ export const Sidebar = ({ isOpen, onClose }) => {
           </div>
 
           <div className={`mt-2 text-center ${!isTabletExpanded ? 'block md:hidden lg:block' : 'block'}`}>
-            <p className="text-[11px] text-[#718096] dark:text-slate-400 truncate">
-              Landslide Guard &bull; Civil Protection
+            <p className="text-[10px] text-[#718096] dark:text-slate-400 font-bold uppercase tracking-wider truncate">
+              Safer Mountains, Stronger Communities
             </p>
           </div>
         </div>

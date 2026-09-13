@@ -1,5 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 230" fill="none">
-
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 140" fill="none">
+  <!-- Brand Emblem -->
+  <g transform="translate(10, 5) scale(0.56)">
+    
     <defs>
       <linearGradient id="shieldGrad_dark" x1="100" y1="10" x2="100" y2="225" gradientUnits="userSpaceOnUse">
         <stop offset="0%" stop-color="#0c2219" />
@@ -165,4 +167,16 @@
     <!-- Apex Telemetry Beacon Jewel -->
     <circle cx="118" cy="8" r="3.5" fill="#39B86A" stroke="#FFFFFF" stroke-width="1.5" />
   
+  </g>
+
+  <!-- Wordmark -->
+  <text x="140" y="66" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="44" font-weight="900" letter-spacing="2">
+    <tspan fill="#FFFFFF">LANDSLIDE</tspan>
+    <tspan fill="#39B86A"> GUARD</tspan>
+  </text>
+
+  <!-- Preferred Tagline -->
+  <text x="142" y="96" font-family="'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14.5" font-weight="700" letter-spacing="3.5" fill="#A1B8AE" text-transform="uppercase">
+    SAFER MOUNTAINS, STRONGER COMMUNITIES
+  </text>
 </svg>

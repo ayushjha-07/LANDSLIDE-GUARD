@@ -34,6 +34,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import heroHimalayas from '../assets/hero_himalayas.jpg';
+import BrandLogo, { BrandIcon } from '../components/common/BrandLogo';
 
 export const Landing = () => {
   const navigate = useNavigate();
@@ -97,31 +98,14 @@ export const Landing = () => {
           <div className="max-w-7xl mx-auto flex items-center justify-between min-w-0">
             
             {/* Left: Stylized 3-Peak Himalayan Mountain Logo */}
-            <Link to="/" className="flex items-center gap-3 group">
-              <div className="relative w-10 h-8 flex-shrink-0">
-                <svg className="w-full h-full" viewBox="0 0 64 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  {/* Left peak */}
-                  <path d="M4 42L18 16L32 42H4Z" fill="#15803d" />
-                  <path d="M18 16L12 28L18 26L24 28L18 16Z" fill="#ffffff" />
-                  {/* Middle Main peak */}
-                  <path d="M16 42L36 8L52 42H16Z" fill="#16a34a" />
-                  <path d="M36 8L27 24L36 21L43 25L36 8Z" fill="#ffffff" />
-                  {/* Right ridge */}
-                  <path d="M34 42L48 20L60 42H34Z" fill="#22c55e" />
-                  <path d="M48 20L42 29L48 27L54 30L48 20Z" fill="#ffffff" />
-                  {/* Base baseline accent */}
-                  <path d="M2 43H62" stroke="#4ade80" strokeWidth="2" strokeLinecap="round" opacity="0.8" />
-                </svg>
-              </div>
-              <div className="flex flex-col text-left">
-                <span className="font-heading font-extrabold text-sm sm:text-base tracking-widest text-white leading-tight">
-                  LANDSLIDE <span className="text-[#4ade80]">GUARD</span>
-                </span>
-                <span className="text-[10px] sm:text-[11px] font-medium text-stone-300/90 tracking-wide leading-tight mt-0.5 whitespace-nowrap">
-                  Safer Mountains, Stronger Communities
-                </span>
-              </div>
-            </Link>
+            {/* Left: Official Landslide Guard Brand Logo */}
+            <BrandLogo 
+              variant="horizontal" 
+              theme="dark" 
+              size="md" 
+              showTagline={true} 
+              to="/"
+            />
 
             {/* Center: Navigation Links */}
             <nav className="hidden md:flex items-center gap-6 lg:gap-8 text-sm font-medium">
@@ -832,10 +816,16 @@ export const Landing = () => {
       <footer className="w-full border-t border-emerald-950/80 bg-[#050b07] py-8 px-4 sm:px-6 lg:px-12 text-xs text-stone-400">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#4ade80]" />
-            <span className="font-bold text-white">Landslide Guard</span>
-            <span>&bull; AI + IoT Geotechnical Early Warning System</span>
+          <div className="flex items-center gap-3">
+            <BrandIcon mode="dark" className="w-7 h-8" />
+            <div className="flex flex-col text-left">
+              <span className="font-heading font-black text-sm text-white tracking-wide leading-none">
+                LANDSLIDE <span className="text-[#39B86A]">GUARD</span>
+              </span>
+              <span className="text-[10px] text-stone-400 font-bold uppercase tracking-wider mt-0.5">
+                SAFER MOUNTAINS, STRONGER COMMUNITIES
+              </span>
+            </div>
           </div>
 
           <div className="text-[11px] text-stone-400">

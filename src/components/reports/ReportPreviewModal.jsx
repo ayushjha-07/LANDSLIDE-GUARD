@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { X, Download, Printer, FileText, CheckCircle2, ShieldAlert, Sparkles } from 'lucide-react';
+import BrandLogo from '../common/BrandLogo';
 
 export const ReportPreviewModal = ({ isOpen, onClose, reportConfig, nodes = [], onExportPdf, onExportCsv, onPrint }) => {
   useEffect(() => {
@@ -86,17 +87,21 @@ export const ReportPreviewModal = ({ isOpen, onClose, reportConfig, nodes = [], 
         {/* Scrollable Printable Document View */}
         <div className="p-5 sm:p-8 overflow-y-auto space-y-6 text-xs text-[#2D3748] dark:text-[#CBD5E0] print:p-0">
           {/* Header Banner */}
-          <div className="border-b-2 border-[#2B6CB0] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <span className="text-[10px] tracking-widest uppercase font-bold text-[#2B6CB0] dark:text-[#63B3ED] block mb-1">
-                Civil Defense &amp; Disaster Prevention Pipeline
-              </span>
-              <h1 className="text-xl sm:text-2xl font-bold font-heading text-[#1A202C] dark:text-white">
-                Landslide Guard — Monitoring Report
-              </h1>
-              <p className="text-xs text-[#718096] dark:text-[#A0AEC0] mt-1">
-                Automated Geotechnical &amp; Environmental Intelligence Summary
-              </p>
+          <div className="border-b-2 border-forest-600 dark:border-forest-500 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-2">
+              <BrandLogo 
+                variant="horizontal" 
+                size="sm" 
+                showTagline={true} 
+              />
+              <div>
+                <h1 className="text-xl sm:text-2xl font-bold font-heading text-[#1A202C] dark:text-white">
+                  Geotechnical &amp; Environmental Monitoring Report
+                </h1>
+                <p className="text-xs text-[#718096] dark:text-[#A0AEC0] mt-0.5">
+                  Automated Geotechnical Telemetry &amp; Machine Learning Hazard Intelligence Summary
+                </p>
+              </div>
             </div>
             <div className="text-left sm:text-right text-xs">
               <span className="font-semibold block text-[#1A202C] dark:text-white">Generated: 13 Sep 2026, 10:00 AM</span>
