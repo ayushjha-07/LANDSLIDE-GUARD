@@ -12,12 +12,12 @@ export const SystemHealthCard = () => {
       className="min-w-0 flex flex-col justify-between"
     >
       <div className="space-y-3 pt-1 text-xs">
-        {/* Real Field Monitoring Station Photograph */}
-        <div className="relative w-full h-[125px] sm:h-[135px] rounded-xl overflow-hidden shadow-xs border border-stone-200/70 dark:border-forest-900/60 group bg-stone-100 dark:bg-[#0c1813]">
+        {/* Real Field Monitoring Station Photograph - Equal aspect-video ratio */}
+        <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-xs border border-stone-200/70 dark:border-forest-900/60 group bg-stone-100 dark:bg-[#0c1813]">
           <img 
             src={sensorStationImg} 
             alt="Solar-powered landslide monitoring field station, Himachal Pradesh" 
-            className="w-full h-full object-cover object-[center_38%] transform transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-cover object-center transform transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
           />
           {/* Subtle gradient scrim */}

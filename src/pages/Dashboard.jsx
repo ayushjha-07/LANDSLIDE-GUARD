@@ -112,7 +112,7 @@ export const Dashboard = () => {
       <LoraNetworkCard />
 
       {/* 11, 12 & 13. WEATHER CONDITIONS, SYSTEM HEALTH & QUICK ACTIONS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 w-full min-w-0">
+      <div id="three-section-grid" className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 w-full min-w-0 items-stretch">
         <WeatherCard />
         <SystemHealthCard />
         <QuickActionsCard />

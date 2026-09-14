@@ -19,12 +19,12 @@ export const QuickActionsCard = () => {
       className="min-w-0 flex flex-col"
     >
       <div className="space-y-3 pt-1 text-xs">
-        {/* Disaster & Environmental Monitoring Control Room Banner */}
-        <div className="relative w-full h-[105px] sm:h-[115px] rounded-xl overflow-hidden shadow-xs border border-stone-200/70 dark:border-forest-900/60 group bg-stone-100 dark:bg-[#0c1813]">
+        {/* Disaster & Environmental Monitoring Control Room Banner - Equal aspect-video ratio */}
+        <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-xs border border-stone-200/70 dark:border-forest-900/60 group bg-stone-100 dark:bg-[#0c1813]">
           <img 
             src={controlRoomImg} 
             alt="Environmental monitoring and disaster management control room" 
-            className="w-full h-full object-cover object-[center_35%] transform transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-cover object-center transform transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
           />
           {/* Subtle gradient scrim */}
