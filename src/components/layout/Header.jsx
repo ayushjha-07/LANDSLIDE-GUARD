@@ -10,7 +10,8 @@ import {
   Radio, 
   User, 
   MapPin,
-  BrainCircuit
+  BrainCircuit,
+  Settings
 } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import UserMenu from '../UserMenu';
@@ -46,7 +47,8 @@ export const Header = ({ onOpenSidebar }) => {
 
   const isSensors = location.pathname === '/sensors';
   const isRisk = location.pathname === '/risk-analysis';
-  const isStyledPage = isSensors || isRisk;
+  const isSettings = location.pathname === '/settings';
+  const isStyledPage = isSensors || isRisk || isSettings;
 
   return (
     <header className={`sticky top-0 z-30 flex items-center justify-between h-16 px-3 sm:px-4 md:px-6 lg:px-8 backdrop-blur-md transition-colors duration-200 box-border w-full min-w-0 ${
@@ -104,6 +106,31 @@ export const Header = ({ onOpenSidebar }) => {
               <div className="text-left leading-tight">
                 <div className="text-[11.5px] font-bold text-slate-900 dark:text-white">Himachal Pradesh</div>
                 <div className="text-[9.5px] text-slate-500 dark:text-slate-400">Kullu - Manali Region</div>
+              </div>
+            </div>
+          </div>
+        ) : isSettings ? (
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                <Settings className="w-5 h-5 stroke-[2.2]" />
+              </div>
+              <div className="min-w-0">
+                <h1 className="text-base sm:text-lg font-bold font-heading text-slate-900 dark:text-white truncate leading-tight">
+                  System Settings
+                </h1>
+                <p className="hidden md:block text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                  Sensor calibration, alert triggers & network frequency
+                </p>
+              </div>
+            </div>
+
+            {/* Regional Location Pill strictly matching visual reference */}
+            <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50/90 dark:bg-slate-900/85 border border-slate-200/80 dark:border-slate-800 shadow-2xs backdrop-blur-md text-slate-800 dark:text-white ml-2">
+              <MapPin className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300 shrink-0" />
+              <div className="text-left leading-tight">
+                <div className="text-[11px] font-bold text-slate-900 dark:text-white">Kullu – Manali Region</div>
+                <div className="text-[9.5px] text-slate-500 dark:text-slate-400">Himachal Pradesh</div>
               </div>
             </div>
           </div>

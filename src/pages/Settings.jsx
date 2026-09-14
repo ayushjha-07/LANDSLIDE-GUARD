@@ -57,7 +57,9 @@ export const Settings = () => {
 
         {/* Active Content Section */}
         <div className="flex-1 w-full min-w-0">
-          {activeSection === 'general' && <GeneralSection />}
+          {activeSection === 'general' && (
+            <GeneralSection onResetClick={(type) => setModalType(type || 'reset_settings')} />
+          )}
           {activeSection === 'monitoring' && <MonitoringSection />}
           {activeSection === 'risk' && <RiskThresholdsSection />}
           {activeSection === 'sensors' && <SensorThresholdsSection />}
