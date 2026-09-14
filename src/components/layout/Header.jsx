@@ -42,10 +42,14 @@ export const Header = ({ onOpenSidebar }) => {
     subtitle: 'AI-Powered Landslide Early Warning System'
   };
 
+  const isSensors = location.pathname === '/sensors';
+
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-3 sm:px-4 md:px-6 lg:px-8 
-      bg-white/95 dark:bg-[#0E131F]/95 backdrop-blur-md 
-      border-b border-[#E2E8F0] dark:border-[#2D3748] transition-colors duration-200 box-border w-full min-w-0"
+    <header className={`sticky top-0 z-30 flex items-center justify-between h-16 px-3 sm:px-4 md:px-6 lg:px-8 backdrop-blur-md transition-colors duration-200 box-border w-full min-w-0 ${
+      isSensors 
+        ? 'bg-[#070d18]/90 text-white border-b border-slate-800/80 shadow-md' 
+        : 'bg-white/95 dark:bg-[#0E131F]/95 text-[#2D3748] dark:text-[#E2E8F0] border-b border-[#E2E8F0] dark:border-[#2D3748]'
+    }`}
     >
       {/* Left: Mobile/Tablet Hamburger + Dynamic Title */}
       <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 mr-2">
@@ -53,21 +57,49 @@ export const Header = ({ onOpenSidebar }) => {
         <button
           type="button"
           onClick={onOpenSidebar}
-          className="min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center rounded-xl text-[#2D3748] hover:text-[#1A202C] dark:text-slate-300 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 border border-[#E2E8F0] dark:border-[#2D3748] lg:hidden flex-shrink-0"
+          className={`min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center rounded-xl border lg:hidden flex-shrink-0 transition-colors ${
+            isSensors
+              ? 'text-slate-200 hover:text-white bg-slate-900/80 border-slate-700'
+              : 'text-[#2D3748] hover:text-[#1A202C] dark:text-slate-300 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 border-[#E2E8F0] dark:border-[#2D3748]'
+          }`}
           aria-label="Open navigation drawer"
         >
           <Menu className="w-5 h-5" />
         </button>
 
-        <div className="min-w-0 flex-1">
-          <h1 className="text-base sm:text-lg md:text-xl font-bold font-heading text-[#1A202C] dark:text-white truncate leading-tight">
-            <span className="sm:hidden">{routeInfo.title}</span>
-            <span className="hidden sm:inline">{routeInfo.fullTitle}</span>
-          </h1>
-          <p className="hidden md:block text-xs text-[#718096] dark:text-slate-400 truncate">
-            {routeInfo.subtitle}
-          </p>
-        </div>
+        {isSensors ? (
+          <div className="flex items-center gap-2.5 min-w-0">
+            {/* Antenna Icon Badge */}
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 flex items-center justify-center shrink-0 shadow-md">
+              <Radio className="w-5 h-5 stroke-[2.2]" />
+            </div>
+
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-sm sm:text-base md:text-lg font-black font-heading text-white tracking-tight truncate leading-tight uppercase">
+                  LIVE GEOTECHNICAL SENSORS
+                </h1>
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shrink-0">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  LIVE
+                </span>
+              </div>
+              <p className="hidden md:block text-xs text-slate-300 truncate mt-0.5">
+                Borehole pore pressure, soil moisture &amp; displacement telemetry
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="min-w-0 flex-1">
+            <h1 className="text-base sm:text-lg md:text-xl font-bold font-heading text-[#1A202C] dark:text-white truncate leading-tight">
+              <span className="sm:hidden">{routeInfo.title}</span>
+              <span className="hidden sm:inline">{routeInfo.fullTitle}</span>
+            </h1>
+            <p className="hidden md:block text-xs text-[#718096] dark:text-slate-400 truncate">
+              {routeInfo.subtitle}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Right Controls: Search, Notification, ONE Theme Button, User Profile */}
@@ -81,12 +113,18 @@ export const Header = ({ onOpenSidebar }) => {
               setShowAlertsDropdown(false);
               setShowUserDropdown(false);
             }}
-            className="min-w-[44px] min-h-[44px] px-2.5 sm:px-3 flex items-center justify-center gap-2 rounded-xl text-xs text-[#2D3748] dark:text-slate-300 bg-slate-50 dark:bg-[#1A202C] border border-[#E2E8F0] dark:border-[#2D3748] hover:border-forest-500 dark:hover:border-forest-400 transition-colors"
+            className={`min-w-[44px] min-h-[44px] px-2.5 sm:px-3 flex items-center justify-center gap-2 rounded-xl text-xs transition-colors ${
+              isSensors
+                ? 'text-slate-200 bg-slate-900/80 border border-slate-700 hover:border-slate-500'
+                : 'text-[#2D3748] dark:text-slate-300 bg-slate-50 dark:bg-[#1A202C] border border-[#E2E8F0] dark:border-[#2D3748] hover:border-forest-500 dark:hover:border-forest-400'
+            }`}
             aria-label="Search telemetry & sensors"
           >
-            <Search className="w-4 h-4 text-[#718096] dark:text-slate-400" />
-            <span className="hidden md:inline">Search...</span>
-            <kbd className="hidden xl:inline-block px-1.5 py-0.5 text-[10px] font-mono rounded bg-slate-200 dark:bg-slate-800 text-[#4A5568] dark:text-slate-300">
+            <Search className="w-4 h-4 text-slate-400" />
+            <span className="hidden md:inline">Search nodes, parameters...</span>
+            <kbd className={`hidden xl:inline-block px-1.5 py-0.5 text-[10px] font-mono rounded ${
+              isSensors ? 'bg-slate-800 text-slate-300 border border-slate-700' : 'bg-slate-200 dark:bg-slate-800 text-[#4A5568] dark:text-slate-300'
+            }`}>
               Ctrl K
             </kbd>
           </button>
@@ -134,7 +172,11 @@ export const Header = ({ onOpenSidebar }) => {
               setShowSearchModal(false);
               setShowUserDropdown(false);
             }}
-            className="relative min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center rounded-xl text-[#2D3748] dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-[#E2E8F0] dark:border-[#2D3748] transition-colors"
+            className={`relative min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center rounded-xl transition-colors ${
+              isSensors
+                ? 'text-slate-200 bg-slate-900/80 border border-slate-700 hover:border-slate-500'
+                : 'text-[#2D3748] dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-[#E2E8F0] dark:border-[#2D3748]'
+            }`}
             aria-label="Early Warning Notifications"
             title="System Alerts & Warnings"
           >

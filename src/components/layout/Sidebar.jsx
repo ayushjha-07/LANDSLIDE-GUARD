@@ -208,75 +208,30 @@ export const Sidebar = ({ isOpen, onClose }) => {
                   <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
                 </div>
 
-                {/* Gateway Online Status & Mini LoRa Antenna Graphic */}
+                {/* Compact LoRa Gateway & Nodes Online Widget */}
                 <div className="flex items-center justify-between gap-2">
                   <div>
-                    <div className="flex items-center gap-1.5 text-xs font-semibold text-white">
+                    <div className="text-[11px] font-bold text-slate-300">
+                      LoRa Gateway
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400 mt-0.5">
                       <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
                       </span>
-                      <span>Gateway Online</span>
-                    </div>
-                    <div className="text-[10px] font-mono text-slate-400 pl-3.5 mt-0.5">
-                      EDGE-GW-01
+                      <span>Online</span>
                     </div>
                   </div>
 
-                  {/* Mini LoRa Gateway SVG graphic */}
-                  <div className="relative w-11 h-9 flex-shrink-0 flex items-center justify-center">
-                    <svg viewBox="0 0 44 36" fill="none" className="w-full h-full" aria-hidden="true">
-                      <path d="M14 11 A10 10 0 0 1 30 11" stroke="#34D399" strokeWidth="1.6" strokeLinecap="round" opacity="0.9" />
-                      <path d="M9 6 A16 16 0 0 1 35 6" stroke="#34D399" strokeWidth="1.4" strokeLinecap="round" opacity="0.55" />
-                      <line x1="22" y1="13" x2="22" y2="25" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" />
-                      <circle cx="22" cy="13" r="1.6" fill="#34D399" />
-                      <rect x="16" y="25" width="12" height="8" rx="1.5" fill="#1e293b" stroke="#475569" strokeWidth="1" />
-                      <circle cx="19" cy="29" r="0.8" fill="#10B981" />
-                      <circle cx="22" cy="29" r="0.8" fill="#38bdf8" />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Canonical Project Stats: 14/16 Nodes Online & 98.6% Packet Success */}
-                <div className="grid grid-cols-2 gap-2 pt-2 border-t border-emerald-500/15">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <div className="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 flex-shrink-0">
-                      <Share2 className="w-3.5 h-3.5" />
+                  <div className="text-right">
+                    <div className="text-xs font-bold font-mono text-white">
+                      7/8 Online
                     </div>
-                    <div className="min-w-0">
-                      <div className="text-xs font-bold text-white font-mono leading-tight">
-                        {SYSTEM_INFO?.connectedNodes || 14} / {SYSTEM_INFO?.totalNodes || 16}
-                      </div>
-                      <div className="text-[9.5px] text-slate-400 leading-tight">
-                        Nodes Online
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 min-w-0">
-                    <div className="w-7 h-7 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 flex-shrink-0">
-                      <ShieldCheck className="w-3.5 h-3.5" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="text-xs font-bold text-white font-mono leading-tight">
-                        98.6%
-                      </div>
-                      <div className="text-[9.5px] text-slate-400 leading-tight">
-                        Packet Success
-                      </div>
+                    <div className="text-[9.5px] text-slate-400">
+                      Nodes Active
                     </div>
                   </div>
                 </div>
-
-                {/* Quick Status Action Pill */}
-                <div className="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-emerald-950/60 border border-emerald-500/25 text-[10.5px] text-emerald-300">
-                  <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                    <span className="font-semibold">Network Stable</span>
-                  </div>
-                  <ChevronRight className="w-3 h-3 text-emerald-400/80" />
-                </div>
-
               </div>
             </div>
 
