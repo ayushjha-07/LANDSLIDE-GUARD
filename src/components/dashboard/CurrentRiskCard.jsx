@@ -838,21 +838,21 @@ export const CurrentRiskCard = ({
                   </span>
                 </div>
 
-                {/* Mini Recharts AreaChart Sparkline */}
-                <div className="w-full h-8 my-0.5">
+                {/* Mini Recharts AreaChart Sparkline (Detailed Zig-Zag) */}
+                <div className="w-full h-9 my-0.5">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={KEY_MEASUREMENTS_SPARKLINES_24H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
                       <defs>
                         <linearGradient id="moistureGradMini" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#06b6d4" stopOpacity={0.4} />
+                          <stop offset="0%" stopColor="#06b6d4" stopOpacity={0.45} />
                           <stop offset="100%" stopColor="#06b6d4" stopOpacity={0.0} />
                         </linearGradient>
                       </defs>
                       <Area 
-                        type="monotone" 
+                        type="linear" 
                         dataKey="moisture" 
                         stroke="#06b6d4" 
-                        strokeWidth={1.5} 
+                        strokeWidth={1.8} 
                         fill="url(#moistureGradMini)" 
                         isAnimationActive={false} 
                       />
@@ -888,8 +888,8 @@ export const CurrentRiskCard = ({
                   </span>
                 </div>
 
-                {/* Mini Recharts BarChart Sparkline */}
-                <div className="w-full h-8 my-0.5">
+                {/* Mini Recharts BarChart Sparkline (Detailed Hyetograph Teeth) */}
+                <div className="w-full h-9 my-0.5">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={KEY_MEASUREMENTS_SPARKLINES_24H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
                       <Bar 
@@ -927,21 +927,21 @@ export const CurrentRiskCard = ({
                   </span>
                 </div>
 
-                {/* Mini Recharts AreaChart Sparkline */}
-                <div className="w-full h-8 my-0.5">
+                {/* Mini Recharts AreaChart Sparkline (Detailed Inclinometer Zig-Zag) */}
+                <div className="w-full h-9 my-0.5">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={KEY_MEASUREMENTS_SPARKLINES_24H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
                       <defs>
                         <linearGradient id="tiltGradMini" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
+                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.45} />
                           <stop offset="100%" stopColor="#10b981" stopOpacity={0.0} />
                         </linearGradient>
                       </defs>
                       <Area 
-                        type="monotone" 
+                        type="linear" 
                         dataKey="tilt" 
                         stroke="#10b981" 
-                        strokeWidth={1.5} 
+                        strokeWidth={1.8} 
                         fill="url(#tiltGradMini)" 
                         isAnimationActive={false} 
                       />
@@ -977,15 +977,15 @@ export const CurrentRiskCard = ({
                   </span>
                 </div>
 
-                {/* Mini Recharts LineChart Sparkline */}
-                <div className="w-full h-8 my-0.5">
+                {/* Mini Recharts LineChart Sparkline (Detailed Seismic Waveform Zig-Zag) */}
+                <div className="w-full h-9 my-0.5">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={KEY_MEASUREMENTS_SPARKLINES_24H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
                       <Line 
-                        type="monotone" 
+                        type="linear" 
                         dataKey="vibration" 
                         stroke="#a855f7" 
-                        strokeWidth={1.5} 
+                        strokeWidth={1.6} 
                         dot={false} 
                         isAnimationActive={false} 
                       />
@@ -1033,21 +1033,21 @@ export const CurrentRiskCard = ({
             </div>
           </div>
 
-          {/* 24H Risk Score Area Chart */}
-          <div className="w-full h-10 mt-1">
+          {/* 24H Risk Score Area Chart (Detailed Zig-Zag Net Slope Strain) */}
+          <div className="w-full h-11 mt-1">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={RISK_SCORE_HISTORY_24H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="trendCardGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.35} />
+                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
                     <stop offset="100%" stopColor="#10b981" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
                 <Area 
-                  type="monotone" 
+                  type="linear" 
                   dataKey="score" 
                   stroke="#10b981" 
-                  strokeWidth={1.8} 
+                  strokeWidth={2} 
                   fill="url(#trendCardGrad)" 
                   isAnimationActive={false} 
                 />
@@ -1078,21 +1078,30 @@ export const CurrentRiskCard = ({
             </div>
           </div>
 
-          {/* Multi-Horizon Risk Prediction Area Chart */}
-          <div className="w-full h-10 mt-1">
+          {/* Multi-Horizon Risk Prediction Area Chart (Detailed Multi-Step Forecast Envelope) */}
+          <div className="w-full h-11 mt-1">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={RISK_PREDICTION_SERIES_8H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="predCardGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#0ea5e9" stopOpacity={0.3} />
+                    <stop offset="0%" stopColor="#0ea5e9" stopOpacity={0.35} />
                     <stop offset="100%" stopColor="#0ea5e9" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
                 <Area 
-                  type="monotone" 
+                  type="linear" 
+                  dataKey="high" 
+                  stroke="#38bdf8" 
+                  strokeWidth={1} 
+                  strokeDasharray="2, 2"
+                  fill="transparent" 
+                  isAnimationActive={false} 
+                />
+                <Area 
+                  type="linear" 
                   dataKey="moderate" 
                   stroke="#0ea5e9" 
-                  strokeWidth={1.8} 
+                  strokeWidth={2} 
                   fill="url(#predCardGrad)" 
                   isAnimationActive={false} 
                 />
