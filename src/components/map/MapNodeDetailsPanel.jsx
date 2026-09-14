@@ -18,6 +18,7 @@ import {
   X
 } from 'lucide-react';
 import Card from '../common/Card';
+import { getNodeFieldImage, getNodeLocationName } from '../../assets/nodes/nodeImages';
 
 export const MapNodeDetailsPanel = ({ node, onClose, className = "" }) => {
   const navigate = useNavigate();
@@ -108,11 +109,11 @@ export const MapNodeDetailsPanel = ({ node, onClose, className = "" }) => {
 
         {/* Location & Prototype GPS Coordinates */}
         <div className="mt-1 space-y-0.5 text-xs">
-          <div className="text-stone-300 font-semibold text-xs">
-            {node.location?.name || node.name || 'Mountain Zone C'}
+          <div className="text-white font-bold text-sm tracking-tight">
+            {getNodeLocationName(node.id) || node.location?.name || node.name || 'Mountain Zone C'}
           </div>
 
-          <div className="flex items-center gap-1.5 text-stone-400 text-[11px]">
+          <div className="flex items-center gap-1.5 text-stone-300 text-xs">
             <MapPin className="w-3.5 h-3.5 text-[#10b981] flex-shrink-0" />
             <span>Near Kullu, Himachal Pradesh</span>
           </div>
@@ -125,30 +126,31 @@ export const MapNodeDetailsPanel = ({ node, onClose, className = "" }) => {
             <button
               type="button"
               onClick={handleCopyCoords}
-              className="p-1 hover:text-white transition-colors"
+              className="p-1 hover:text-white transition-colors cursor-pointer"
               title="Copy GPS coordinates"
             >
-              {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
             </button>
           </div>
         </div>
 
         {/* Real Field Station Photograph */}
-        <div className="mt-3 relative aspect-video rounded-xl overflow-hidden border border-stone-800 shadow-md bg-black/40 group">
+        <div className="mt-3 relative aspect-[16/10] sm:aspect-video rounded-xl overflow-hidden border border-stone-800 shadow-md bg-black/40 group">
           <img
-            src="/images/landslide_field_station.jpg"
-            alt="Reference field landslide monitoring system"
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            key={node.id}
+            src={getNodeFieldImage(node.id)}
+            alt={`${node.id} field sensor station`}
+            className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
           />
           {/* Top-Right Badge */}
-          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md border border-white/10 text-[10px] font-semibold text-stone-200 shadow-md">
+          <div className="absolute top-2 right-2 px-2 py-0.5 rounded-md bg-black/75 backdrop-blur-md border border-white/15 text-[10px] font-medium text-stone-200 shadow-md">
             Reference field image
           </div>
-          {/* Subtle Bottom Caption */}
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent p-2 pt-4">
-            <p className="text-[11px] text-stone-300 font-medium tracking-tight">
-              Reference: field landslide monitoring system
+          {/* Bottom Caption matching reference image */}
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-2 pt-4">
+            <p className="text-[10.5px] text-stone-200 font-medium tracking-tight">
+              Actual sensor installation at mountain slope
             </p>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { MapContainer, TileLayer, useMap, ScaleControl, Polygon } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap, ScaleControl, Polygon, Marker } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import SensorMarker from './SensorMarker';
@@ -15,7 +15,117 @@ import {
 import MapControls, { DashboardMapControls } from './MapControls';
 import { AlertTriangle, Compass, CloudRain } from 'lucide-react';
 
-// Elongated Himalayan mountain slope landslide hazard zone overlay for Kullu / Beas sector
+// Exact canonical map coordinates matching Reference Image 1
+export const CANONICAL_MAP_COORDS = {
+  'NODE-01': [32.258, 77.170],
+  'NODE-02': [32.242, 77.145],
+  'NODE-03': [32.246, 77.215],
+  'NODE-04': [32.230, 77.248],
+  'NODE-05': [32.228, 77.185],
+  'NODE-06': [32.195, 77.185],
+  'NODE-07': [32.198, 77.140],
+  'NODE-08': [32.196, 77.230]
+};
+
+// 1. High Risk Zone (Red Dashed - Central Corridor around NODE-05)
+export const HIGH_RISK_ZONE = [
+  [32.240, 77.170],
+  [32.244, 77.195],
+  [32.235, 77.215],
+  [32.218, 77.205],
+  [32.212, 77.175],
+  [32.220, 77.155],
+  [32.234, 77.155]
+];
+
+// 2. Watch Zone (Yellow Dashed - Intermediate Slope Zone around NODE-03 and NODE-05)
+export const WATCH_ZONE = [
+  [32.256, 77.165],
+  [32.262, 77.195],
+  [32.254, 77.235],
+  [32.225, 77.240],
+  [32.205, 77.218],
+  [32.198, 77.175],
+  [32.206, 77.142],
+  [32.235, 77.132],
+  [32.250, 77.145]
+];
+
+// 3. Monitoring Boundary (Green Dashed - Outer Valley Perimeter enclosing all 8 nodes)
+export const MONITORING_BOUNDARY = [
+  [32.274, 77.155],
+  [32.282, 77.205],
+  [32.268, 77.260],
+  [32.240, 77.275],
+  [32.205, 77.268],
+  [32.170, 77.245],
+  [32.165, 77.175],
+  [32.172, 77.125],
+  [32.215, 77.110],
+  [32.255, 77.120]
+];
+
+// Regional Landmark labels directly rendered on terrain matching Reference Image 1
+export const TERRAIN_LANDMARKS = [
+  { name: 'Rohtang Pass', elev: '3,978 m', pos: [32.268, 77.215], type: 'pass' },
+  { name: 'Hampta Pass', elev: '4,270 m', pos: [32.250, 77.265], type: 'pass' },
+  { name: 'Manali', pos: [32.256, 77.185], type: 'town' },
+  { name: 'Solang Valley', pos: [32.226, 77.112], type: 'town' },
+  { name: 'Kullu', pos: [32.186, 77.122], type: 'town' },
+  { name: 'Bhuntar', pos: [32.148, 77.185], type: 'town' },
+  { name: 'Beas River', pos: [32.242, 77.135], type: 'river' }
+];
+
+// Historical Landslide warning spots matching Reference Image 1
+export const LANDSLIDE_HAZARDS = [
+  [32.252, 77.200],
+  [32.242, 77.255],
+  [32.236, 77.160],
+  [32.220, 77.155],
+  [32.224, 77.228],
+  [32.180, 77.185]
+];
+
+function createLandmarkIcon(landmark) {
+  if (landmark.type === 'pass') {
+    return L.divIcon({
+      html: `<div class="text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] whitespace-nowrap pointer-events-none select-none">
+        <div class="text-white font-bold text-[11px] leading-tight flex items-center gap-1 justify-center">
+          <span class="text-xs">⛰</span> <span>${landmark.name}</span>
+        </div>
+        <div class="text-slate-200 text-[9.5px] font-mono leading-tight">⛰ ${landmark.elev}</div>
+      </div>`,
+      className: 'custom-map-landmark',
+      iconSize: [110, 24],
+      iconAnchor: [55, 12]
+    });
+  }
+  if (landmark.type === 'river') {
+    return L.divIcon({
+      html: `<div class="text-cyan-300 font-bold italic text-xs tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] whitespace-nowrap pointer-events-none select-none -rotate-12">${landmark.name}</div>`,
+      className: 'custom-map-landmark',
+      iconSize: [80, 20],
+      iconAnchor: [40, 10]
+    });
+  }
+  return L.divIcon({
+    html: `<div class="text-white font-black text-xs sm:text-sm tracking-wider drop-shadow-[0_2px_5px_rgba(0,0,0,0.95)] whitespace-nowrap pointer-events-none select-none">${landmark.name}</div>`,
+    className: 'custom-map-landmark',
+    iconSize: [90, 20],
+    iconAnchor: [45, 10]
+  });
+}
+
+function createHazardIcon() {
+  return L.divIcon({
+    html: `<div class="w-4 h-4 flex items-center justify-center text-xs drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] select-none pointer-events-none">⚠️</div>`,
+    className: 'custom-map-hazard',
+    iconSize: [16, 16],
+    iconAnchor: [8, 8]
+  });
+}
+
+// Elongated Himalayan mountain slope landslide hazard zone overlay for Kullu / Beas sector (Alerts mode)
 export const LANDSLIDE_PRONE_ZONE = [
   [32.2580, 77.1700],
   [32.2640, 77.2060],
@@ -24,7 +134,7 @@ export const LANDSLIDE_PRONE_ZONE = [
   [32.2340, 77.1720]
 ];
 
-// Helper component to smoothly fly map to selected node or search location without overriding the initial wide view
+// Helper component to smoothly fly map to selected node or search location without overriding initial wide view
 function MapCameraController({ targetPosition, targetZoom, selectedNodeId, searchTarget }) {
   const map = useMap();
   const isFirstRender = useRef(true);
@@ -48,7 +158,7 @@ function MapCameraController({ targetPosition, targetZoom, selectedNodeId, searc
       prevSelectedNodeId.current = selectedNodeId;
       prevSearchTarget.current = searchTarget;
       if (targetPosition) {
-        map.flyTo(targetPosition, targetZoom || 12.0, {
+        map.flyTo(targetPosition, targetZoom || 12.1, {
           duration: 1.0
         });
       }
@@ -75,12 +185,16 @@ export const MonitoringMap = ({
   onStatusFilterChange = null,
   onResetView = null,
   height = null,
-  className = ""
+  className = "",
+  searchQuery = '',
+  onSearchChange = null,
+  onSelectPlace = null,
+  onSelectNodeById = null
 }) => {
   const isDashboard = variant === 'dashboard';
   const isAlerts = variant === 'alerts';
 
-  // Default to real high-altitude Himalayan aerial satellite view matching the reference images
+  // Default to real high-altitude Himalayan aerial satellite view matching Reference Image 1
   const [internalLayer, setInternalLayer] = useState('satellite');
   const currentLayer = layer !== null && layer !== undefined ? layer : internalLayer;
   const [hasTileError, setHasTileError] = useState(false);
@@ -96,20 +210,38 @@ export const MonitoringMap = ({
     return MAP_TILE_PROVIDERS[currentLayer] || MAP_TILE_PROVIDERS.satellite;
   }, [currentLayer]);
 
-  // Support canonical alert nodes prioritization
+  // Support canonical coordinates for all nodes to guarantee exact alignment with Reference Image 1
   const displayNodes = useMemo(() => {
-    if (isAlerts && nodes.length > 0) {
-      const alertNodeIds = ['NODE-05', 'NODE-03', 'NODE-02', 'NODE-07', 'Node 05', 'Node 03', 'Node 02', 'Node 07'];
-      const filtered = nodes.filter(n => alertNodeIds.includes(n.id) || alertNodeIds.includes(n.name));
-      return filtered.length > 0 ? filtered : nodes;
-    }
-    return nodes;
+    const list = isAlerts && nodes.length > 0
+      ? (() => {
+          const alertNodeIds = ['NODE-05', 'NODE-03', 'NODE-02', 'NODE-07', 'Node 05', 'Node 03', 'Node 02', 'Node 07'];
+          const filtered = nodes.filter(n => alertNodeIds.includes(n.id) || alertNodeIds.includes(n.name));
+          return filtered.length > 0 ? filtered : nodes;
+        })()
+      : nodes;
+
+    return list.map(node => {
+      const canonicalCoord = CANONICAL_MAP_COORDS[node.id];
+      if (canonicalCoord) {
+        return {
+          ...node,
+          latitude: canonicalCoord[0],
+          longitude: canonicalCoord[1],
+          location: {
+            ...node.location,
+            latitude: canonicalCoord[0],
+            longitude: canonicalCoord[1]
+          }
+        };
+      }
+      return node;
+    });
   }, [nodes, isAlerts]);
 
   // Determine initial center and zoom
-  const initialCenter = isAlerts ? [32.2417, 77.1892] : HIMACHAL_CENTER;
-  const defaultZoom = isAlerts ? 10.6 : (isDashboard ? HIMACHAL_DASHBOARD_ZOOM : HIMACHAL_FULL_ZOOM);
-  const containerHeight = height || (isAlerts ? 'h-[360px] sm:h-[440px] lg:h-full lg:min-h-[500px]' : isDashboard ? MAP_CONTAINER_HEIGHTS.dashboard : MAP_CONTAINER_HEIGHTS.full);
+  const initialCenter = isAlerts ? [32.2417, 77.1892] : [32.225, 77.185];
+  const defaultZoom = isAlerts ? 10.6 : (isDashboard ? HIMACHAL_DASHBOARD_ZOOM : 12.1);
+  const containerHeight = height || (isAlerts ? 'h-[360px] sm:h-[440px] lg:h-full lg:min-h-[500px]' : isDashboard ? MAP_CONTAINER_HEIGHTS.dashboard : 'h-[620px] sm:h-[680px] lg:h-[720px]');
 
   // Determine camera target from either explicit search target or selected node
   const cameraTarget = useMemo(() => {
@@ -129,17 +261,74 @@ export const MonitoringMap = ({
       return searchTarget.zoom;
     }
     if (selectedNode) {
-      return 12.8;
+      return 12.5;
     }
     return defaultZoom;
   }, [searchTarget, selectedNode, defaultZoom]);
 
   return (
     <div className={`relative w-full rounded-2xl overflow-hidden border border-stone-800 bg-[#0c1310] shadow-2xl min-w-0 ${className}`}>
-      {/* Subtle Natural Atmospheric Haze Overlay (inspired by reference images) */}
+      {/* Subtle Natural Atmospheric Haze Overlay */}
       <div className="absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-stone-950/25 via-stone-950/10 to-transparent pointer-events-none z-[350]" />
 
-      {/* ALERTS VARIANT GIS OVERLAYS (matching primary reference) */}
+      {/* 1. LEFT-SIDE FLOATING LEGEND (matching Reference Image 1) */}
+      {!isDashboard && !isAlerts && (
+        <div 
+          ref={(el) => { if (el) L.DomEvent.disableScrollPropagation(el); }}
+          onMouseDown={(e) => e.stopPropagation()}
+          className="absolute top-16 left-3 z-[1000] !pointer-events-auto select-none p-3 rounded-xl bg-black/85 backdrop-blur-md border border-white/20 shadow-2xl text-xs space-y-2 text-stone-200"
+        >
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#10b981] shadow-xs flex-shrink-0" />
+            <span className="text-stone-100 text-[11px] font-medium">Safe Node</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#f59e0b] shadow-xs flex-shrink-0" />
+            <span className="text-stone-100 text-[11px] font-medium">Warning Node</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444] shadow-xs flex-shrink-0" />
+            <span className="text-stone-100 text-[11px] font-medium">High Risk Node</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#94a3b8] shadow-xs flex-shrink-0" />
+            <span className="text-stone-100 text-[11px] font-medium">Offline Node</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-3.5 h-3 rounded-xs border border-dashed border-[#10b981] bg-[#10b981]/30 flex-shrink-0" />
+            <span className="text-stone-100 text-[11px] font-medium">Monitoring Boundary</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-3.5 h-3 rounded-xs border border-dashed border-[#eab308] bg-[#eab308]/30 flex-shrink-0" />
+            <span className="text-stone-100 text-[11px] font-medium">Watch Zone</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-3.5 h-3 rounded-xs border border-dashed border-[#ef4444] bg-[#ef4444]/40 flex-shrink-0" />
+            <span className="text-stone-100 text-[11px] font-medium">High Risk Zone</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-3.5 h-3.5 flex items-center justify-center text-xs font-bold text-amber-400 flex-shrink-0">⚠️</span>
+            <span className="text-stone-100 text-[11px] font-medium">Landslide History</span>
+          </div>
+        </div>
+      )}
+
+      {/* 2. BOTTOM-LEFT 5 KM SCALE INDICATOR (matching Reference Image 1) */}
+      {!isDashboard && !isAlerts && (
+        <div className="absolute bottom-3 left-4 z-[999] pointer-events-none select-none flex flex-col items-start text-white drop-shadow-md">
+          <span className="text-[10px] font-mono font-bold leading-none mb-1">5 km</span>
+          <div className="relative w-16 h-1 border-b-2 border-l-2 border-r-2 border-white" />
+        </div>
+      )}
+
+      {/* 3. BOTTOM-RIGHT OPENSTREETMAP ATTRIBUTION (matching Reference Image 1) */}
+      {!isDashboard && !isAlerts && (
+        <div className="absolute bottom-2.5 right-4 z-[999] pointer-events-none select-none text-[10.5px] text-white/70 drop-shadow-md font-sans">
+          © OpenStreetMap contributors
+        </div>
+      )}
+
+      {/* ALERTS VARIANT GIS OVERLAYS */}
       {isAlerts && (
         <>
           {/* Top-Left Location Indicator */}
@@ -281,11 +470,6 @@ export const MonitoringMap = ({
             </>
           )}
 
-          {/* Metric Scale Indicator (Full map only) */}
-          {!isDashboard && !isAlerts && (
-            <ScaleControl position="bottomleft" imperial={false} />
-          )}
-
           {/* Smooth Camera Controller - centers map when a node is selected or searched */}
           <MapCameraController 
             targetPosition={cameraTarget} 
@@ -294,7 +478,7 @@ export const MonitoringMap = ({
             searchTarget={searchTarget}
           />
 
-          {/* Map Controls: Dashboard Mode vs Full GIS Mode (Alerts mode uses streamlined overlays) */}
+          {/* Map Controls: Dashboard Mode vs Full GIS Mode */}
           {!isAlerts && (
             isDashboard ? (
               <DashboardMapControls 
@@ -323,8 +507,73 @@ export const MonitoringMap = ({
                 statusFilter={statusFilter}
                 onStatusFilterChange={onStatusFilterChange}
                 onResetView={onResetView}
+                searchQuery={searchQuery}
+                onSearchChange={onSearchChange}
+                onSelectPlace={onSelectPlace}
+                onSelectNodeById={onSelectNodeById}
               />
             )
+          )}
+
+          {/* 3 CONCENTRIC AI RISK ZONES (Full Map GIS Mode) */}
+          {!isAlerts && !isDashboard && (
+            <>
+              {/* Outer Monitoring Boundary (Green Dashed) */}
+              <Polygon
+                positions={MONITORING_BOUNDARY}
+                pathOptions={{
+                  color: '#10b981',
+                  fillColor: '#10b981',
+                  fillOpacity: 0.12,
+                  weight: 1.5,
+                  dashArray: '6 6'
+                }}
+              />
+
+              {/* Middle Watch Zone (Yellow Dashed) */}
+              <Polygon
+                positions={WATCH_ZONE}
+                pathOptions={{
+                  color: '#eab308',
+                  fillColor: '#eab308',
+                  fillOpacity: 0.22,
+                  weight: 1.5,
+                  dashArray: '6 6'
+                }}
+              />
+
+              {/* Inner High Risk Zone (Red Dashed) */}
+              <Polygon
+                positions={HIGH_RISK_ZONE}
+                pathOptions={{
+                  color: '#ef4444',
+                  fillColor: '#ef4444',
+                  fillOpacity: 0.35,
+                  weight: 2,
+                  dashArray: '6 6'
+                }}
+              />
+
+              {/* Terrain Landmarks (Rohtang, Hampta, Manali, etc.) */}
+              {TERRAIN_LANDMARKS.map(landmark => (
+                <Marker
+                  key={landmark.name}
+                  position={landmark.pos}
+                  icon={createLandmarkIcon(landmark)}
+                  interactive={false}
+                />
+              ))}
+
+              {/* Landslide History Warning Spots */}
+              {LANDSLIDE_HAZARDS.map((pos, idx) => (
+                <Marker
+                  key={`hazard-${idx}`}
+                  position={pos}
+                  icon={createHazardIcon()}
+                  interactive={false}
+                />
+              ))}
+            </>
           )}
 
           {/* Landslide Prone Hazard Area Polygon (Alerts mode) */}
@@ -341,8 +590,8 @@ export const MonitoringMap = ({
             />
           )}
 
-          {/* Prototype Risk Influence Zones (Low Opacity) */}
-          {showRiskZones && displayNodes.map(node => (
+          {/* Fallback prototype Risk Influence Zones if on Dashboard */}
+          {isDashboard && showRiskZones && displayNodes.map(node => (
             <RiskZone key={`risk-zone-${node.id}`} node={node} />
           ))}
 
@@ -354,7 +603,7 @@ export const MonitoringMap = ({
               isSelected={selectedNode?.id === node.id}
               onSelect={onSelectNode}
               popupVariant={isDashboard || isAlerts ? 'compact' : 'detailed'}
-              disablePopup={isAlerts}
+              disablePopup={!isDashboard}
             />
           ))}
         </MapContainer>

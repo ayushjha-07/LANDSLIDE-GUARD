@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Mountain, Radio, CheckCircle2, AlertTriangle, Info } from 'lucide-react';
+import { MapPin, Radio, Wifi, XCircle, AlertTriangle } from 'lucide-react';
 
 export const MapBottomSummary = ({
   totalCount = 8,
@@ -9,114 +9,132 @@ export const MapBottomSummary = ({
   className = ""
 }) => {
   return (
-    <div className={`p-4 rounded-2xl bg-[#0f172a]/95 dark:bg-[#0b1319]/95 backdrop-blur-md border border-stone-800 shadow-xl text-stone-300 grid grid-cols-1 md:grid-cols-12 gap-4 items-center ${className}`}>
-      
-      {/* Column 1: Monitoring Region (Col 1-3) */}
-      <div className="md:col-span-3 flex items-start gap-3 border-b md:border-b-0 md:border-r border-stone-800 pb-3 md:pb-0 md:pr-4">
-        <div className="p-2 rounded-xl bg-forest-950/60 border border-forest-800/80 text-[#10b981] flex-shrink-0">
-          <MapPin className="w-5 h-5" />
-        </div>
-        <div className="min-w-0">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-stone-400 block font-semibold">
-            Monitoring Region
-          </span>
-          <strong className="text-sm font-bold text-white block truncate">
-            Himachal Pradesh, India
-          </strong>
-          <span className="text-[11px] text-stone-400 block truncate">
-            Kullu &ndash; Manali / Beas Valley
-          </span>
-        </div>
-      </div>
-
-      {/* Column 2: Sensor Node Counts & Highest Risk (Col 4-7) */}
-      <div className="md:col-span-4 flex items-center justify-between gap-3 border-b md:border-b-0 md:border-r border-stone-800 pb-3 md:pb-0 md:pr-4">
-        {/* Sensor Nodes */}
-        <div className="flex items-center gap-2">
-          <Radio className="w-4 h-4 text-[#10b981]" />
-          <div>
-            <span className="text-[10px] text-stone-400 uppercase block">Nodes</span>
-            <strong className="text-sm font-bold text-white font-mono">{totalCount}</strong>
+    <div className={`space-y-3 w-full min-w-0 ${className}`}>
+      {/* 1. Main White Metrics & Legend Card */}
+      <div className="bg-white dark:bg-[#0c121e] border border-slate-200/80 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        
+        {/* Section 1: Monitoring Region */}
+        <div className="flex items-center gap-3 pr-4 lg:border-r border-slate-200 dark:border-slate-800">
+          <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-900/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <MapPin className="w-5 h-5" />
+          </div>
+          <div className="min-w-0">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+              Monitoring Region
+            </span>
+            <strong className="text-sm font-extrabold text-slate-900 dark:text-white block truncate">
+              Himachal Pradesh, India
+            </strong>
+            <span className="text-xs text-slate-500 dark:text-slate-400 block truncate">
+              Kullu – Manali / Beas Valley
+            </span>
           </div>
         </div>
 
-        {/* Online */}
-        <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#10b981] ring-2 ring-[#10b981]/30" />
+        {/* Section 2: Nodes */}
+        <div className="flex items-center gap-3 pr-4 lg:border-r border-slate-200 dark:border-slate-800">
+          <div className="w-9 h-9 rounded-lg bg-slate-50 dark:bg-slate-900 text-emerald-500 flex items-center justify-center shrink-0">
+            <Radio className="w-5 h-5" />
+          </div>
           <div>
-            <span className="text-[10px] text-stone-400 uppercase block">Online</span>
-            <strong className="text-sm font-bold text-[#10b981] font-mono">{onlineCount}</strong>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+              Nodes
+            </span>
+            <strong className="text-lg font-bold font-mono text-slate-900 dark:text-white">
+              {totalCount}
+            </strong>
           </div>
         </div>
 
-        {/* Offline */}
-        <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-stone-500" />
+        {/* Section 3: Online */}
+        <div className="flex items-center gap-3 pr-4 lg:border-r border-slate-200 dark:border-slate-800">
+          <div className="w-9 h-9 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <Wifi className="w-5 h-5" />
+          </div>
           <div>
-            <span className="text-[10px] text-stone-400 uppercase block">Offline</span>
-            <strong className="text-sm font-bold text-stone-400 font-mono">{offlineCount}</strong>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+              Online
+            </span>
+            <strong className="text-lg font-bold font-mono text-emerald-600 dark:text-emerald-400">
+              {onlineCount}
+            </strong>
           </div>
         </div>
 
-        {/* Highest Risk */}
-        <div className="flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 text-[#ef4444] flex-shrink-0" />
+        {/* Section 4: Offline */}
+        <div className="flex items-center gap-3 pr-4 lg:border-r border-slate-200 dark:border-slate-800">
+          <div className="w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center shrink-0">
+            <XCircle className="w-5 h-5" />
+          </div>
           <div>
-            <span className="text-[10px] text-stone-400 uppercase block">Highest Risk</span>
-            <div className="flex items-center gap-1">
-              <strong className="text-xs font-bold font-mono text-white">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+              Offline
+            </span>
+            <strong className="text-lg font-bold font-mono text-slate-700 dark:text-slate-300">
+              {offlineCount}
+            </strong>
+          </div>
+        </div>
+
+        {/* Section 5: Highest Risk */}
+        <div className="flex items-center gap-3 pr-4 lg:border-r border-slate-200 dark:border-slate-800">
+          <div className="w-9 h-9 rounded-lg bg-rose-50 dark:bg-rose-950/50 text-rose-500 flex items-center justify-center shrink-0">
+            <AlertTriangle className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block">
+              Highest Risk
+            </span>
+            <div className="flex items-baseline gap-1.5">
+              <strong className="text-sm font-bold text-slate-900 dark:text-white">
                 {highestRiskNode?.id?.replace("NODE-", "Node ") || "Node 05"}
               </strong>
-              <span className="text-[10px] font-bold text-[#ef4444]">
+              <span className="text-xs font-bold text-rose-500">
                 {highestRiskNode?.riskLevel || "High Risk"}
               </span>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Column 3: Risk Legend (Col 8-9) */}
-      <div className="md:col-span-2 flex items-center justify-center border-b md:border-b-0 md:border-r border-stone-800 pb-3 md:pb-0 md:pr-4">
-        <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px]">
+        {/* Section 6: Mini Risk Dots Legend */}
+        <div className="flex items-center gap-4 text-xs font-medium text-slate-600 dark:text-slate-300 flex-wrap lg:flex-nowrap">
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#10b981]" />
-            <span className="text-stone-300">Safe</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#10b981]" />
+            <span>Safe</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#dc2626]" />
-            <span className="text-stone-300">Critical</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#f59e0b]" />
+            <span>Warning</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-[#f59e0b]" />
-            <span className="text-stone-300">Warning</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444]" />
+            <span>High Risk</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-stone-500" />
-            <span className="text-stone-400">Offline</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#b91c1c]" />
+            <span>Critical</span>
           </div>
-          <div className="flex items-center gap-1.5 col-span-2">
-            <span className="w-2 h-2 rounded-full bg-[#ea580c]" />
-            <span className="text-stone-300">High Risk</span>
+          <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#64748b]" />
+            <span>Offline</span>
           </div>
         </div>
       </div>
 
-      {/* Column 4: Map Disclaimer & Attribution (Col 10-12) */}
-      <div className="md:col-span-3 flex items-start gap-2.5">
-        <Info className="w-4 h-4 text-[#10b981] flex-shrink-0 mt-0.5" />
-        <div className="space-y-0.5 text-[11px]">
-          <strong className="font-bold text-white text-xs block">
+      {/* 2. Map Disclaimer Banner matching reference */}
+      <div className="px-4 py-3 rounded-xl bg-amber-500/10 dark:bg-amber-950/20 border border-amber-500/30 flex items-center gap-3 text-xs text-amber-900 dark:text-amber-200">
+        <div className="w-5 h-5 rounded-md border border-amber-500/50 flex items-center justify-center shrink-0 text-amber-600 dark:text-amber-400">
+          <AlertTriangle className="w-3.5 h-3.5" />
+        </div>
+        <div className="leading-snug">
+          <strong className="font-bold text-amber-800 dark:text-amber-400 mr-2">
             Map Disclaimer
           </strong>
-          <p className="text-[10px] text-stone-400 leading-tight">
-            Real geographic basemap. Sensor locations and risk data are simulated prototype data and do not represent deployed sensors or official hazard boundaries.
-          </p>
-          <span className="text-[10px] text-stone-500 block font-mono">
-            &copy; OpenStreetMap contributors
+          <span className="text-slate-600 dark:text-slate-300">
+            Real geographic basemap. Sensor locations and risk data are simulated prototype data and do not represent deployed sensors or official landslide hazard boundaries.
           </span>
         </div>
       </div>
-
     </div>
   );
 };

@@ -41,9 +41,14 @@ export const MapControls = ({
   onRiskFilterChange,
   statusFilter = 'all',
   onStatusFilterChange,
-  onResetView
+  onResetView,
+  searchQuery = '',
+  onSearchChange,
+  onSelectNodeById,
+  onSelectPlace
 }) => {
   const map = useMap();
+  const [localSearch, setLocalSearch] = useState(searchQuery || '');
 
   const handleZoomIn = (e) => {
     e.stopPropagation();
@@ -61,6 +66,7 @@ export const MapControls = ({
     map.flyTo(HIMACHAL_CENTER, HIMACHAL_ZOOM, { duration: 1.0 });
     if (onLayerChange) onLayerChange('satellite');
     if (onResetView) onResetView();
+    setLocalSearch('');
   };
 
   const handleLocateCluster = (e) => {
@@ -68,9 +74,40 @@ export const MapControls = ({
     map.flyTo(CLUSTER_CENTER, CLUSTER_ZOOM, { duration: 1.0 });
   };
 
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    const query = localSearch.trim().toLowerCase();
+    if (!query) return;
+
+    if (query.startsWith('node-') || query.startsWith('node')) {
+      const num = query.replace('node-', '').replace('node', '').padStart(2, '0');
+      const nodeId = `NODE-${num}`;
+      if (onSelectNodeById) onSelectNodeById(nodeId);
+      return;
+    }
+
+    const PLACES = {
+      manali: { lat: 32.256, lng: 77.185, zoom: 13 },
+      kullu: { lat: 32.186, lng: 77.122, zoom: 13 },
+      solang: { lat: 32.226, lng: 77.112, zoom: 13.5 },
+      spiti: { lat: 32.246, lng: 77.980, zoom: 11 },
+      bhuntar: { lat: 32.148, lng: 77.185, zoom: 13 },
+      rohtang: { lat: 32.268, lng: 77.215, zoom: 13.5 },
+      hampta: { lat: 32.250, lng: 77.265, zoom: 13.5 }
+    };
+
+    for (const [key, val] of Object.entries(PLACES)) {
+      if (query.includes(key)) {
+        map.flyTo([val.lat, val.lng], val.zoom, { duration: 1.0 });
+        if (onSelectPlace) onSelectPlace({ name: key, ...val });
+        break;
+      }
+    }
+  };
+
   return (
     <>
-      {/* 1. TOP FLOATING TOOLBAR: Layer Toggles + Dropdowns + Reset View */}
+      {/* 1. TOP FLOATING TOOLBAR: Layer Switcher + Search Bar + Filters + Reset View */}
       <div 
         ref={(el) => {
           if (el) {
@@ -79,22 +116,22 @@ export const MapControls = ({
         }}
         onMouseDown={(e) => e.stopPropagation()}
         onDoubleClick={(e) => e.stopPropagation()}
-        className="absolute top-3 left-3 right-3 z-[1000] !pointer-events-auto select-none flex items-center justify-between gap-2 flex-wrap"
+        className="absolute top-3 left-3 right-12 z-[1000] !pointer-events-auto select-none flex items-center gap-1.5 flex-nowrap overflow-x-auto no-scrollbar py-0.5"
       >
-        {/* Left: Layer Selector Pill Group [Map] [Terrain] [Satellite] */}
-        <div className="flex items-center rounded-xl bg-[#0f172a]/95 dark:bg-[#0b1319]/95 border border-stone-800 shadow-xl p-1 backdrop-blur-md gap-1">
+        {/* Left: Layer Selector Pill Group [Map] [Satellite] [Terrain] */}
+        <div className="flex items-center rounded-xl bg-black/80 dark:bg-black/85 border border-white/20 shadow-xl p-0.5 backdrop-blur-md gap-0.5 shrink-0">
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               onLayerChange('standard');
             }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               currentLayer === 'standard'
-                ? 'bg-[#10b981] text-white shadow-md'
-                : 'text-stone-300 hover:text-white hover:bg-white/10'
+                ? 'bg-white text-slate-900 font-bold shadow-xs'
+                : 'text-white/80 hover:text-white hover:bg-white/10'
             }`}
-            title="Standard OpenStreetMap (Roads, Rivers & Towns)"
+            title="Standard OpenStreetMap"
           >
             Map
           </button>
@@ -103,111 +140,133 @@ export const MapControls = ({
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              onLayerChange('terrain');
+              onLayerChange('satellite');
             }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-              currentLayer === 'terrain'
-                ? 'bg-[#10b981] text-white shadow-md'
-                : 'text-stone-300 hover:text-white hover:bg-white/10'
+            className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              currentLayer === 'satellite'
+                ? 'bg-white text-slate-900 font-bold shadow-xs'
+                : 'text-white/80 hover:text-white hover:bg-white/10'
             }`}
-            title="Topographic Terrain Map (Himachal elevation relief & contours)"
+            title="Himalayan Aerial Satellite"
           >
-            Terrain
+            Satellite
           </button>
 
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              onLayerChange('satellite');
+              onLayerChange('terrain');
             }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-              currentLayer === 'satellite'
-                ? 'bg-[#10b981] text-white shadow-md'
-                : 'text-stone-300 hover:text-white hover:bg-white/10'
+            className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              currentLayer === 'terrain'
+                ? 'bg-white text-slate-900 font-bold shadow-xs'
+                : 'text-white/80 hover:text-white hover:bg-white/10'
             }`}
-            title="Himalayan Aerial Satellite (80–90° Top-Down Drone/Satellite View)"
+            title="Topographic Terrain"
           >
-            Satellite
+            Terrain
           </button>
         </div>
 
-        {/* Right / Center: Filter Dropdowns & Reset View */}
-        <div className="flex items-center gap-2 flex-wrap">
+        {/* Center: Search Bar directly inside top bar matching reference */}
+        <form onSubmit={handleSearchSubmit} className="relative shrink-0 w-36 sm:w-44 lg:w-48">
+          <div className="relative flex items-center">
+            <span className="absolute left-2.5 text-slate-400 pointer-events-none text-xs">
+              🔍
+            </span>
+            <input
+              type="text"
+              value={localSearch}
+              onChange={(e) => {
+                setLocalSearch(e.target.value);
+                if (onSearchChange) onSearchChange(e.target.value);
+              }}
+              placeholder="Search location or node..."
+              className="w-full pl-7 pr-2.5 py-1 rounded-xl bg-black/80 dark:bg-black/85 border border-white/20 text-white text-xs placeholder:text-slate-400 backdrop-blur-md shadow-xl focus:outline-none focus:ring-1 focus:ring-emerald-400"
+            />
+          </div>
+        </form>
+
+        {/* Right: Filter Dropdowns & Reset View */}
+        <div className="flex items-center gap-1 shrink-0">
           {/* Node Selector Dropdown */}
           <select
             value={nodeFilter}
             onChange={(e) => onNodeFilterChange && onNodeFilterChange(e.target.value)}
-            className="min-h-[36px] px-3 py-1.5 rounded-xl bg-[#0f172a]/95 dark:bg-[#0b1319]/95 text-stone-200 border border-stone-800 text-xs font-semibold backdrop-blur-md shadow-xl focus:outline-none focus:ring-1 focus:ring-[#10b981] cursor-pointer"
+            className="h-[30px] px-2 py-0.5 rounded-xl bg-black/80 dark:bg-black/85 text-white border border-white/20 text-xs font-semibold backdrop-blur-md shadow-xl focus:outline-none focus:ring-1 focus:ring-emerald-400 cursor-pointer"
             aria-label="Filter by Node"
           >
-            <option value="all">All Nodes</option>
-            <option value="NODE-01">NODE-01</option>
-            <option value="NODE-02">NODE-02</option>
-            <option value="NODE-03">NODE-03</option>
-            <option value="NODE-04">NODE-04</option>
-            <option value="NODE-05">NODE-05</option>
-            <option value="NODE-06">NODE-06</option>
-            <option value="NODE-07">NODE-07</option>
-            <option value="NODE-08">NODE-08</option>
+            <option value="all" className="bg-slate-900 text-white">All Nodes</option>
+            <option value="NODE-01" className="bg-slate-900 text-white">NODE-01</option>
+            <option value="NODE-02" className="bg-slate-900 text-white">NODE-02</option>
+            <option value="NODE-03" className="bg-slate-900 text-white">NODE-03</option>
+            <option value="NODE-04" className="bg-slate-900 text-white">NODE-04</option>
+            <option value="NODE-05" className="bg-slate-900 text-white">NODE-05</option>
+            <option value="NODE-06" className="bg-slate-900 text-white">NODE-06</option>
+            <option value="NODE-07" className="bg-slate-900 text-white">NODE-07</option>
+            <option value="NODE-08" className="bg-slate-900 text-white">NODE-08</option>
           </select>
 
           {/* Risk Level Dropdown */}
           <select
             value={riskFilter}
             onChange={(e) => onRiskFilterChange && onRiskFilterChange(e.target.value)}
-            className="min-h-[36px] px-3 py-1.5 rounded-xl bg-[#0f172a]/95 dark:bg-[#0b1319]/95 text-stone-200 border border-stone-800 text-xs font-semibold backdrop-blur-md shadow-xl focus:outline-none focus:ring-1 focus:ring-[#10b981] cursor-pointer"
+            className="h-[30px] px-2 py-0.5 rounded-xl bg-black/80 dark:bg-black/85 text-white border border-white/20 text-xs font-semibold backdrop-blur-md shadow-xl focus:outline-none focus:ring-1 focus:ring-emerald-400 cursor-pointer"
             aria-label="Filter by Risk Level"
           >
-            <option value="all">All Risk Levels</option>
-            <option value="safe">Safe (0–25)</option>
-            <option value="warning">Warning (&gt;25–50)</option>
-            <option value="high-risk">High Risk (&gt;50–75)</option>
-            <option value="critical">Critical (&gt;75–100)</option>
-            <option value="unknown">Unknown (null / offline)</option>
+            <option value="all" className="bg-slate-900 text-white">All Risk Levels</option>
+            <option value="safe" className="bg-slate-900 text-white">Safe (0–25)</option>
+            <option value="warning" className="bg-slate-900 text-white">Warning (&gt;25–50)</option>
+            <option value="high-risk" className="bg-slate-900 text-white">High Risk (&gt;50–75)</option>
+            <option value="critical" className="bg-slate-900 text-white">Critical (&gt;75–100)</option>
+            <option value="unknown" className="bg-slate-900 text-white">Offline</option>
           </select>
 
           {/* Status Dropdown */}
           <select
             value={statusFilter}
             onChange={(e) => onStatusFilterChange && onStatusFilterChange(e.target.value)}
-            className="min-h-[36px] px-3 py-1.5 rounded-xl bg-[#0f172a]/95 dark:bg-[#0b1319]/95 text-stone-200 border border-stone-800 text-xs font-semibold backdrop-blur-md shadow-xl focus:outline-none focus:ring-1 focus:ring-[#10b981] cursor-pointer"
+            className="h-[30px] px-2 py-0.5 rounded-xl bg-black/80 dark:bg-black/85 text-white border border-white/20 text-xs font-semibold backdrop-blur-md shadow-xl focus:outline-none focus:ring-1 focus:ring-emerald-400 cursor-pointer"
             aria-label="Filter by Device Status"
           >
-            <option value="all">All Status</option>
-            <option value="online">Online</option>
-            <option value="offline">Offline</option>
+            <option value="all" className="bg-slate-900 text-white">All Status</option>
+            <option value="online" className="bg-slate-900 text-white">Online</option>
+            <option value="offline" className="bg-slate-900 text-white">Offline</option>
           </select>
 
           {/* Reset View Button */}
           <button
             type="button"
             onClick={handleReset}
-            className="min-h-[36px] px-3.5 py-1.5 rounded-xl bg-[#0f172a]/95 dark:bg-[#0b1319]/95 hover:bg-stone-800 text-stone-200 border border-stone-800 text-xs font-semibold backdrop-blur-md shadow-xl flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="h-[30px] px-2.5 py-0.5 rounded-xl bg-black/80 dark:bg-black/85 hover:bg-black text-white border border-white/20 text-xs font-semibold backdrop-blur-md shadow-xl flex items-center gap-1.5 transition-colors cursor-pointer shrink-0"
             title="Reset Map View and Filters"
           >
-            <RotateCcw className="w-3.5 h-3.5 text-stone-300" />
+            <RotateCcw className="w-3.5 h-3.5 text-slate-300" />
             <span>Reset View</span>
           </button>
         </div>
       </div>
 
-      {/* 2. TOP-LEFT VERTICAL ZOOM & LOCATE CONTROLS */}
+      {/* 2. RIGHT-SIDE VERTICAL CONTROLS (North Indicator + Zoom Controls + Locate Cluster) */}
       <div 
-        ref={(el) => {
-          if (el) {
-            L.DomEvent.disableScrollPropagation(el);
-          }
-        }}
+        ref={(el) => { if (el) L.DomEvent.disableScrollPropagation(el); }}
         onMouseDown={(e) => e.stopPropagation()}
         onDoubleClick={(e) => e.stopPropagation()}
-        className="absolute bottom-4 right-3 z-[1000] !pointer-events-auto select-none"
+        className="absolute top-14 right-3 z-[1000] !pointer-events-auto select-none flex flex-col items-center gap-2"
       >
-        <div className="flex flex-col rounded-xl bg-[#0f172a]/95 dark:bg-[#0b1319]/95 border border-stone-800 shadow-xl overflow-hidden divide-y divide-stone-800 backdrop-blur-md">
+        {/* North Compass Indicator */}
+        <div className="w-8 h-8 rounded-lg bg-white/95 dark:bg-slate-900 border border-slate-300 dark:border-white/20 shadow-xl flex flex-col items-center justify-center text-slate-800 dark:text-white pointer-events-none">
+          <div className="w-0 h-0 border-l-[3.5px] border-l-transparent border-r-[3.5px] border-r-transparent border-b-[6px] border-b-rose-500 mb-0.5" />
+          <span className="text-[9px] font-mono font-black leading-none">N</span>
+        </div>
+
+        {/* Zoom In & Zoom Out Pill */}
+        <div className="flex flex-col rounded-lg bg-white/95 dark:bg-slate-900 border border-slate-300 dark:border-white/20 shadow-xl overflow-hidden divide-y divide-slate-200 dark:divide-slate-800">
           <button
             type="button"
             onClick={handleZoomIn}
-            className="w-8 h-8 flex items-center justify-center text-stone-200 hover:text-white hover:bg-white/10 transition-colors"
+            className="w-8 h-8 flex items-center justify-center text-slate-800 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer"
             title="Zoom In (+)"
             aria-label="Zoom In"
           >
@@ -217,23 +276,24 @@ export const MapControls = ({
           <button
             type="button"
             onClick={handleZoomOut}
-            className="w-8 h-8 flex items-center justify-center text-stone-200 hover:text-white hover:bg-white/10 transition-colors"
+            className="w-8 h-8 flex items-center justify-center text-slate-800 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer"
             title="Zoom Out (−)"
             aria-label="Zoom Out"
           >
             <Minus className="w-4 h-4" />
           </button>
-
-          <button
-            type="button"
-            onClick={handleLocateCluster}
-            className="w-8 h-8 flex items-center justify-center text-[#10b981] hover:text-emerald-300 hover:bg-white/10 transition-colors"
-            title="Locate Kullu–Manali Corridor"
-            aria-label="Locate Monitoring Cluster"
-          >
-            <Crosshair className="w-3.5 h-3.5" />
-          </button>
         </div>
+
+        {/* Locate Cluster */}
+        <button
+          type="button"
+          onClick={handleLocateCluster}
+          className="w-8 h-8 rounded-lg bg-white/95 dark:bg-slate-900 border border-slate-300 dark:border-white/20 text-slate-800 dark:text-white hover:bg-slate-100 dark:hover:bg-white/10 shadow-xl flex items-center justify-center transition-colors cursor-pointer"
+          title="Locate Kullu–Manali Corridor"
+          aria-label="Locate Monitoring Cluster"
+        >
+          <Crosshair className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+        </button>
       </div>
     </>
   );

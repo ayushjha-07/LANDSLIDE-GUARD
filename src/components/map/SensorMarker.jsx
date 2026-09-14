@@ -20,53 +20,34 @@ function createNodeDivIcon(node, isSelected) {
   const isHighRisk = !isOffline && (riskLevel === 'critical' || riskLevel === 'high-risk' || riskLevel === 'high risk' || node.id === 'NODE-05');
   const isWarning = !isOffline && (riskLevel === 'warning');
 
-  // Risk pin colors matching the reference image and Earth & Data theme
-  let pinColor = '#10b981'; // Green: Safe
+  let dotBg = '#10b981'; // Green: Safe
   let pulseRing = '';
-  let badgeBorder = 'border-emerald-500/40';
-  let badgeIndicator = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>';
+  let dotInner = '';
 
   if (isOffline) {
-    pinColor = '#6b7280'; // Gray: Offline
-    badgeBorder = 'border-stone-600';
-    badgeIndicator = '<span class="w-1.5 h-1.5 rounded-full bg-stone-500"></span>';
+    dotBg = '#94a3b8'; // Slate: Offline
+    dotInner = '<div class="w-1.5 h-1.5 rounded-full bg-slate-900"></div>';
   } else if (isHighRisk) {
-    pinColor = '#ef4444'; // Red: High Risk
-    pulseRing = `
-      <div class="absolute -top-3 -left-3 w-14 h-14 rounded-full bg-red-500/35 animate-ping pointer-events-none"></div>
-      <div class="absolute -top-1.5 -left-1.5 w-10 h-10 rounded-full bg-red-500/40 blur-xs pointer-events-none"></div>
-    `;
-    badgeBorder = 'border-red-500/80 shadow-[0_0_12px_rgba(239,68,68,0.5)]';
-    badgeIndicator = '<span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>';
+    dotBg = '#ef4444'; // Red: High Risk
+    pulseRing = '<span class="animate-ping absolute -top-1.5 -left-1.5 w-7 h-7 rounded-full bg-red-500 opacity-75 pointer-events-none"></span>';
+    dotInner = '<div class="w-1.5 h-1.5 rounded-full bg-white"></div>';
   } else if (isWarning) {
-    pinColor = '#f59e0b'; // Amber: Warning
-    badgeBorder = 'border-amber-500/60 shadow-[0_0_8px_rgba(245,158,11,0.3)]';
-    badgeIndicator = '<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>';
+    dotBg = '#f59e0b'; // Amber: Warning
+    dotInner = '<div class="w-1.5 h-1.5 rounded-full bg-black/60"></div>';
   }
 
   const selectGlow = isSelected 
-    ? 'ring-2 ring-white ring-offset-2 ring-offset-black/60 scale-110 z-50 drop-shadow-2xl' 
-    : 'hover:scale-105 drop-shadow-md';
+    ? 'ring-2 ring-white ring-offset-2 ring-offset-slate-950 scale-110 z-50 shadow-2xl' 
+    : 'hover:scale-105 shadow-md';
 
   const html = `
     <div class="relative flex items-center cursor-pointer select-none transition-all duration-200 ${selectGlow}">
       ${pulseRing}
-      <!-- Teardrop GIS Pin with Mountain Peak Icon inside -->
-      <div class="relative flex items-center justify-center flex-shrink-0">
-        <svg width="28" height="34" viewBox="0 0 28 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Teardrop path with tip at (14, 34) -->
-          <path d="M14 0C6.268 0 0 6.268 0 14C0 23.5 14 34 14 34C14 34 28 23.5 28 14C28 6.268 21.732 0 14 0Z" fill="${pinColor}" stroke="#ffffff" stroke-width="1.8" />
-          <!-- Inner circle badge -->
-          <circle cx="14" cy="13" r="8" fill="rgba(0,0,0,0.22)" />
-          <!-- Mountain icon inside pin -->
-          <path d="M9 16.5L12.5 10.5L15.5 14.5L17.5 11.5L20 16.5H9Z" fill="#ffffff" />
-        </svg>
+      <div class="w-4 h-4 rounded-full border-2 border-white shadow-md flex items-center justify-center shrink-0 z-20" style="background-color: ${dotBg};">
+        ${dotInner}
       </div>
-
-      <!-- Attached Sleek Dark Node ID Badge -->
-      <div class="-ml-1 pl-2 pr-2.5 py-0.5 rounded-r-md bg-[#0f172a]/95 text-white border ${badgeBorder} text-[10px] font-mono font-bold tracking-tight shadow-md flex items-center gap-1 backdrop-blur-xs whitespace-nowrap">
+      <div class="-ml-1 pl-2 pr-2.5 py-0.5 rounded-r-md bg-black/90 text-white border border-white/25 text-[10px] font-mono font-bold tracking-tight shadow-xl flex items-center gap-1 backdrop-blur-md whitespace-nowrap z-10">
         <span>${node.id}</span>
-        ${badgeIndicator}
       </div>
     </div>
   `;
@@ -74,9 +55,9 @@ function createNodeDivIcon(node, isSelected) {
   return L.divIcon({
     html,
     className: 'custom-node-marker',
-    iconSize: [96, 36],
-    iconAnchor: [14, 34], // Pin tip at (14, 34)
-    popupAnchor: [0, -34]
+    iconSize: [84, 24],
+    iconAnchor: [8, 12],
+    popupAnchor: [0, -14]
   });
 }
 

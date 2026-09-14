@@ -9,52 +9,45 @@ export const MapHeader = ({
   onRefresh 
 }) => {
   return (
-    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-stone-200/80 dark:border-forest-900/60 pb-5 w-full min-w-0">
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 w-full min-w-0">
       <div className="min-w-0">
-        <div className="flex items-center gap-2 text-xs font-semibold text-stone-500 dark:text-stone-400 mb-1.5 flex-wrap">
+        <div className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 mb-1 font-medium">
           <span>Home</span>
-          <span>/</span>
-          <span className="text-forest-700 dark:text-nature-400">Map</span>
-          <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-forest-500/10 text-forest-700 dark:text-nature-400 border border-forest-500/20 ml-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-nature-500 animate-pulse" />
-            HIMACHAL PRADESH SECTOR
-          </span>
+          <span className="text-slate-400">›</span>
+          <span className="text-slate-600 dark:text-slate-300">Monitoring Map</span>
         </div>
         
-        {/* Exact Section 23 Title & Subtitle */}
-        <h1 className="text-2xl sm:text-3xl font-extrabold font-heading text-stone-900 dark:text-white tracking-tight">
+        {/* Main Heading */}
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
           Himachal Pradesh Monitoring Map
         </h1>
-        <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-1">
-          Real geographic map with prototype landslide-monitoring nodes
+        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+          Real-time geospatial monitoring of sensor nodes and landslide risk zones
         </p>
       </div>
 
-      {/* Right side: Nodes Count & ● Prototype Monitoring */}
+      {/* Right side: Nodes Count & Prototype Monitoring & Refresh */}
       <div className="flex items-center gap-3 flex-wrap self-start md:self-auto flex-shrink-0">
-        <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-[#121c16] border border-stone-200 dark:border-forest-800 text-xs font-semibold text-stone-800 dark:text-stone-100 shadow-sm">
-          <span className="w-2.5 h-2.5 rounded-full bg-nature-500 animate-pulse" />
+        <div className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/60 text-xs font-bold text-emerald-800 dark:text-emerald-300 shadow-2xs">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-xs" />
           <span>{onlineCount} / {totalCount} Nodes Online</span>
         </div>
 
-        {/* Section 23: ● Prototype Monitoring */}
-        <span className="inline-flex items-center gap-1.5 text-[11px] font-mono font-bold px-3 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400">
+        <span className="inline-flex items-center gap-2 text-xs font-semibold px-3.5 py-2 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800/60 text-amber-800 dark:text-amber-300 shadow-2xs">
           <span className="w-2 h-2 rounded-full bg-amber-500" />
           Prototype Monitoring
         </span>
 
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={onRefresh}
-            disabled={isRefreshing}
-            className="min-h-[44px] min-w-[44px] p-2.5 rounded-xl bg-white dark:bg-[#121c16] border border-stone-200 dark:border-forest-800 text-stone-700 dark:text-stone-200 hover:bg-stone-50 dark:hover:bg-forest-900/50 transition-colors shadow-sm flex items-center justify-center cursor-pointer"
-            title="Refresh map telemetry"
-            aria-label="Refresh map telemetry"
-          >
-            <RefreshCw className={`w-4 h-4 text-forest-600 dark:text-nature-400 ${isRefreshing ? 'animate-spin' : ''}`} />
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={onRefresh}
+          disabled={isRefreshing}
+          className="p-2.5 rounded-xl bg-white dark:bg-[#121c16] border border-slate-200/80 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-2xs flex items-center justify-center cursor-pointer"
+          title="Refresh map telemetry"
+          aria-label="Refresh map telemetry"
+        >
+          <RefreshCw className={`w-4 h-4 text-slate-600 dark:text-slate-300 ${isRefreshing ? 'animate-spin' : ''}`} />
+        </button>
       </div>
     </div>
   );
