@@ -47,7 +47,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 import { useSensorContext } from '../../context/SensorContext';
-import heroHimalayasImg from '../../assets/hero_himalayas.jpg';
+import heroHimalayasBannerImg from '../../assets/hero_himalayas_banner.jpg';
 import { 
   RISK_SCORE_HISTORY_24H, 
   RISK_PREDICTION_SERIES_8H, 
@@ -115,16 +115,14 @@ const MONITORING_BOUNDARY = [
 const REGIONAL_LANDMARKS = [
   { name: 'Rohtang Pass', elev: '3,978 m', pos: [32.268, 77.210], type: 'pass' },
   { name: 'Manali', pos: [32.256, 77.168], type: 'town_bold' },
-  { name: 'Solang', pos: [32.246, 77.195], type: 'town' },
+  { name: 'Solang Valley', pos: [32.246, 77.195], type: 'town' },
   { name: 'Kasol', pos: [32.215, 77.145], type: 'town' },
-  { name: 'Naggar', pos: [32.195, 77.168], type: 'town' },
-  { name: 'Mandi', pos: [32.152, 77.135], type: 'town_bold' },
-  { name: 'Bhuntar', pos: [32.128, 77.160], type: 'town' },
-  { name: 'Parvati Valley', pos: [32.175, 77.240], type: 'valley' },
-  { name: 'Beas River', pos: [32.220, 77.105], type: 'river' },
-  { name: '↑ To Lahaul (Leh)', pos: [32.265, 77.140], type: 'route' },
-  { name: '← To Mandi', pos: [32.165, 77.085], type: 'route' },
-  { name: '↓ To Shimla', pos: [32.130, 77.100], type: 'route' }
+  { name: 'Kullu', pos: [32.190, 77.145], type: 'town_bold' },
+  { name: 'Naggar', pos: [32.195, 77.172], type: 'town' },
+  { name: 'Bhuntar', pos: [32.140, 77.155], type: 'town' },
+  { name: 'Beas River', pos: [32.222, 77.108], type: 'river' },
+  { name: '↑ To Leh', pos: [32.265, 77.135], type: 'route' },
+  { name: '↓ To Mandi', pos: [32.145, 77.105], type: 'route' }
 ];
 
 function createLandmarkIcon(landmark) {
@@ -179,7 +177,7 @@ function createLandmarkIcon(landmark) {
 // Custom Pinned Callout DivIcon for NODE-05 (Positioned to upper-right matching Master Reference)
 function createCalloutDivIcon(node) {
   const html = `
-    <div class="relative select-none pointer-events-auto" style="transform: translate(52px, -125px); width: 200px;">
+    <div class="relative select-none pointer-events-auto" style="transform: translate(48px, -188px); width: 205px;">
       <!-- Callout Glass Container -->
       <div class="rounded-xl bg-slate-950/95 border border-white/20 p-2.5 shadow-2xl backdrop-blur-md text-white">
         <!-- Top Bar: Red Pulsing Dot + NODE-05 + Close Button -->
@@ -206,7 +204,7 @@ function createCalloutDivIcon(node) {
           High Risk
         </div>
 
-        <!-- Metric Rows -->
+        <!-- Metric Rows matching Master Reference -->
         <div class="space-y-1 text-[9px] leading-tight text-slate-300">
           <div class="flex justify-between">
             <span class="text-slate-400">Location</span>
@@ -214,11 +212,31 @@ function createCalloutDivIcon(node) {
           </div>
           <div class="flex justify-between">
             <span class="text-slate-400">Altitude</span>
-            <span class="font-medium text-white">2,560 m</span>
+            <span class="font-medium text-white font-mono">2,560 m</span>
           </div>
           <div class="flex justify-between">
-            <span class="text-slate-400">Last Update</span>
-            <span class="font-medium text-slate-300">2 min ago</span>
+            <span class="text-slate-400">Risk Score</span>
+            <span class="font-medium text-white font-mono">68 / 100</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Soil Moisture</span>
+            <span class="font-medium text-white font-mono">76 %</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Rainfall (24h)</span>
+            <span class="font-medium text-white font-mono">29 mm</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Ground Tilt</span>
+            <span class="font-medium text-white font-mono">4.8°</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Vibration</span>
+            <span class="font-medium text-white font-mono">0.11 g</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Last Updated</span>
+            <span class="font-medium text-slate-300">Just now</span>
           </div>
         </div>
 
@@ -242,7 +260,7 @@ function createCalloutDivIcon(node) {
   return L.divIcon({
     html,
     className: 'custom-pinned-callout-marker',
-    iconSize: [200, 140],
+    iconSize: [215, 215],
     iconAnchor: [0, 0]
   });
 }
@@ -566,14 +584,12 @@ const REF_TREND_SERIES = [
 
 const REF_PREDICTION_SERIES = [
   { time: 'Now', low: 19.5, moderate: 20.0, high: 21.0 },
-  { time: '1h',  low: 19.5, moderate: 22.5, high: 24.0 },
-  { time: '2h',  low: 19.5, moderate: 25.5, high: 27.0 },
-  { time: '3h',  low: 19.5, moderate: 28.0, high: 31.0 },
-  { time: '4h',  low: 19.5, moderate: 24.5, high: 36.0 },
-  { time: '5h',  low: 19.5, moderate: 19.5, high: 41.5 },
-  { time: '6h',  low: 19.5, moderate: 16.0, high: 46.5 },
-  { time: '7h',  low: 19.5, moderate: 19.0, high: 50.0 },
-  { time: '8h',  low: 19.5, moderate: 25.0, high: 54.0 }
+  { time: '1h',  low: 19.5, moderate: 22.5, high: 23.5 },
+  { time: '2h',  low: 19.5, moderate: 24.5, high: 26.5 },
+  { time: '3h',  low: 19.5, moderate: 26.0, high: 29.5 },
+  { time: '4h',  low: 19.5, moderate: 22.5, high: 34.0 },
+  { time: '5h',  low: 19.5, moderate: 18.0, high: 39.5 },
+  { time: '6h',  low: 19.5, moderate: 15.0, high: 47.0 }
 ];
 
 // Sleek Custom Tooltip for Mini Sparkline Charts
@@ -730,13 +746,6 @@ const SemicircularRiskGauge = ({ score = 22, level = 'safe' }) => {
         <span className="text-rose-500 dark:text-rose-400">100 Critical</span>
       </div>
 
-      {/* Subtitle / Trend Badge below Gauge */}
-      <div className="mt-1.5 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium border bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20">
-        <span className="font-semibold">↓ -12%</span>
-        <span className="text-slate-500 dark:text-slate-400">from last 24h</span>
-        <span className="text-slate-300 dark:text-slate-600">•</span>
-        <span className="text-slate-600 dark:text-slate-300 font-medium">Lower risk conditions</span>
-      </div>
     </div>
   );
 };
@@ -971,13 +980,13 @@ export const CurrentRiskCard = ({
   }, [selectedNode, activeSensorValues.rainfall]);
 
   const displayTilt = useMemo(() => {
-    if (selectedNode) return typeof activeSensorValues.tilt === 'number' ? activeSensorValues.tilt.toFixed(1) : (activeSensorValues.tilt || '1.9');
-    return '1.9';
+    if (selectedNode) return typeof activeSensorValues.tilt === 'number' ? activeSensorValues.tilt.toFixed(2) : (activeSensorValues.tilt || '1.77');
+    return '1.77';
   }, [selectedNode, activeSensorValues.tilt]);
 
   const displayVibration = useMemo(() => {
-    if (selectedNode) return typeof activeSensorValues.vibration === 'number' ? activeSensorValues.vibration.toFixed(2) : (activeSensorValues.vibration || '0.02');
-    return '0.02';
+    if (selectedNode) return typeof activeSensorValues.vibration === 'number' ? activeSensorValues.vibration.toFixed(3) : (activeSensorValues.vibration || '0.033');
+    return '0.033';
   }, [selectedNode, activeSensorValues.vibration]);
 
   // Formatted timestamp
@@ -995,9 +1004,9 @@ export const CurrentRiskCard = ({
   }, [activeRiskAssessment.trend]);
 
   const displayPredictionWindow = useMemo(() => {
-    const p = activeRiskAssessment.predictionWindow || 'Next 8 Hours';
-    if (p === '6h' || p === 'Next 6h') return 'Next 8 Hours';
-    if (p === '8h' || p === 'Next 8h') return 'Next 8 Hours';
+    const p = activeRiskAssessment.predictionWindow || 'Next 6 hours';
+    if (p === '6h' || p === 'Next 6h') return 'Next 6 hours';
+    if (p === '8h' || p === 'Next 8h') return 'Next 8 hours';
     return p;
   }, [activeRiskAssessment.predictionWindow]);
 
@@ -1069,81 +1078,91 @@ export const CurrentRiskCard = ({
   return (
     <div 
       id="current-landslide-risk-card" 
-      className={`w-full bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-4 sm:p-5 md:p-6 transition-colors overflow-hidden flex flex-col justify-between ${className}`}
+      className={`relative w-full bg-[#070d18] text-white rounded-3xl overflow-hidden border border-slate-700/60 shadow-2xl p-4 sm:p-5 md:p-6 transition-colors flex flex-col justify-between ${className}`}
     >
+      {/* Full Clear Realistic Himalayan Mountain Background Layer */}
+      <div className="absolute inset-0 pointer-events-none select-none z-0 overflow-hidden">
+        <img 
+          src={heroHimalayasBannerImg} 
+          alt="Himalayan Mountains" 
+          className="w-full h-[280px] sm:h-[320px] lg:h-[340px] object-cover object-top filter brightness-[1.08] contrast-[1.08]"
+        />
+        {/* Left-to-right soft gradient: ensures high contrast for title & labels while letting snow peaks, forests, and sky shine clearly on the right */}
+        <div className="absolute inset-x-0 top-0 h-[280px] sm:h-[320px] lg:h-[340px] bg-gradient-to-r from-[#070d18]/95 via-[#070d18]/65 to-[#070d18]/15" />
+        
+        {/* Top-to-bottom atmospheric fade: merges mountain slopes gracefully into the dark command-center slate background right below header */}
+        <div className="absolute inset-x-0 top-16 h-[220px] sm:h-[260px] lg:h-[280px] bg-gradient-to-b from-transparent via-[#070d18]/70 to-[#070d18]" />
+        
+        {/* Subtle sky ambient glow */}
+        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-sky-500/10 via-transparent to-transparent" />
+      </div>
       
       {/* ========================================================================= */}
-      {/* 1. HEADER SECTION (Strictly matching reference visual) */}
+      {/* 1. TOP HEADER (Clear Himalayan Backdrop, Seamless & Open - No Box Dividers) */}
       {/* ========================================================================= */}
-      <div className="relative rounded-2xl overflow-hidden mb-4 bg-gradient-to-r from-emerald-50/60 via-slate-50/40 to-sky-50/30 dark:from-slate-900/90 dark:via-slate-850/80 dark:to-slate-800/70 border border-slate-100 dark:border-slate-800 p-3.5 sm:p-4">
-        
-        {/* Himalayan Mountain Panorama Backdrop (Seamless blending into right side) */}
-        <div className="absolute right-0 top-0 bottom-0 w-2/5 sm:w-1/2 pointer-events-none overflow-hidden select-none">
-          <img 
-            src={heroHimalayasImg} 
-            alt="" 
-            className="w-full h-full object-cover object-right opacity-35 dark:opacity-25 mix-blend-multiply dark:mix-blend-luminosity"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-50/90 via-slate-50/70 to-transparent dark:from-slate-900 dark:via-slate-900/80 dark:to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-emerald-50/80 via-transparent to-transparent dark:from-slate-900/90 dark:via-transparent" />
-        </div>
-
-        <div className="relative z-10 flex flex-col gap-2">
-          {/* Row 1: Icon + Title + LIVE pill on Left, Prototype badge on Right */}
-          <div className="flex items-center justify-between gap-2 min-w-0">
-            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-100/80 dark:bg-emerald-950/70 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-xs">
-                <Mountain className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.2]" />
-              </div>
-
-              <div className="flex items-center gap-2 min-w-0">
-                <h2 className="text-base sm:text-lg md:text-xl font-bold font-heading text-slate-900 dark:text-white tracking-tight whitespace-nowrap">
-                  CURRENT LANDSLIDE RISK
-                </h2>
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/60 shrink-0">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  LIVE
-                </span>
-              </div>
-            </div>
-
-            <div className="shrink-0 hidden sm:block">
-              <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-full bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 text-slate-700 dark:text-slate-300 shadow-2xs whitespace-nowrap">
-                Prototype Risk Analysis
-              </span>
-            </div>
+      <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4 select-none">
+        {/* Left: Emblem Icon + Title + LIVE pill + Subtitle + IoT Breadcrumb */}
+        <div className="flex items-start gap-3 min-w-0">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 flex items-center justify-center shrink-0 shadow-lg backdrop-blur-md">
+            <Mountain className="w-5 h-5 sm:w-5.5 sm:h-5.5 stroke-[2.2]" />
           </div>
 
-          {/* Row 2: Subtitle on Left, Last updated on Right */}
-          <div className="flex items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400 pl-10.5 sm:pl-12 flex-wrap">
-            <p className="font-medium text-[11px] sm:text-xs">
+          <div className="flex flex-col min-w-0">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-black font-heading text-white tracking-tight drop-shadow-sm">
+                CURRENT LANDSLIDE RISK
+              </h2>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-xs backdrop-blur-md">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                LIVE
+              </span>
+            </div>
+
+            <p className="text-xs sm:text-[13px] font-medium text-slate-300 drop-shadow-xs mt-0.5">
               Real-time multi-sensor hazard assessment
             </p>
-            <div className="flex items-center gap-1.5 shrink-0">
-              <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-400 dark:text-slate-500 whitespace-nowrap">
-                <Clock className="w-3 h-3" />
-                <span>Last updated: {formattedTimestamp}</span>
-              </span>
-            </div>
-          </div>
 
-          {/* Row 3: Meta breadcrumb on Left, Slogan on Right */}
-          <div className="pt-1 mt-0.5 text-[11px] text-slate-400 dark:text-slate-500 flex items-center justify-between gap-2">
-            <span className="truncate">
-              Himachal Region <span className="mx-1 text-slate-300 dark:text-slate-700">•</span> Monitoring Mountain Slopes <span className="mx-1 text-slate-300 dark:text-slate-700">•</span> Protecting Communities <span className="mx-1 text-slate-300 dark:text-slate-700">•</span> Powered by IoT & AI
-            </span>
-            <span className="font-serif italic text-xs font-semibold text-slate-600/90 dark:text-slate-300/90 tracking-tight shrink-0 whitespace-nowrap hidden sm:inline-block">
-              Safer Mountains Stronger Communities
-            </span>
+            <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-1 flex-wrap">
+              <span>Monitoring mountain slopes</span>
+              <span className="text-slate-600">|</span>
+              <span>Protecting communities</span>
+              <span className="text-slate-600">|</span>
+              <span>Powered by IoT & AI</span>
+            </div>
           </div>
         </div>
 
+        {/* Right: Location & Timestamp Glass Pills + Italic Slogan */}
+        <div className="flex flex-col items-start md:items-end gap-1.5 shrink-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Location Pill */}
+            <div className="px-3 py-1.5 rounded-xl bg-slate-900/80 border border-white/15 shadow-lg backdrop-blur-md flex items-center gap-2 text-white">
+              <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <div className="text-left leading-tight">
+                <div className="text-[11px] font-bold">Himachal Pradesh</div>
+                <div className="text-[9px] text-slate-300">Kullu - Manali Region</div>
+              </div>
+            </div>
+
+            {/* Last Updated Pill */}
+            <div className="px-3 py-1.5 rounded-xl bg-slate-900/80 border border-white/15 shadow-lg backdrop-blur-md flex items-center gap-2 text-white">
+              <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <div className="text-left leading-tight">
+                <div className="text-[9px] text-slate-400">Last updated</div>
+                <div className="text-[10.5px] font-mono font-bold text-slate-200">{formattedTimestamp}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Italic Slogan */}
+          <div className="font-serif italic text-xs sm:text-sm font-semibold text-slate-200/90 tracking-tight drop-shadow-sm mt-0.5">
+            Safer Mountains Stronger Communities
+          </div>
+        </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. MAIN WORKSPACE: MAP (LEFT ~60%) + RISK SUMMARY & SPARKLINES (RIGHT ~40%) */}
-      {/* ========================================================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch min-w-0">
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch min-w-0">
         
         {/* ========================================================================= */}
         {/* LEFT: BRIGHT, HIGH-CONTRAST INTERACTIVE SATELLITE MAP (col-span-7) */}
@@ -1438,14 +1457,14 @@ export const CurrentRiskCard = ({
           {/* 1. Risk Level Header & Link */}
           <div className="flex items-center justify-between pb-0.5">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold font-mono tracking-wider text-slate-500 dark:text-slate-400 uppercase">
+              <span className="text-xs font-bold font-mono tracking-wider text-slate-300 uppercase">
                 RISK LEVEL
               </span>
               {selectedNode && (
                 <button
                   type="button"
                   onClick={() => setSelectedNodeId(null)}
-                  className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-colors cursor-pointer"
                   title="Reset to regional overview"
                 >
                   <RotateCcw className="w-2.5 h-2.5" />
@@ -1455,31 +1474,50 @@ export const CurrentRiskCard = ({
             </div>
             <Link 
               to="/risk-analysis" 
-              className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 inline-flex items-center gap-1 transition-colors group"
+              className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 inline-flex items-center gap-1 transition-colors group"
             >
               <span>View Details</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
 
-          {/* 2. Semicircular Risk Gauge */}
-          <div className="py-1">
-            <SemicircularRiskGauge 
-              score={activeRiskAssessment.riskScore ?? 22} 
-              level={activeRiskAssessment.riskLevel ?? 'safe'} 
-            />
+          {/* 2. Semicircular Risk Gauge & Trend Reduction Badge */}
+          <div className="flex items-center justify-between gap-3 py-1">
+            <div className="flex-1 max-w-[210px] sm:max-w-[230px]">
+              <SemicircularRiskGauge 
+                score={activeRiskAssessment.riskScore ?? 22} 
+                level={activeRiskAssessment.riskLevel ?? 'safe'} 
+              />
+            </div>
+
+            {/* Compact Right Badge matching Master Reference */}
+            <div className="shrink-0 p-2.5 rounded-xl bg-slate-900/80 border border-slate-800/80 backdrop-blur-md flex flex-col items-center justify-center text-center shadow-md min-w-[110px] sm:min-w-[125px]">
+              <div className="flex items-center gap-1.5 text-emerald-400">
+                <div className="w-5 h-5 rounded-md bg-emerald-500/20 flex items-center justify-center shrink-0">
+                  <span className="text-xs font-bold leading-none">↓</span>
+                </div>
+                <div className="text-left leading-none">
+                  <span className="text-xs sm:text-sm font-bold tracking-tight text-white">-12%</span>
+                  <div className="text-[8.5px] text-slate-400">from last 24h</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 text-[9.5px] font-medium text-emerald-400 mt-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+                <span>Lower risk conditions</span>
+              </div>
+            </div>
           </div>
 
           {/* 3. Dynamic Environmental Assessment Card */}
-          <div className={`rounded-xl p-3 border flex items-start gap-3 transition-colors ${assessmentMeta.container}`}>
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${assessmentMeta.iconBg}`}>
+          <div className="rounded-xl p-3 border border-emerald-500/30 bg-emerald-950/40 backdrop-blur-md flex items-start gap-3 shadow-md transition-colors">
+            <div className="w-8 h-8 rounded-lg bg-emerald-900/60 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
               <AssessmentIcon className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <div className="text-xs font-bold text-slate-800 dark:text-white leading-snug">
+              <div className="text-xs font-bold text-white leading-snug">
                 {assessmentMeta.title}
               </div>
-              <div className="text-[11px] text-slate-500 dark:text-slate-400 leading-tight mt-0.5">
+              <div className="text-[11px] text-slate-300 leading-tight mt-0.5">
                 {assessmentMeta.desc}
               </div>
             </div>
@@ -1489,44 +1527,46 @@ export const CurrentRiskCard = ({
           <div>
             <div className="flex items-center justify-between gap-1.5 mb-2">
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold font-mono tracking-wider text-slate-500 dark:text-slate-400 uppercase">
+                <span className="text-xs font-bold font-mono tracking-wider text-slate-400 uppercase">
                   KEY MEASUREMENTS
                 </span>
-                <span className="text-[10.5px] font-bold text-emerald-600 dark:text-emerald-400">
+                <span className="text-xs font-bold text-emerald-400">
                   (LIVE)
                 </span>
               </div>
-              {selectedNode && (
-                <span className="text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 truncate">
-                  Node: {selectedNode.id}
-                </span>
-              )}
+              <Link 
+                to="/live-sensors" 
+                className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 inline-flex items-center gap-1 group transition-colors"
+              >
+                <span>View Sensor Data</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              </Link>
             </div>
 
-            <div id="key-measurements-grid" className="grid grid-cols-2 gap-2.5">
+            <div id="key-measurements-grid" className="grid grid-cols-2 gap-2.5 sm:gap-3">
               
               {/* Soil Moisture */}
-              <div className="p-2.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 shadow-2xs flex flex-col justify-between min-w-0">
+              <div className="p-2.5 sm:p-3 rounded-xl bg-[#0c1626]/85 backdrop-blur-md border border-slate-800/80 shadow-md flex flex-col justify-between min-w-0">
                 <div className="flex items-start gap-2 min-w-0">
-                  <div className="w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/70 border border-sky-200 dark:border-sky-500/30 text-sky-500 dark:text-sky-400 flex items-center justify-center shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-sky-950/70 border border-sky-500/30 text-sky-400 flex items-center justify-center shrink-0">
                     <Droplets className="w-3.5 h-3.5" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium truncate">
+                    <div className="text-[10.5px] text-slate-400 font-medium truncate">
                       Soil Moisture
                     </div>
-                    <div className="text-sm sm:text-base font-black font-sans text-slate-900 dark:text-white leading-none mt-0.5">
-                      {displayMoisture} <span className="text-[10.5px] font-medium text-slate-400 dark:text-slate-500">%</span>
+                    <div className="text-sm sm:text-base font-black font-sans text-white leading-none mt-0.5">
+                      {displayMoisture} <span className="text-[10.5px] font-medium text-slate-400">%</span>
                     </div>
-                    <div className="flex items-center gap-1 text-[9px] font-semibold text-emerald-600 dark:text-emerald-400 mt-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                    <div className="flex items-center gap-1 text-[9px] font-semibold text-emerald-400 mt-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
                       <span>Normal</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Recessed Dark Box with Left Y-Axis and Area Chart */}
-                <div className="rounded-lg bg-slate-950/80 border border-slate-800/80 p-1 flex items-stretch h-12 mt-2 gap-1.5">
+                <div className="rounded-lg bg-slate-950/90 border border-slate-800/80 p-1 flex items-stretch h-12 mt-2 gap-1.5">
                   <div className="w-4 shrink-0 flex flex-col justify-between py-0.5 text-[7.5px] font-mono text-slate-500 text-right pr-1 border-r border-slate-800 select-none">
                     <span>60</span>
                     <span>20</span>
@@ -1557,27 +1597,27 @@ export const CurrentRiskCard = ({
               </div>
 
               {/* Rainfall (24h) */}
-              <div className="p-2.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 shadow-2xs flex flex-col justify-between min-w-0">
+              <div className="p-2.5 sm:p-3 rounded-xl bg-[#0c1626]/85 backdrop-blur-md border border-slate-800/80 shadow-md flex flex-col justify-between min-w-0">
                 <div className="flex items-start gap-2 min-w-0">
-                  <div className="w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/70 border border-sky-200 dark:border-sky-500/30 text-sky-500 dark:text-sky-400 flex items-center justify-center shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-sky-950/70 border border-sky-500/30 text-sky-400 flex items-center justify-center shrink-0">
                     <CloudRain className="w-3.5 h-3.5" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium truncate">
+                    <div className="text-[10.5px] text-slate-400 font-medium truncate">
                       Rainfall (24h)
                     </div>
-                    <div className="text-sm sm:text-base font-black font-sans text-slate-900 dark:text-white leading-none mt-0.5">
-                      {displayRainfall} <span className="text-[10.5px] font-medium text-slate-400 dark:text-slate-500">mm</span>
+                    <div className="text-sm sm:text-base font-black font-sans text-white leading-none mt-0.5">
+                      {displayRainfall} <span className="text-[10.5px] font-medium text-slate-400">mm</span>
                     </div>
-                    <div className="flex items-center gap-1 text-[9px] font-semibold text-emerald-600 dark:text-emerald-400 mt-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                    <div className="flex items-center gap-1 text-[9px] font-semibold text-sky-400 mt-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-sky-400 shrink-0" />
                       <span>Low</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Recessed Dark Box with Left Y-Axis and Bar Chart */}
-                <div className="rounded-lg bg-slate-950/80 border border-slate-800/80 p-1 flex items-stretch h-12 mt-2 gap-1.5">
+                <div className="rounded-lg bg-slate-950/90 border border-slate-800/80 p-1 flex items-stretch h-12 mt-2 gap-1.5">
                   <div className="w-4 shrink-0 flex flex-col justify-between py-0.5 text-[7.5px] font-mono text-slate-500 text-right pr-1 border-r border-slate-800 select-none">
                     <span>30</span>
                     <span>0</span>
@@ -1600,27 +1640,27 @@ export const CurrentRiskCard = ({
               </div>
 
               {/* Ground Tilt */}
-              <div className="p-2.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 shadow-2xs flex flex-col justify-between min-w-0">
+              <div className="p-2.5 sm:p-3 rounded-xl bg-[#0c1626]/85 backdrop-blur-md border border-slate-800/80 shadow-md flex flex-col justify-between min-w-0">
                 <div className="flex items-start gap-2 min-w-0">
-                  <div className="w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/70 border border-sky-200 dark:border-sky-500/30 text-sky-500 dark:text-sky-400 flex items-center justify-center shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-teal-950/70 border border-teal-500/30 text-teal-400 flex items-center justify-center shrink-0">
                     <TrendingUp className="w-3.5 h-3.5" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium truncate">
+                    <div className="text-[10.5px] text-slate-400 font-medium truncate">
                       Ground Tilt
                     </div>
-                    <div className="text-sm sm:text-base font-black font-sans text-slate-900 dark:text-white leading-none mt-0.5">
-                      {displayTilt} <span className="text-[10.5px] font-medium text-slate-400 dark:text-slate-500">°</span>
+                    <div className="text-sm sm:text-base font-black font-sans text-white leading-none mt-0.5">
+                      {displayTilt} <span className="text-[10.5px] font-medium text-slate-400">°</span>
                     </div>
-                    <div className="flex items-center gap-1 text-[9px] font-semibold text-emerald-600 dark:text-emerald-400 mt-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                    <div className="flex items-center gap-1 text-[9px] font-semibold text-emerald-400 mt-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
                       <span>Stable</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Recessed Dark Box with Left Y-Axis and Area Chart */}
-                <div className="rounded-lg bg-slate-950/80 border border-slate-800/80 p-1 flex items-stretch h-12 mt-2 gap-1.5">
+                <div className="rounded-lg bg-slate-950/90 border border-slate-800/80 p-1 flex items-stretch h-12 mt-2 gap-1.5">
                   <div className="w-4 shrink-0 flex flex-col justify-between py-0.5 text-[7.5px] font-mono text-slate-500 text-right pr-1 border-r border-slate-800 select-none">
                     <span>3.5</span>
                     <span>0.0</span>
@@ -1651,27 +1691,27 @@ export const CurrentRiskCard = ({
               </div>
 
               {/* Vibration */}
-              <div className="p-2.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 shadow-2xs flex flex-col justify-between min-w-0">
+              <div className="p-2.5 sm:p-3 rounded-xl bg-[#0c1626]/85 backdrop-blur-md border border-slate-800/80 shadow-md flex flex-col justify-between min-w-0">
                 <div className="flex items-start gap-2 min-w-0">
-                  <div className="w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/70 border border-sky-200 dark:border-sky-500/30 text-sky-500 dark:text-sky-400 flex items-center justify-center shrink-0">
+                  <div className="w-7 h-7 rounded-full bg-cyan-950/70 border border-cyan-500/30 text-cyan-400 flex items-center justify-center shrink-0">
                     <Activity className="w-3.5 h-3.5" />
                   </div>
                   <div className="min-w-0">
-                    <div className="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium truncate">
+                    <div className="text-[10.5px] text-slate-400 font-medium truncate">
                       Vibration
                     </div>
-                    <div className="text-sm sm:text-base font-black font-sans text-slate-900 dark:text-white leading-none mt-0.5">
-                      {displayVibration} <span className="text-[10.5px] font-medium text-slate-400 dark:text-slate-500">g</span>
+                    <div className="text-sm sm:text-base font-black font-sans text-white leading-none mt-0.5">
+                      {displayVibration} <span className="text-[10.5px] font-medium text-slate-400">g</span>
                     </div>
-                    <div className="flex items-center gap-1 text-[9px] font-semibold text-sky-500 dark:text-sky-400 mt-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
+                    <div className="flex items-center gap-1 text-[9px] font-semibold text-emerald-400 mt-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
                       <span>Normal</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Recessed Dark Box with Left Y-Axis and Line Chart */}
-                <div className="rounded-lg bg-slate-950/80 border border-slate-800/80 p-1 flex items-stretch h-12 mt-2 gap-1.5">
+                <div className="rounded-lg bg-slate-950/90 border border-slate-800/80 p-1 flex items-stretch h-12 mt-2 gap-1.5">
                   <div className="w-4 shrink-0 flex flex-col justify-between py-0.5 text-[7.5px] font-mono text-slate-500 text-right pr-1 border-r border-slate-800 select-none">
                     <span>0.10</span>
                     <span>0.00</span>
@@ -1684,8 +1724,8 @@ export const CurrentRiskCard = ({
                         <Line 
                           type="linear" 
                           dataKey="vibration" 
-                          stroke="#38bdf8" 
-                          strokeWidth={1.3} 
+                          stroke="#06b6d4" 
+                          strokeWidth={1.4} 
                           dot={false} 
                           isAnimationActive={false} 
                         />
@@ -1705,32 +1745,32 @@ export const CurrentRiskCard = ({
       {/* ========================================================================= */}
       {/* 3. BOTTOM ANALYTICS CARDS (4 EQUAL CARDS STRICTLY MATCHING MASTER REFERENCE) */}
       {/* ========================================================================= */}
-      <div id="bottom-analytics-cards" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-4 pt-1">
+      <div id="bottom-analytics-cards" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 mt-5 relative z-10">
         
         {/* Card 1: Trend (Last 24 Hours) */}
-        <div className="p-3 rounded-2xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between min-w-0 shadow-xs">
+        <div className="p-3 sm:p-3.5 rounded-2xl bg-[#0c1626]/85 backdrop-blur-md border border-slate-800/80 shadow-md flex flex-col justify-between min-w-0">
           <div>
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-emerald-100/80 dark:bg-emerald-950/70 border border-emerald-200/60 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-emerald-950/70 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
                 <TrendingUp className="w-3.5 h-3.5" />
               </div>
-              <div className="text-xs font-bold text-slate-900 dark:text-white">
+              <div className="text-xs font-bold text-white">
                 Trend <span className="text-slate-400 font-normal text-xs">(Last 24 Hours)</span>
               </div>
             </div>
 
             <div className="mt-2.5 mb-1">
-              <div className="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 leading-none">
+              <div className="text-sm sm:text-base font-bold text-emerald-400 leading-none">
                 Stable
               </div>
-              <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 leading-tight">
+              <div className="text-[10px] text-slate-400 mt-1 leading-tight">
                 No significant change in overall risk level
               </div>
             </div>
           </div>
 
           {/* Recessed Dark Chart Box with Grid & Inflection Dots */}
-          <div className="rounded-xl bg-slate-950/80 border border-slate-800/80 p-2 pt-2 pb-1 mt-2">
+          <div className="rounded-xl bg-slate-950/90 border border-slate-800/80 p-2 pt-2 pb-1 mt-2">
             <div className="w-full h-16">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={REF_TREND_SERIES} margin={{ top: 4, right: 6, left: 6, bottom: 0 }}>
@@ -1784,33 +1824,33 @@ export const CurrentRiskCard = ({
         </div>
 
         {/* Card 2: Prediction Window (Prototype) */}
-        <div className="p-3 rounded-2xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between min-w-0 shadow-xs">
+        <div className="p-3 sm:p-3.5 rounded-2xl bg-[#0c1626]/85 backdrop-blur-md border border-slate-800/80 shadow-md flex flex-col justify-between min-w-0">
           <div>
             <div className="flex items-start justify-between gap-1 min-w-0">
               <div className="flex items-center gap-2 min-w-0">
-                <div className="w-7 h-7 rounded-lg bg-sky-100/80 dark:bg-sky-950/70 border border-sky-200/60 dark:border-sky-500/30 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
+                <div className="w-7 h-7 rounded-lg bg-sky-950/70 border border-sky-500/30 text-sky-400 flex items-center justify-center shrink-0">
                   <Clock className="w-3.5 h-3.5" />
                 </div>
                 <div className="leading-tight min-w-0">
-                  <div className="text-xs font-bold text-slate-900 dark:text-white">
+                  <div className="text-xs font-bold text-white">
                     Prediction Window
                   </div>
-                  <div className="text-[10px] text-slate-400">
+                  <div className="text-[10px] text-rose-400">
                     (Prototype)
                   </div>
                 </div>
               </div>
-              <span className="text-rose-500 dark:text-rose-400 font-semibold text-[10.5px] shrink-0">
-                Next 8 hours
+              <span className="text-cyan-400 font-semibold text-[10.5px] shrink-0">
+                Next 6 hours
               </span>
             </div>
 
-            <div className="mt-1.5 text-[10px] text-slate-600 dark:text-slate-300 leading-tight">
-              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Low probability</span> of increased risk based on current trends
+            <div className="mt-1.5 text-[10px] text-slate-300 leading-tight">
+              <span className="text-emerald-400 font-semibold">Low probability</span> of increased risk based on current trends
             </div>
 
             {/* Legend Dots */}
-            <div className="flex items-center gap-3 mt-1.5 text-[9.5px] font-medium text-slate-600 dark:text-slate-300">
+            <div className="flex items-center gap-3 mt-1.5 text-[9.5px] font-medium text-slate-300">
               <div className="flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 <span>Low</span>
@@ -1827,7 +1867,7 @@ export const CurrentRiskCard = ({
           </div>
 
           {/* Recessed Dark Chart Box with Grid & 3 Risk Layers */}
-          <div className="rounded-xl bg-slate-950/80 border border-slate-800/80 p-2 pt-2 pb-1 mt-2">
+          <div className="rounded-xl bg-slate-950/90 border border-slate-800/80 p-2 pt-2 pb-1 mt-2">
             <div className="w-full h-16">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={REF_PREDICTION_SERIES} margin={{ top: 4, right: 6, left: 6, bottom: 0 }}>
@@ -1850,7 +1890,7 @@ export const CurrentRiskCard = ({
                   <YAxis domain={[10, 58]} hide />
                   <XAxis 
                     dataKey="time" 
-                    ticks={['Now', '2h', '4h', '6h', '8h']} 
+                    ticks={['Now', '2h', '4h', '6h']} 
                     stroke="#334155" 
                     tick={{ fill: '#94a3b8', fontSize: 8, fontFamily: 'monospace' }} 
                     axisLine={{ stroke: '#334155', strokeWidth: 0.8 }} 
@@ -1897,13 +1937,13 @@ export const CurrentRiskCard = ({
         </div>
 
         {/* Card 3: Safety Factor (Prototype) */}
-        <div className="p-3 rounded-2xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between min-w-0">
+        <div className="p-3 sm:p-3.5 rounded-2xl bg-[#0c1626]/85 backdrop-blur-md border border-slate-800/80 shadow-md flex flex-col justify-between min-w-0">
           <div className="flex items-center gap-2 min-w-0">
-            <div className="w-7 h-7 rounded-lg bg-emerald-100/80 dark:bg-emerald-950/70 border border-emerald-200/60 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+            <div className="w-7 h-7 rounded-lg bg-emerald-950/70 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
               <ShieldCheck className="w-3.5 h-3.5" />
             </div>
-            <div className="text-xs font-bold text-slate-900 dark:text-white">
-              Safety Factor <span className="text-rose-500 dark:text-rose-400 font-normal text-xs">(Prototype)</span>
+            <div className="text-xs font-bold text-white">
+              Safety Factor <span className="text-rose-400 font-normal text-xs">(Prototype)</span>
             </div>
           </div>
 
@@ -1913,59 +1953,58 @@ export const CurrentRiskCard = ({
         </div>
 
         {/* Card 4: Area Information */}
-        <div className="p-3 rounded-2xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between min-w-0">
+        <div className="p-3 sm:p-3.5 rounded-2xl bg-[#0c1626]/85 backdrop-blur-md border border-slate-800/80 shadow-md flex flex-col justify-between min-w-0">
           <div>
             <div className="flex items-start gap-2.5 min-w-0 mb-2.5">
-              <div className="w-7 h-7 rounded-lg bg-emerald-100/80 dark:bg-emerald-950/70 border border-emerald-200/60 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-emerald-950/70 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0">
                 <Mountain className="w-3.5 h-3.5" />
               </div>
               <div className="min-w-0 leading-tight">
                 <div className="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider">
                   Area Information
                 </div>
-                <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                <div className="text-xs sm:text-sm font-bold text-white">
                   Himachal Pradesh
                 </div>
-                <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                <div className="text-[10px] text-slate-400">
                   Kullu – Manali Region
                 </div>
               </div>
             </div>
 
-            {/* 3 Metric Rows matching Master Reference */}
-            <div className="space-y-2 pt-1 border-t border-slate-200/60 dark:border-slate-800">
+            {/* 3 Metric Rows matching Master Reference (no harsh divider border) */}
+            <div className="space-y-2.5 pt-1">
               <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-md border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                <div className="w-5 h-5 rounded-md border border-emerald-500/40 text-emerald-400 flex items-center justify-center shrink-0">
                   <User className="w-3 h-3" />
                 </div>
                 <div className="leading-tight">
-                  <span className="font-bold text-xs text-slate-900 dark:text-white mr-1.5">8</span>
-                  <span className="text-[10.5px] text-slate-500 dark:text-slate-400">Monitoring Nodes</span>
+                  <span className="font-bold text-xs text-white mr-1.5">8</span>
+                  <span className="text-[10.5px] text-slate-400">Monitoring Nodes</span>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-md border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                <div className="w-5 h-5 rounded-md border border-emerald-500/40 text-emerald-400 flex items-center justify-center shrink-0">
                   <Compass className="w-3 h-3" />
                 </div>
                 <div className="leading-tight">
-                  <span className="font-bold text-xs text-slate-900 dark:text-white mr-1.5">~120 km²</span>
-                  <span className="text-[10.5px] text-slate-500 dark:text-slate-400">Monitored Area (Prototype)</span>
+                  <span className="font-bold text-xs text-white mr-1.5">~120 km²</span>
+                  <span className="text-[10.5px] text-slate-400">Monitored Area (Prototype)</span>
                 </div>
               </div>
 
               <div className="flex items-start gap-2">
-                <div className="w-5 h-5 rounded-md border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-5 h-5 rounded-md border border-emerald-500/40 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
                   <Shield className="w-3 h-3" />
                 </div>
-                <div className="text-[10.5px] text-slate-600 dark:text-slate-300 leading-snug">
-                  Multiple high-risk slopes under observation
+                <div className="text-[10.5px] text-slate-300 leading-snug">
+                  Multiple mountain slopes under observation
                 </div>
               </div>
             </div>
           </div>
         </div>
-
 
       </div>
 
