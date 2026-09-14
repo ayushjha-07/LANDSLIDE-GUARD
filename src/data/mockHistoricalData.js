@@ -245,3 +245,71 @@ export const RECENT_REPORTS_ARCHIVE = [
     summary: 'Comprehensive 8-node stability and LoRa communication availability audit.'
   }
 ];
+
+// 9. 24-Hour Overall Risk Score Trend Series
+export const RISK_SCORE_HISTORY_24H = [
+  { time: '00:00', score: 24, status: 'Safe' },
+  { time: '01:00', score: 24, status: 'Safe' },
+  { time: '02:00', score: 23, status: 'Safe' },
+  { time: '03:00', score: 23, status: 'Safe' },
+  { time: '04:00', score: 22, status: 'Safe' },
+  { time: '05:00', score: 22, status: 'Safe' },
+  { time: '06:00', score: 23, status: 'Safe' },
+  { time: '07:00', score: 24, status: 'Safe' },
+  { time: '08:00', score: 25, status: 'Safe' },
+  { time: '09:00', score: 25, status: 'Safe' },
+  { time: '10:00', score: 24, status: 'Safe' },
+  { time: '11:00', score: 23, status: 'Safe' },
+  { time: '12:00', score: 23, status: 'Safe' },
+  { time: '13:00', score: 24, status: 'Safe' },
+  { time: '14:00', score: 25, status: 'Safe' },
+  { time: '15:00', score: 24, status: 'Safe' },
+  { time: '16:00', score: 23, status: 'Safe' },
+  { time: '17:00', score: 23, status: 'Safe' },
+  { time: '18:00', score: 22, status: 'Safe' },
+  { time: '19:00', score: 22, status: 'Safe' },
+  { time: '20:00', score: 23, status: 'Safe' },
+  { time: '21:00', score: 23, status: 'Safe' },
+  { time: '22:00', score: 22, status: 'Safe' },
+  { time: '23:00', score: 22, status: 'Safe' },
+  { time: 'Now',   score: 22, status: 'Safe' }
+];
+
+// 10. Multi-Horizon Risk Prediction Series (Prototype 8H Horizon)
+export const RISK_PREDICTION_SERIES_8H = [
+  { time: 'Now', low: 20, moderate: 24, high: 28 },
+  { time: '2h',  low: 21, moderate: 25, high: 29 },
+  { time: '4h',  low: 22, moderate: 26, high: 30 },
+  { time: '6h',  low: 21, moderate: 25, high: 31 },
+  { time: '8h',  low: 20, moderate: 24, high: 29 }
+];
+
+// 11. Deterministic Sparklines for Key Measurements Cards (24 Points)
+export const KEY_MEASUREMENTS_SPARKLINES_24H = [
+  { time: '00:00', moisture: 41.0, rainBar: 0.1, tilt: 1.10, vibration: 0.025 },
+  { time: '01:00', moisture: 41.2, rainBar: 0.1, tilt: 1.12, vibration: 0.026 },
+  { time: '02:00', moisture: 41.4, rainBar: 0.0, tilt: 1.16, vibration: 0.027 },
+  { time: '03:00', moisture: 41.3, rainBar: 0.1, tilt: 1.12, vibration: 0.028 },
+  { time: '04:00', moisture: 41.1, rainBar: 0.2, tilt: 1.08, vibration: 0.029 },
+  { time: '05:00', moisture: 41.5, rainBar: 0.3, tilt: 1.15, vibration: 0.029 },
+  { time: '06:00', moisture: 41.8, rainBar: 0.3, tilt: 1.25, vibration: 0.030 },
+  { time: '07:00', moisture: 42.1, rainBar: 0.3, tilt: 1.42, vibration: 0.031 },
+  { time: '08:00', moisture: 42.5, rainBar: 0.4, tilt: 1.58, vibration: 0.033 },
+  { time: '09:00', moisture: 42.8, rainBar: 0.7, tilt: 1.66, vibration: 0.032 },
+  { time: '10:00', moisture: 43.1, rainBar: 1.0, tilt: 1.72, vibration: 0.033 },
+  { time: '11:00', moisture: 43.4, rainBar: 1.1, tilt: 1.70, vibration: 0.034 },
+  { time: '12:00', moisture: 43.8, rainBar: 1.2, tilt: 1.66, vibration: 0.035 },
+  { time: '13:00', moisture: 43.5, rainBar: 2.7, tilt: 1.78, vibration: 0.036 },
+  { time: '14:00', moisture: 43.2, rainBar: 3.0, tilt: 1.92, vibration: 0.038 },
+  { time: '15:00', moisture: 43.0, rainBar: 1.2, tilt: 1.82, vibration: 0.035 },
+  { time: '16:00', moisture: 42.8, rainBar: 0.6, tilt: 1.68, vibration: 0.030 },
+  { time: '17:00', moisture: 42.7, rainBar: 0.8, tilt: 1.55, vibration: 0.029 },
+  { time: '18:00', moisture: 42.6, rainBar: 0.7, tilt: 1.45, vibration: 0.028 },
+  { time: '19:00', moisture: 42.5, rainBar: 0.0, tilt: 1.52, vibration: 0.029 },
+  { time: '20:00', moisture: 42.5, rainBar: 0.0, tilt: 1.62, vibration: 0.031 },
+  { time: '21:00', moisture: 42.4, rainBar: 0.0, tilt: 1.66, vibration: 0.030 },
+  { time: '22:00', moisture: 42.4, rainBar: 0.0, tilt: 1.71, vibration: 0.029 },
+  { time: '23:00', moisture: 42.4, rainBar: 0.0, tilt: 1.74, vibration: 0.031 },
+  { time: 'Now',   moisture: 42.4, rainBar: 0.0, tilt: 1.77, vibration: 0.033 }
+];
+
