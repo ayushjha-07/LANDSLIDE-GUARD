@@ -174,12 +174,12 @@ export const INITIAL_CANONICAL_NODES_DATA = [
       predictionWindow: "6h"
     },
     readings: {
-      soilMoisture: { value: 42.0, unit: "%", trend: "stable" },
+      soilMoisture: { value: 43.3, unit: "%", trend: "stable" },
       rainfall: { value: 12.0, unit: "mm", trend: "decreasing" },
-      tilt: { value: 1.8, unit: "°", trend: "stable" },
-      vibration: { value: 0.03, unit: "g", trend: "stable" },
-      temperature: { value: 21.4, unit: "°C", trend: "stable" },
-      humidity: { value: 72.0, unit: "%", trend: "stable" }
+      tilt: { value: 1.69, unit: "°", trend: "stable" },
+      vibration: { value: 0.031, unit: "g", trend: "stable" },
+      temperature: { value: 22.7, unit: "°C", trend: "stable" },
+      humidity: { value: 74.4, unit: "%", trend: "stable" }
     },
     device: {
       controller: "ESP32",
@@ -210,12 +210,12 @@ export const INITIAL_CANONICAL_NODES_DATA = [
       predictionWindow: "6h"
     },
     readings: {
-      soilMoisture: { value: 38.0, unit: "%", trend: "stable" },
+      soilMoisture: { value: 37.5, unit: "%", trend: "stable" },
       rainfall: { value: 8.0, unit: "mm", trend: "decreasing" },
-      tilt: { value: 1.2, unit: "°", trend: "stable" },
-      vibration: { value: 0.03, unit: "g", trend: "stable" },
-      temperature: { value: 20.8, unit: "°C", trend: "stable" },
-      humidity: { value: 74.0, unit: "%", trend: "stable" }
+      tilt: { value: 1.47, unit: "°", trend: "stable" },
+      vibration: { value: 0.043, unit: "g", trend: "stable" },
+      temperature: { value: 20.7, unit: "°C", trend: "stable" },
+      humidity: { value: 74.6, unit: "%", trend: "stable" }
     },
     device: {
       controller: "ESP32",
@@ -246,9 +246,9 @@ export const INITIAL_CANONICAL_NODES_DATA = [
       predictionWindow: "6h"
     },
     readings: {
-      soilMoisture: { value: 64.0, unit: "%", trend: "increasing" },
-      rainfall: { value: 24.0, unit: "mm", trend: "increasing" },
-      tilt: { value: 3.6, unit: "°", trend: "increasing" },
+      soilMoisture: { value: 68.0, unit: "%", trend: "increasing" },
+      rainfall: { value: 21.0, unit: "mm", trend: "increasing" },
+      tilt: { value: 3.4, unit: "°", trend: "increasing" },
       vibration: { value: 0.07, unit: "g", trend: "increasing" },
       temperature: { value: 22.1, unit: "°C", trend: "stable" },
       humidity: { value: 78.0, unit: "%", trend: "increasing" }
@@ -282,12 +282,12 @@ export const INITIAL_CANONICAL_NODES_DATA = [
       predictionWindow: "6h"
     },
     readings: {
-      soilMoisture: { value: 38.0, unit: "%", trend: "stable" },
+      soilMoisture: { value: 39.5, unit: "%", trend: "stable" },
       rainfall: { value: 9.0, unit: "mm", trend: "decreasing" },
-      tilt: { value: 1.5, unit: "°", trend: "stable" },
-      vibration: { value: 0.02, unit: "g", trend: "stable" },
-      temperature: { value: 21.0, unit: "°C", trend: "stable" },
-      humidity: { value: 70.0, unit: "%", trend: "stable" }
+      tilt: { value: 1.53, unit: "°", trend: "stable" },
+      vibration: { value: 0.017, unit: "g", trend: "stable" },
+      temperature: { value: 20.9, unit: "°C", trend: "stable" },
+      humidity: { value: 69.7, unit: "%", trend: "stable" }
     },
     device: {
       controller: "ESP32",
@@ -328,8 +328,8 @@ export const INITIAL_CANONICAL_NODES_DATA = [
     device: {
       controller: "ESP32",
       communication: "LoRa",
-      battery: { value: 73, unit: "%" },
-      signal: { rssi: -82, unit: "dBm" },
+      battery: { value: 68, unit: "%" },
+      signal: { rssi: -65, unit: "dBm" },
       snr: 6.8,
       lastSeen: "Just now",
       packets: { received: 1450, successRate: 96.2 }
@@ -372,10 +372,10 @@ export const INITIAL_CANONICAL_NODES_DATA = [
     device: {
       controller: "ESP32",
       communication: "LoRa",
-      battery: { value: 32, unit: "%" },
+      battery: { value: 62, unit: "%" },
       signal: { rssi: null, unit: "dBm" },
       snr: null,
-      lastSeen: "18 minutes ago",
+      lastSeen: "18 min ago",
       packets: { received: 980, successRate: 82.0 }
     },
     riskHistory: ["Safe", "Safe", "Safe", "Unknown", "Unknown"]
@@ -398,17 +398,17 @@ export const INITIAL_CANONICAL_NODES_DATA = [
       predictionWindow: "6h"
     },
     readings: {
-      soilMoisture: { value: 45.0, unit: "%", trend: "stable" },
+      soilMoisture: { value: 44.8, unit: "%", trend: "stable" },
       rainfall: { value: 14.0, unit: "mm", trend: "stable" },
       tilt: { value: 2.1, unit: "°", trend: "stable" },
-      vibration: { value: 0.03, unit: "g", trend: "stable" },
-      temperature: { value: 21.2, unit: "°C", trend: "stable" },
-      humidity: { value: 73.0, unit: "%", trend: "stable" }
+      vibration: { value: 0.027, unit: "g", trend: "stable" },
+      temperature: { value: 21.6, unit: "°C", trend: "stable" },
+      humidity: { value: 74.0, unit: "%", trend: "stable" }
     },
     device: {
       controller: "ESP32",
       communication: "LoRa",
-      battery: { value: 89, unit: "%" },
+      battery: { value: 88, unit: "%" },
       signal: { rssi: -70, unit: "dBm" },
       snr: 8.9,
       lastSeen: "Just now",
@@ -434,18 +434,18 @@ export const INITIAL_CANONICAL_NODES_DATA = [
       predictionWindow: "6h"
     },
     readings: {
-      soilMoisture: { value: 40.0, unit: "%", trend: "stable" },
+      soilMoisture: { value: 38.0, unit: "%", trend: "stable" },
       rainfall: { value: 11.0, unit: "mm", trend: "stable" },
-      tilt: { value: 1.7, unit: "°", trend: "stable" },
-      vibration: { value: 0.02, unit: "g", trend: "stable" },
-      temperature: { value: 20.5, unit: "°C", trend: "stable" },
-      humidity: { value: 69.0, unit: "%", trend: "stable" }
+      tilt: { value: 1.76, unit: "°", trend: "stable" },
+      vibration: { value: 0.015, unit: "g", trend: "stable" },
+      temperature: { value: 20.4, unit: "°C", trend: "stable" },
+      humidity: { value: 70.0, unit: "%", trend: "stable" }
     },
     device: {
       controller: "ESP32",
       communication: "LoRa",
-      battery: { value: 96, unit: "%" },
-      signal: { rssi: -64, unit: "dBm" },
+      battery: { value: 92, unit: "%" },
+      signal: { rssi: -69, unit: "dBm" },
       snr: 9.8,
       lastSeen: "Just now",
       packets: { received: 1492, successRate: 99.8 }
