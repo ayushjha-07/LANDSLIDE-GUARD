@@ -4,12 +4,13 @@ import {
   Search, 
   Bell, 
   Menu, 
-  ChevronDown,
-  AlertTriangle,
-  X,
-  Radio,
-  User,
-  MapPin
+  ChevronDown, 
+  AlertTriangle, 
+  X, 
+  Radio, 
+  User, 
+  MapPin,
+  BrainCircuit
 } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import UserMenu from '../UserMenu';
@@ -19,7 +20,7 @@ import { MOCK_ALERTS } from '../../data/mockData';
 const ROUTE_TITLES = {
   '/dashboard': { title: 'Dashboard', fullTitle: 'Operational Dashboard', subtitle: 'Real-time telemetry, risk analysis & system health' },
   '/sensors': { title: 'Live Sensors', fullTitle: 'Live Geotechnical Sensors', subtitle: 'Borehole pore pressure, soil moisture & displacement telemetry' },
-  '/risk-analysis': { title: 'Risk Analysis', fullTitle: 'AI Risk Analysis', subtitle: 'Random Forest hazard classification & LSTM displacement predictions' },
+  '/risk-analysis': { title: 'Risk Analysis', fullTitle: 'AI Risk Analysis', subtitle: 'Machine Learning driven landslide risk assessment for safer communities' },
   '/map': { title: 'Monitoring Map', fullTitle: 'Himachal Pradesh Monitoring Map', subtitle: 'Real geographic map with prototype landslide-monitoring nodes' },
   '/alerts': { title: 'Alerts', fullTitle: 'Early Warning Alerts', subtitle: 'Automated threshold dispatches & community hazard notifications' },
   '/reports': { title: 'Reports', fullTitle: 'Reports & Analytics', subtitle: 'Historical monitoring data, risk trends and system performance insights' },
@@ -44,10 +45,12 @@ export const Header = ({ onOpenSidebar }) => {
   };
 
   const isSensors = location.pathname === '/sensors';
+  const isRisk = location.pathname === '/risk-analysis';
+  const isStyledPage = isSensors || isRisk;
 
   return (
     <header className={`sticky top-0 z-30 flex items-center justify-between h-16 px-3 sm:px-4 md:px-6 lg:px-8 backdrop-blur-md transition-colors duration-200 box-border w-full min-w-0 ${
-      isSensors 
+      isStyledPage 
         ? 'bg-white/80 dark:bg-[#070d18]/85 text-slate-900 dark:text-white border-b border-slate-200/80 dark:border-slate-800/80 shadow-xs dark:shadow-md' 
         : 'bg-white/95 dark:bg-[#0E131F]/95 text-[#2D3748] dark:text-[#E2E8F0] border-b border-[#E2E8F0] dark:border-[#2D3748]'
     }`}
@@ -59,7 +62,7 @@ export const Header = ({ onOpenSidebar }) => {
           type="button"
           onClick={onOpenSidebar}
           className={`min-w-[44px] min-h-[44px] w-11 h-11 flex items-center justify-center rounded-xl border lg:hidden flex-shrink-0 transition-colors ${
-            isSensors
+            isStyledPage
               ? 'text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white bg-white/80 dark:bg-slate-900/80 border-slate-200/80 dark:border-slate-700'
               : 'text-[#2D3748] hover:text-[#1A202C] dark:text-slate-300 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 border-[#E2E8F0] dark:border-[#2D3748]'
           }`}
@@ -68,7 +71,32 @@ export const Header = ({ onOpenSidebar }) => {
           <Menu className="w-5 h-5" />
         </button>
 
-        {isSensors ? (
+        {isRisk ? (
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                <BrainCircuit className="w-5 h-5 stroke-[2.2]" />
+              </div>
+              <div className="min-w-0">
+                <h1 className="text-base sm:text-lg font-bold font-heading text-slate-900 dark:text-white truncate leading-tight">
+                  AI Risk Analysis
+                </h1>
+                <p className="hidden md:block text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                  Machine Learning driven landslide risk assessment for safer communities
+                </p>
+              </div>
+            </div>
+
+            {/* Regional Location Pill strictly matching visual reference */}
+            <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50/90 dark:bg-slate-900/85 border border-slate-200/80 dark:border-slate-800 shadow-2xs backdrop-blur-md text-slate-800 dark:text-white ml-2">
+              <MapPin className="w-3.5 h-3.5 text-slate-700 dark:text-slate-300 shrink-0" />
+              <div className="text-left leading-tight">
+                <div className="text-[11px] font-bold text-slate-900 dark:text-white">Kullu - Manali Region</div>
+                <div className="text-[9.5px] text-slate-500 dark:text-slate-400">Himachal Pradesh</div>
+              </div>
+            </div>
+          </div>
+        ) : isSensors ? (
           <div className="flex items-center gap-2.5 min-w-0">
             {/* Regional Location Pill strictly matching visual reference */}
             <div className="px-3.5 py-1.5 rounded-xl bg-white/85 dark:bg-slate-900/85 border border-slate-200/80 dark:border-white/15 shadow-xs backdrop-blur-md flex items-center gap-2 text-slate-800 dark:text-white">
