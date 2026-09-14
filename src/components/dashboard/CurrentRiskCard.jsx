@@ -398,6 +398,184 @@ function MapOverlayControls({ onReset, basemap, onSelectBasemap, showLabels, onT
   );
 }
 
+// Calibrated Reference Datasets matching Master Reference (crop_all_4_km.png, crop_trend.png, crop_pred.png)
+const REF_SOIL_MOISTURE_SERIES = [
+  { step: 1, moisture: 28 },
+  { step: 2, moisture: 29 },
+  { step: 3, moisture: 34 },
+  { step: 4, moisture: 30 },
+  { step: 5, moisture: 36 },
+  { step: 6, moisture: 32 },
+  { step: 7, moisture: 38 },
+  { step: 8, moisture: 35 },
+  { step: 9, moisture: 33 },
+  { step: 10, moisture: 37 },
+  { step: 11, moisture: 38 },
+  { step: 12, moisture: 35 },
+  { step: 13, moisture: 32 },
+  { step: 14, moisture: 34 },
+  { step: 15, moisture: 38 },
+  { step: 16, moisture: 36 },
+  { step: 17, moisture: 34 },
+  { step: 18, moisture: 39 },
+  { step: 19, moisture: 43 },
+  { step: 20, moisture: 48 },
+  { step: 21, moisture: 53 },
+  { step: 22, moisture: 56 },
+  { step: 23, moisture: 49 },
+  { step: 24, moisture: 51 }
+];
+
+const REF_RAINFALL_SERIES = [
+  { step: 1, rainBar: 1.0 },
+  { step: 2, rainBar: 1.2 },
+  { step: 3, rainBar: 1.0 },
+  { step: 4, rainBar: 1.5 },
+  { step: 5, rainBar: 1.0 },
+  { step: 6, rainBar: 1.2 },
+  { step: 7, rainBar: 5.5 },
+  { step: 8, rainBar: 1.0 },
+  { step: 9, rainBar: 1.5 },
+  { step: 10, rainBar: 1.2 },
+  { step: 11, rainBar: 2.0 },
+  { step: 12, rainBar: 1.0 },
+  { step: 13, rainBar: 1.4 },
+  { step: 14, rainBar: 2.2 },
+  { step: 15, rainBar: 8.5 },
+  { step: 16, rainBar: 12.0 },
+  { step: 17, rainBar: 2.8 },
+  { step: 18, rainBar: 9.0 },
+  { step: 19, rainBar: 18.5 },
+  { step: 20, rainBar: 4.5 },
+  { step: 21, rainBar: 10.5 },
+  { step: 22, rainBar: 3.0 },
+  { step: 23, rainBar: 26.5 },
+  { step: 24, rainBar: 7.0 }
+];
+
+const REF_GROUND_TILT_SERIES = [
+  { step: 1, tilt: 1.02 },
+  { step: 2, tilt: 1.05 },
+  { step: 3, tilt: 1.15 },
+  { step: 4, tilt: 1.28 },
+  { step: 5, tilt: 1.20 },
+  { step: 6, tilt: 1.42 },
+  { step: 7, tilt: 1.35 },
+  { step: 8, tilt: 1.50 },
+  { step: 9, tilt: 1.45 },
+  { step: 10, tilt: 1.70 },
+  { step: 11, tilt: 1.62 },
+  { step: 12, tilt: 1.88 },
+  { step: 13, tilt: 1.75 },
+  { step: 14, tilt: 2.10 },
+  { step: 15, tilt: 1.95 },
+  { step: 16, tilt: 2.25 },
+  { step: 17, tilt: 2.48 },
+  { step: 18, tilt: 2.15 },
+  { step: 19, tilt: 1.90 },
+  { step: 20, tilt: 2.05 },
+  { step: 21, tilt: 1.65 },
+  { step: 22, tilt: 1.50 },
+  { step: 23, tilt: 1.72 },
+  { step: 24, tilt: 1.90 }
+];
+
+const REF_VIBRATION_SERIES = [
+  { step: 1, vibration: 0.018 },
+  { step: 2, vibration: 0.024 },
+  { step: 3, vibration: 0.015 },
+  { step: 4, vibration: 0.029 },
+  { step: 5, vibration: 0.019 },
+  { step: 6, vibration: 0.026 },
+  { step: 7, vibration: 0.014 },
+  { step: 8, vibration: 0.031 },
+  { step: 9, vibration: 0.022 },
+  { step: 10, vibration: 0.028 },
+  { step: 11, vibration: 0.016 },
+  { step: 12, vibration: 0.027 },
+  { step: 13, vibration: 0.018 },
+  { step: 14, vibration: 0.032 },
+  { step: 15, vibration: 0.021 },
+  { step: 16, vibration: 0.025 },
+  { step: 17, vibration: 0.016 },
+  { step: 18, vibration: 0.030 },
+  { step: 19, vibration: 0.022 },
+  { step: 20, vibration: 0.027 },
+  { step: 21, vibration: 0.018 },
+  { step: 22, vibration: 0.033 },
+  { step: 23, vibration: 0.023 },
+  { step: 24, vibration: 0.026 },
+  { step: 25, vibration: 0.017 },
+  { step: 26, vibration: 0.031 },
+  { step: 27, vibration: 0.020 },
+  { step: 28, vibration: 0.028 },
+  { step: 29, vibration: 0.018 },
+  { step: 30, vibration: 0.045 },
+  { step: 31, vibration: 0.015 },
+  { step: 32, vibration: 0.062 },
+  { step: 33, vibration: 0.024 },
+  { step: 34, vibration: 0.052 },
+  { step: 35, vibration: 0.018 },
+  { step: 36, vibration: 0.078 },
+  { step: 37, vibration: 0.025 },
+  { step: 38, vibration: 0.060 },
+  { step: 39, vibration: 0.016 },
+  { step: 40, vibration: 0.088 },
+  { step: 41, vibration: 0.028 },
+  { step: 42, vibration: 0.065 },
+  { step: 43, vibration: 0.019 },
+  { step: 44, vibration: 0.074 },
+  { step: 45, vibration: 0.022 },
+  { step: 46, vibration: 0.085 },
+  { step: 47, vibration: 0.025 },
+  { step: 48, vibration: 0.068 },
+  { step: 49, vibration: 0.020 },
+  { step: 50, vibration: 0.076 },
+  { step: 51, vibration: 0.022 },
+  { step: 52, vibration: 0.020 }
+];
+
+const REF_TREND_SERIES = [
+  { time: '00:00', score: 20, hasDot: true },
+  { time: '01:00', score: 23 },
+  { time: '02:00', score: 26 },
+  { time: '03:00', score: 29 },
+  { time: '04:00', score: 28 },
+  { time: '05:00', score: 32 },
+  { time: '06:00', score: 35, hasDot: true },
+  { time: '07:00', score: 33 },
+  { time: '08:00', score: 31 },
+  { time: '09:00', score: 29 },
+  { time: '10:00', score: 27 },
+  { time: '11:00', score: 24 },
+  { time: '12:00', score: 26 },
+  { time: '13:00', score: 29 },
+  { time: '14:00', score: 31, hasDot: true },
+  { time: '15:00', score: 31, hasDot: true },
+  { time: '16:00', score: 29 },
+  { time: '17:00', score: 27 },
+  { time: '18:00', score: 30 },
+  { time: '19:00', score: 36 },
+  { time: '19:30', score: 41, hasDot: true },
+  { time: '20:30', score: 34 },
+  { time: '21:30', score: 36 },
+  { time: '22:30', score: 25, hasDot: true },
+  { time: '23:30', score: 28 },
+  { time: 'Now',   score: 32, hasDot: true }
+];
+
+const REF_PREDICTION_SERIES = [
+  { time: 'Now', low: 19.5, moderate: 20.0, high: 21.0 },
+  { time: '1h',  low: 19.5, moderate: 22.5, high: 24.0 },
+  { time: '2h',  low: 19.5, moderate: 25.5, high: 27.0 },
+  { time: '3h',  low: 19.5, moderate: 28.0, high: 31.0 },
+  { time: '4h',  low: 19.5, moderate: 24.5, high: 36.0 },
+  { time: '5h',  low: 19.5, moderate: 19.5, high: 41.5 },
+  { time: '6h',  low: 19.5, moderate: 16.0, high: 46.5 },
+  { time: '7h',  low: 19.5, moderate: 19.0, high: 50.0 },
+  { time: '8h',  low: 19.5, moderate: 25.0, high: 54.0 }
+];
+
 // Sleek Custom Tooltip for Mini Sparkline Charts
 const MiniChartTooltip = ({ active, payload, unit = '', label = 'Value' }) => {
   if (active && payload && payload.length) {
@@ -780,6 +958,27 @@ export const CurrentRiskCard = ({
     }
     return baseRiskAssessment;
   }, [selectedNode, baseRiskAssessment]);
+
+  // Formatted sensor values conforming strictly to Master Reference
+  const displayMoisture = useMemo(() => {
+    if (selectedNode) return typeof activeSensorValues.moisture === 'number' ? activeSensorValues.moisture.toFixed(1) : (activeSensorValues.moisture || '42.4');
+    return '42.4';
+  }, [selectedNode, activeSensorValues.moisture]);
+
+  const displayRainfall = useMemo(() => {
+    if (selectedNode) return Math.round(activeSensorValues.rainfall ?? 12);
+    return 12;
+  }, [selectedNode, activeSensorValues.rainfall]);
+
+  const displayTilt = useMemo(() => {
+    if (selectedNode) return typeof activeSensorValues.tilt === 'number' ? activeSensorValues.tilt.toFixed(1) : (activeSensorValues.tilt || '1.9');
+    return '1.9';
+  }, [selectedNode, activeSensorValues.tilt]);
+
+  const displayVibration = useMemo(() => {
+    if (selectedNode) return typeof activeSensorValues.vibration === 'number' ? activeSensorValues.vibration.toFixed(2) : (activeSensorValues.vibration || '0.02');
+    return '0.02';
+  }, [selectedNode, activeSensorValues.vibration]);
 
   // Formatted timestamp
   const formattedTimestamp = useMemo(() => {
@@ -1304,203 +1503,195 @@ export const CurrentRiskCard = ({
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-2.5">
+            <div id="key-measurements-grid" className="grid grid-cols-2 gap-2.5">
               
               {/* Soil Moisture */}
               <div className="p-2.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 shadow-2xs flex flex-col justify-between min-w-0">
-                <div className="flex items-start justify-between gap-1.5">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <div className="w-6.5 h-6.5 rounded-lg bg-sky-50 dark:bg-sky-950/60 text-sky-500 dark:text-sky-400 border border-sky-100 dark:border-sky-900/40 flex items-center justify-center shrink-0">
-                      <Droplets className="w-3.5 h-3.5" />
-                    </div>
-                    <span className="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium truncate">
+                <div className="flex items-start gap-2 min-w-0">
+                  <div className="w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/70 border border-sky-200 dark:border-sky-500/30 text-sky-500 dark:text-sky-400 flex items-center justify-center shrink-0">
+                    <Droplets className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium truncate">
                       Soil Moisture
-                    </span>
+                    </div>
+                    <div className="text-sm sm:text-base font-black font-sans text-slate-900 dark:text-white leading-none mt-0.5">
+                      {displayMoisture} <span className="text-[10.5px] font-medium text-slate-400 dark:text-slate-500">%</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-[9px] font-semibold text-emerald-600 dark:text-emerald-400 mt-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                      <span>Normal</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-baseline gap-1 my-1">
-                  <span className="text-sm sm:text-base font-bold font-mono text-slate-900 dark:text-white leading-none">
-                    {activeSensorValues.moisture ?? 42.3}
-                  </span>
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-                    %
-                  </span>
-                </div>
-
-                {/* Mini Recharts AreaChart Sparkline (Detailed Zig-Zag with Dynamic Domain) */}
-                <div className="w-full h-9 my-0.5">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={KEY_MEASUREMENTS_SPARKLINES_24H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
-                      <defs>
-                        <linearGradient id="moistureGradMini" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#06b6d4" stopOpacity={0.5} />
-                          <stop offset="100%" stopColor="#06b6d4" stopOpacity={0.0} />
-                        </linearGradient>
-                      </defs>
-                      <YAxis domain={['dataMin - 1.2', 'dataMax + 1.2']} hide />
-                      <Tooltip content={<MiniChartTooltip unit="%" label="Moisture" />} />
-                      <Area 
-                        type="linear" 
-                        dataKey="moisture" 
-                        stroke="#06b6d4" 
-                        strokeWidth={1.8} 
-                        fill="url(#moistureGradMini)" 
-                        isAnimationActive={false} 
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-
-                <div className="flex items-center gap-1 text-[9.5px] font-medium text-slate-600 dark:text-slate-300 pt-0.5">
-                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                    (activeSensorValues.moisture || 0) > 60 ? 'bg-rose-500' : (activeSensorValues.moisture || 0) > 48 ? 'bg-amber-500' : 'bg-emerald-500'
-                  }`} />
-                  <span>{(activeSensorValues.moisture || 0) > 60 ? 'Critical' : (activeSensorValues.moisture || 0) > 48 ? 'Elevated' : 'Normal'}</span>
+                {/* Recessed Dark Box with Left Y-Axis and Area Chart */}
+                <div className="rounded-lg bg-slate-950/80 border border-slate-800/80 p-1 flex items-stretch h-12 mt-2 gap-1.5">
+                  <div className="w-4 shrink-0 flex flex-col justify-between py-0.5 text-[7.5px] font-mono text-slate-500 text-right pr-1 border-r border-slate-800 select-none">
+                    <span>60</span>
+                    <span>20</span>
+                  </div>
+                  <div className="flex-1 min-w-0 h-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={REF_SOIL_MOISTURE_SERIES} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="moistureGradRef" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#10b981" stopOpacity={0.45} />
+                            <stop offset="100%" stopColor="#10b981" stopOpacity={0.05} />
+                          </linearGradient>
+                        </defs>
+                        <YAxis domain={[20, 60]} hide />
+                        <Tooltip content={<MiniChartTooltip unit="%" label="Moisture" />} />
+                        <Area 
+                          type="linear" 
+                          dataKey="moisture" 
+                          stroke="#10b981" 
+                          strokeWidth={1.6} 
+                          fill="url(#moistureGradRef)" 
+                          isAnimationActive={false} 
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
 
               {/* Rainfall (24h) */}
               <div className="p-2.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 shadow-2xs flex flex-col justify-between min-w-0">
-                <div className="flex items-start justify-between gap-1.5">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <div className="w-6.5 h-6.5 rounded-lg bg-sky-50 dark:bg-sky-950/60 text-sky-500 dark:text-sky-400 border border-sky-100 dark:border-sky-900/40 flex items-center justify-center shrink-0">
-                      <CloudRain className="w-3.5 h-3.5" />
-                    </div>
-                    <span className="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium truncate">
+                <div className="flex items-start gap-2 min-w-0">
+                  <div className="w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/70 border border-sky-200 dark:border-sky-500/30 text-sky-500 dark:text-sky-400 flex items-center justify-center shrink-0">
+                    <CloudRain className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium truncate">
                       Rainfall (24h)
-                    </span>
+                    </div>
+                    <div className="text-sm sm:text-base font-black font-sans text-slate-900 dark:text-white leading-none mt-0.5">
+                      {displayRainfall} <span className="text-[10.5px] font-medium text-slate-400 dark:text-slate-500">mm</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-[9px] font-semibold text-emerald-600 dark:text-emerald-400 mt-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                      <span>Low</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-baseline gap-1 my-1">
-                  <span className="text-sm sm:text-base font-bold font-mono text-slate-900 dark:text-white leading-none">
-                    {activeSensorValues.rainfall ?? 12}
-                  </span>
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-                    mm
-                  </span>
-                </div>
-
-                {/* Mini Recharts BarChart Sparkline (Discrete Hyetograph Bars with Tooltip) */}
-                <div className="w-full h-9 my-0.5">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={KEY_MEASUREMENTS_SPARKLINES_24H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
-                      <Tooltip content={<MiniChartTooltip unit="mm" label="Rain Rate" />} />
-                      <Bar 
-                        dataKey="rainBar" 
-                        fill="#38bdf8" 
-                        radius={[1, 1, 0, 0]} 
-                        isAnimationActive={false} 
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-
-                <div className="flex items-center gap-1 text-[9.5px] font-medium text-slate-600 dark:text-slate-300 pt-0.5">
-                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                    (activeSensorValues.rainfall || 0) > 30 ? 'bg-rose-500' : (activeSensorValues.rainfall || 0) > 20 ? 'bg-amber-500' : 'bg-emerald-500'
-                  }`} />
-                  <span>{(activeSensorValues.rainfall || 0) > 30 ? 'Heavy' : (activeSensorValues.rainfall || 0) > 20 ? 'Moderate' : 'Normal'}</span>
+                {/* Recessed Dark Box with Left Y-Axis and Bar Chart */}
+                <div className="rounded-lg bg-slate-950/80 border border-slate-800/80 p-1 flex items-stretch h-12 mt-2 gap-1.5">
+                  <div className="w-4 shrink-0 flex flex-col justify-between py-0.5 text-[7.5px] font-mono text-slate-500 text-right pr-1 border-r border-slate-800 select-none">
+                    <span>30</span>
+                    <span>0</span>
+                  </div>
+                  <div className="flex-1 min-w-0 h-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={REF_RAINFALL_SERIES} margin={{ top: 2, right: 0, left: 0, bottom: 0 }} barCategoryGap="12%">
+                        <YAxis domain={[0, 30]} hide />
+                        <Tooltip content={<MiniChartTooltip unit="mm" label="Rain" />} />
+                        <Bar 
+                          dataKey="rainBar" 
+                          fill="#38bdf8" 
+                          radius={[1, 1, 0, 0]} 
+                          isAnimationActive={false} 
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
 
               {/* Ground Tilt */}
               <div className="p-2.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 shadow-2xs flex flex-col justify-between min-w-0">
-                <div className="flex items-start justify-between gap-1.5">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <div className="w-6.5 h-6.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-500 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/40 flex items-center justify-center shrink-0">
-                      <MoveDiagonal className="w-3.5 h-3.5" />
-                    </div>
-                    <span className="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium truncate">
+                <div className="flex items-start gap-2 min-w-0">
+                  <div className="w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/70 border border-sky-200 dark:border-sky-500/30 text-sky-500 dark:text-sky-400 flex items-center justify-center shrink-0">
+                    <TrendingUp className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium truncate">
                       Ground Tilt
-                    </span>
+                    </div>
+                    <div className="text-sm sm:text-base font-black font-sans text-slate-900 dark:text-white leading-none mt-0.5">
+                      {displayTilt} <span className="text-[10.5px] font-medium text-slate-400 dark:text-slate-500">°</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-[9px] font-semibold text-emerald-600 dark:text-emerald-400 mt-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                      <span>Stable</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-baseline gap-0.5 my-1">
-                  <span className="text-sm sm:text-base font-bold font-mono text-slate-900 dark:text-white leading-none">
-                    {activeSensorValues.tilt ?? 1.86}°
-                  </span>
-                </div>
-
-                {/* Mini Recharts AreaChart Sparkline (Detailed Inclinometer Zig-Zag with Dynamic Domain) */}
-                <div className="w-full h-9 my-0.5">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={KEY_MEASUREMENTS_SPARKLINES_24H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
-                      <defs>
-                        <linearGradient id="tiltGradMini" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.5} />
-                          <stop offset="100%" stopColor="#10b981" stopOpacity={0.0} />
-                        </linearGradient>
-                      </defs>
-                      <YAxis domain={['dataMin - 0.2', 'dataMax + 0.2']} hide />
-                      <Tooltip content={<MiniChartTooltip unit="°" label="Incline" />} />
-                      <Area 
-                        type="linear" 
-                        dataKey="tilt" 
-                        stroke="#10b981" 
-                        strokeWidth={1.8} 
-                        fill="url(#tiltGradMini)" 
-                        isAnimationActive={false} 
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
-
-                <div className="flex items-center gap-1 text-[9.5px] font-medium text-slate-600 dark:text-slate-300 pt-0.5">
-                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                    (activeSensorValues.tilt || 0) > 4.0 ? 'bg-rose-500' : (activeSensorValues.tilt || 0) > 3.0 ? 'bg-amber-500' : 'bg-emerald-500'
-                  }`} />
-                  <span>{(activeSensorValues.tilt || 0) > 4.0 ? 'Displacement' : (activeSensorValues.tilt || 0) > 3.0 ? 'Shift' : 'Stable'}</span>
+                {/* Recessed Dark Box with Left Y-Axis and Area Chart */}
+                <div className="rounded-lg bg-slate-950/80 border border-slate-800/80 p-1 flex items-stretch h-12 mt-2 gap-1.5">
+                  <div className="w-4 shrink-0 flex flex-col justify-between py-0.5 text-[7.5px] font-mono text-slate-500 text-right pr-1 border-r border-slate-800 select-none">
+                    <span>3.5</span>
+                    <span>0.0</span>
+                  </div>
+                  <div className="flex-1 min-w-0 h-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={REF_GROUND_TILT_SERIES} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="tiltGradRef" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#10b981" stopOpacity={0.45} />
+                            <stop offset="100%" stopColor="#10b981" stopOpacity={0.05} />
+                          </linearGradient>
+                        </defs>
+                        <YAxis domain={[0.0, 3.5]} hide />
+                        <Tooltip content={<MiniChartTooltip unit="°" label="Tilt" />} />
+                        <Area 
+                          type="linear" 
+                          dataKey="tilt" 
+                          stroke="#10b981" 
+                          strokeWidth={1.6} 
+                          fill="url(#tiltGradRef)" 
+                          isAnimationActive={false} 
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
 
               {/* Vibration */}
               <div className="p-2.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 shadow-2xs flex flex-col justify-between min-w-0">
-                <div className="flex items-start justify-between gap-1.5">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <div className="w-6.5 h-6.5 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-500 dark:text-purple-400 border border-purple-100 dark:border-purple-900/40 flex items-center justify-center shrink-0">
-                      <Activity className="w-3.5 h-3.5" />
-                    </div>
-                    <span className="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium truncate">
+                <div className="flex items-start gap-2 min-w-0">
+                  <div className="w-7 h-7 rounded-full bg-sky-50 dark:bg-sky-950/70 border border-sky-200 dark:border-sky-500/30 text-sky-500 dark:text-sky-400 flex items-center justify-center shrink-0">
+                    <Activity className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[10.5px] text-slate-500 dark:text-slate-400 font-medium truncate">
                       Vibration
-                    </span>
+                    </div>
+                    <div className="text-sm sm:text-base font-black font-sans text-slate-900 dark:text-white leading-none mt-0.5">
+                      {displayVibration} <span className="text-[10.5px] font-medium text-slate-400 dark:text-slate-500">g</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-[9px] font-semibold text-sky-500 dark:text-sky-400 mt-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-sky-500 shrink-0" />
+                      <span>Normal</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-baseline gap-1 my-1">
-                  <span className="text-sm sm:text-base font-bold font-mono text-slate-900 dark:text-white leading-none">
-                    {activeSensorValues.vibration ?? 0.033}
-                  </span>
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-                    g
-                  </span>
-                </div>
-
-                {/* Mini Recharts LineChart Sparkline (Detailed Seismic Waveform Zig-Zag with Dynamic Domain) */}
-                <div className="w-full h-9 my-0.5">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={KEY_MEASUREMENTS_SPARKLINES_24H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
-                      <YAxis domain={['dataMin - 0.005', 'dataMax + 0.008']} hide />
-                      <Tooltip content={<MiniChartTooltip unit="g" label="Vibration" />} />
-                      <Line 
-                        type="linear" 
-                        dataKey="vibration" 
-                        stroke="#a855f7" 
-                        strokeWidth={1.6} 
-                        dot={false} 
-                        isAnimationActive={false} 
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-
-                <div className="flex items-center gap-1 text-[9.5px] font-medium text-slate-600 dark:text-slate-300 pt-0.5">
-                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                    (activeSensorValues.vibration || 0) > 0.08 ? 'bg-rose-500' : (activeSensorValues.vibration || 0) > 0.05 ? 'bg-amber-500' : 'bg-emerald-500'
-                  }`} />
-                  <span>{(activeSensorValues.vibration || 0) > 0.08 ? 'Micro-Tremors' : 'Normal'}</span>
+                {/* Recessed Dark Box with Left Y-Axis and Line Chart */}
+                <div className="rounded-lg bg-slate-950/80 border border-slate-800/80 p-1 flex items-stretch h-12 mt-2 gap-1.5">
+                  <div className="w-4 shrink-0 flex flex-col justify-between py-0.5 text-[7.5px] font-mono text-slate-500 text-right pr-1 border-r border-slate-800 select-none">
+                    <span>0.10</span>
+                    <span>0.00</span>
+                  </div>
+                  <div className="flex-1 min-w-0 h-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={REF_VIBRATION_SERIES} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
+                        <YAxis domain={[0.00, 0.10]} hide />
+                        <Tooltip content={<MiniChartTooltip unit="g" label="Vibration" />} />
+                        <Line 
+                          type="linear" 
+                          dataKey="vibration" 
+                          stroke="#38bdf8" 
+                          strokeWidth={1.3} 
+                          dot={false} 
+                          isAnimationActive={false} 
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
                 </div>
               </div>
 
@@ -1514,10 +1705,10 @@ export const CurrentRiskCard = ({
       {/* ========================================================================= */}
       {/* 3. BOTTOM ANALYTICS CARDS (4 EQUAL CARDS STRICTLY MATCHING MASTER REFERENCE) */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-4 pt-1">
+      <div id="bottom-analytics-cards" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-4 pt-1">
         
         {/* Card 1: Trend (Last 24 Hours) */}
-        <div className="p-3 rounded-2xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between min-w-0">
+        <div className="p-3 rounded-2xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between min-w-0 shadow-xs">
           <div>
             <div className="flex items-center gap-2 min-w-0">
               <div className="w-7 h-7 rounded-lg bg-emerald-100/80 dark:bg-emerald-950/70 border border-emerald-200/60 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
@@ -1538,43 +1729,62 @@ export const CurrentRiskCard = ({
             </div>
           </div>
 
-          {/* Detailed 24H Sparkline with Grid & X-Axis */}
-          <div className="w-full h-14 mt-1.5">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={RISK_SCORE_HISTORY_24H} margin={{ top: 2, right: 4, left: 4, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="trendCardGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
-                    <stop offset="100%" stopColor="#10b981" stopOpacity={0.0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke="#334155" strokeDasharray="2 2" strokeOpacity={0.35} vertical={false} />
-                <YAxis domain={['dataMin - 3', 'dataMax + 3']} hide />
-                <XAxis 
-                  dataKey="time" 
-                  ticks={['00:00', '06:00', '12:00', '18:00', 'Now']} 
-                  stroke="#475569" 
-                  tick={{ fill: '#94a3b8', fontSize: 8.5 }} 
-                  axisLine={{ stroke: '#334155', strokeWidth: 0.8 }} 
-                  tickLine={false} 
-                />
-                <Tooltip content={<MiniChartTooltip unit="/100" label="Risk Index" />} />
-                <Area 
-                  type="linear" 
-                  dataKey="score" 
-                  stroke="#10b981" 
-                  strokeWidth={1.8} 
-                  fill="url(#trendCardGrad)" 
-                  dot={{ r: 1.5, fill: '#10b981', strokeWidth: 0 }}
-                  isAnimationActive={false} 
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+          {/* Recessed Dark Chart Box with Grid & Inflection Dots */}
+          <div className="rounded-xl bg-slate-950/80 border border-slate-800/80 p-2 pt-2 pb-1 mt-2">
+            <div className="w-full h-16">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={REF_TREND_SERIES} margin={{ top: 4, right: 6, left: 6, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="trendCardGradRef" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
+                      <stop offset="100%" stopColor="#10b981" stopOpacity={0.02} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid stroke="#334155" strokeDasharray="3 3" strokeOpacity={0.4} vertical={true} horizontal={true} />
+                  <YAxis domain={[12, 46]} hide />
+                  <XAxis 
+                    dataKey="time" 
+                    ticks={['00:00', '06:00', '12:00', '18:00', 'Now']} 
+                    stroke="#334155" 
+                    tick={{ fill: '#94a3b8', fontSize: 8, fontFamily: 'monospace' }} 
+                    axisLine={{ stroke: '#334155', strokeWidth: 0.8 }} 
+                    tickLine={false} 
+                    padding={{ left: 8, right: 8 }}
+                  />
+                  <Tooltip content={<MiniChartTooltip unit="/100" label="Risk Index" />} />
+                  <Area 
+                    type="linear" 
+                    dataKey="score" 
+                    stroke="#10b981" 
+                    strokeWidth={1.8} 
+                    fill="url(#trendCardGradRef)" 
+                    dot={(dotProps) => {
+                      const { cx, cy, payload } = dotProps;
+                      if (payload?.hasDot) {
+                        return (
+                          <circle
+                            key={`dot-${payload.time}`}
+                            cx={cx}
+                            cy={cy}
+                            r={2.4}
+                            fill="#10b981"
+                            stroke="#022c22"
+                            strokeWidth={1}
+                          />
+                        );
+                      }
+                      return null;
+                    }}
+                    isAnimationActive={false} 
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
 
         {/* Card 2: Prediction Window (Prototype) */}
-        <div className="p-3 rounded-2xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between min-w-0">
+        <div className="p-3 rounded-2xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between min-w-0 shadow-xs">
           <div>
             <div className="flex items-start justify-between gap-1 min-w-0">
               <div className="flex items-center gap-2 min-w-0">
@@ -1590,7 +1800,7 @@ export const CurrentRiskCard = ({
                   </div>
                 </div>
               </div>
-              <span className="text-rose-500 dark:text-rose-400 font-semibold text-[11px] shrink-0">
+              <span className="text-rose-500 dark:text-rose-400 font-semibold text-[10.5px] shrink-0">
                 Next 8 hours
               </span>
             </div>
@@ -1616,59 +1826,73 @@ export const CurrentRiskCard = ({
             </div>
           </div>
 
-          {/* Multi-Horizon Risk Prediction Area Chart */}
-          <div className="w-full h-14 mt-1.5">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={RISK_PREDICTION_SERIES_8H} margin={{ top: 2, right: 4, left: 4, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="predLowGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
-                    <stop offset="100%" stopColor="#10b981" stopOpacity={0.0} />
-                  </linearGradient>
-                  <linearGradient id="predModGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.3} />
-                    <stop offset="100%" stopColor="#f59e0b" stopOpacity={0.0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid stroke="#334155" strokeDasharray="2 2" strokeOpacity={0.3} vertical={false} />
-                <YAxis domain={['dataMin - 3', 'dataMax + 4']} hide />
-                <XAxis 
-                  dataKey="time" 
-                  ticks={['Now', '+2h', '+4h', '+6h', '+8h']} 
-                  tickFormatter={(val) => val.replace('+', '')}
-                  stroke="#475569" 
-                  tick={{ fill: '#94a3b8', fontSize: 8.5 }} 
-                  axisLine={{ stroke: '#334155', strokeWidth: 0.8 }} 
-                  tickLine={false} 
-                />
-                <Tooltip content={<PredictionChartTooltip />} />
-                <Area 
-                  type="monotone" 
-                  dataKey="high" 
-                  stroke="#ef4444" 
-                  strokeWidth={1} 
-                  strokeDasharray="2 2"
-                  fill="transparent" 
-                  isAnimationActive={false} 
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="moderate" 
-                  stroke="#f59e0b" 
-                  strokeWidth={1.5} 
-                  fill="url(#predModGrad)" 
-                  isAnimationActive={false} 
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="low" 
-                  stroke="#10b981" 
-                  strokeWidth={1.8} 
-                  fill="url(#predLowGrad)" 
-                  isAnimationActive={false} 
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+          {/* Recessed Dark Chart Box with Grid & 3 Risk Layers */}
+          <div className="rounded-xl bg-slate-950/80 border border-slate-800/80 p-2 pt-2 pb-1 mt-2">
+            <div className="w-full h-16">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={REF_PREDICTION_SERIES} margin={{ top: 4, right: 6, left: 6, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="predLowGradRef" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
+                      <stop offset="100%" stopColor="#10b981" stopOpacity={0.02} />
+                    </linearGradient>
+                    <linearGradient id="predModGradRef" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.35} />
+                      <stop offset="100%" stopColor="#f59e0b" stopOpacity={0.05} />
+                    </linearGradient>
+                    <linearGradient id="predHighFanGradRef" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#ef4444" stopOpacity={0.0} />
+                      <stop offset="50%" stopColor="#ef4444" stopOpacity={0.15} />
+                      <stop offset="100%" stopColor="#ef4444" stopOpacity={0.45} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid stroke="#334155" strokeDasharray="3 3" strokeOpacity={0.4} vertical={true} horizontal={true} />
+                  <YAxis domain={[10, 58]} hide />
+                  <XAxis 
+                    dataKey="time" 
+                    ticks={['Now', '2h', '4h', '6h', '8h']} 
+                    stroke="#334155" 
+                    tick={{ fill: '#94a3b8', fontSize: 8, fontFamily: 'monospace' }} 
+                    axisLine={{ stroke: '#334155', strokeWidth: 0.8 }} 
+                    tickLine={false} 
+                    padding={{ left: 8, right: 8 }}
+                  />
+                  <Tooltip content={<PredictionChartTooltip />} />
+                  
+                  {/* High Risk Uncertainty Fan */}
+                  <Area 
+                    type="monotone" 
+                    dataKey="high" 
+                    stroke="#ef4444" 
+                    strokeWidth={1.2} 
+                    strokeDasharray="3 3"
+                    fill="url(#predHighFanGradRef)" 
+                    isAnimationActive={false} 
+                  />
+
+                  {/* Moderate Risk Wave */}
+                  <Area 
+                    type="monotone" 
+                    dataKey="moderate" 
+                    stroke="#f59e0b" 
+                    strokeWidth={1.8} 
+                    fill="url(#predModGradRef)" 
+                    isAnimationActive={false} 
+                  />
+
+                  {/* Low Risk Baseline */}
+                  <Area 
+                    type="monotone" 
+                    dataKey="low" 
+                    stroke="#10b981" 
+                    strokeWidth={1.6} 
+                    strokeDasharray="3 3"
+                    fill="url(#predLowGradRef)" 
+                    isAnimationActive={false} 
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
 
