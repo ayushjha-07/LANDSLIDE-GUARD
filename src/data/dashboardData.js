@@ -1,10 +1,10 @@
 export const INITIAL_SENSOR_VALUES = {
-  moisture: 42.0,      // %
+  moisture: 41.2,      // %
   rainfall: 12.0,      // mm
-  tilt: 1.8,           // degrees
-  vibration: 0.03,     // g
-  temperature: 21.4,   // °C
-  humidity: 72.0,      // %
+  tilt: 1.77,          // degrees
+  vibration: 0.033,    // g
+  temperature: 21.6,   // °C
+  humidity: 76.5,      // %
   pressure: 1012,      // hPa
   windSpeed: 6.0,      // km/h
 };

@@ -9,12 +9,15 @@ import {
   BarChart3,
   Lightbulb,
   Calendar,
-  ChevronDown
+  ChevronDown,
+  Waves
 } from 'lucide-react';
 import {
   ResponsiveContainer,
   AreaChart,
   Area,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   Tooltip,
@@ -23,23 +26,8 @@ import {
   ReferenceLine
 } from 'recharts';
 import heroHimalayas from '../../assets/hero_himalayas.jpg';
+import { DETAILED_STABILITY_SERIES_24H } from '../../data/mockHistoricalData';
 
-// Deterministic 24-Hour historical series matching the exact reference curve and data points
-const DEFAULT_STABILITY_SERIES = [
-  { time: '00:00', tilt: 1.12, vibration: 0.026, thresholdTilt: 3.5, thresholdVib: 0.05 },
-  { time: '02:00', tilt: 1.18, vibration: 0.027, thresholdTilt: 3.5, thresholdVib: 0.05 },
-  { time: '04:00', tilt: 1.08, vibration: 0.029, thresholdTilt: 3.5, thresholdVib: 0.05 },
-  { time: '06:00', tilt: 1.28, vibration: 0.031, thresholdTilt: 3.5, thresholdVib: 0.05 },
-  { time: '08:00', tilt: 1.62, vibration: 0.033, thresholdTilt: 3.5, thresholdVib: 0.05 },
-  { time: '10:00', tilt: 1.72, vibration: 0.032, thresholdTilt: 3.5, thresholdVib: 0.05 },
-  { time: '12:00', tilt: 1.66, vibration: 0.035, thresholdTilt: 3.5, thresholdVib: 0.05 },
-  { time: '14:00', tilt: 1.87, vibration: 0.033, thresholdTilt: 3.5, thresholdVib: 0.05 }, // Tooltip anchor in reference (Tilt: 1.87°)
-  { time: '16:00', tilt: 1.68, vibration: 0.030, thresholdTilt: 3.5, thresholdVib: 0.05 },
-  { time: '18:00', tilt: 1.45, vibration: 0.029, thresholdTilt: 3.5, thresholdVib: 0.05 },
-  { time: '20:00', tilt: 1.62, vibration: 0.031, thresholdTilt: 3.5, thresholdVib: 0.05 },
-  { time: '22:00', tilt: 1.71, vibration: 0.029, thresholdTilt: 3.5, thresholdVib: 0.05 },
-  { time: 'Now',   tilt: 1.81, vibration: 0.033, thresholdTilt: 3.5, thresholdVib: 0.05 }, // Current reading
-];
 
 // Header Mountain Transmitter Emblem SVG
 const MountainStabilityEmblem = () => (
@@ -168,20 +156,62 @@ const SlopeCrossSectionIllustration = () => (
   </div>
 );
 
-// Custom Tooltip Matching Dark Card Popover
+// Custom Tooltip Matching Geotechnical Precision Card
 const CustomTooltip = ({ active, payload, label, unit, parameterLabel }) => {
   if (active && payload && payload.length) {
-    const val = payload[0].value;
+    const dataPoint = payload[0]?.payload;
+    const val = payload[0]?.value;
+    const status = dataPoint?.status || 'Normal';
+    const change = dataPoint?.change || '+0.08°';
     return (
-      <div className="bg-slate-900/95 dark:bg-slate-950/95 text-white px-3.5 py-2.5 rounded-xl shadow-xl border border-slate-700/60 backdrop-blur-md pointer-events-none z-50 min-w-[115px]">
-        <div className="text-[11px] font-semibold text-slate-400 mb-1 font-mono">
-          {label}
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <span className="text-xs text-slate-200">{parameterLabel}:</span>
-          <span className="text-sm font-bold font-mono text-emerald-300">
-            {val}{unit}
+      <div className="bg-slate-900/95 dark:bg-slate-950/95 text-white px-3.5 py-2.5 rounded-xl shadow-xl border border-slate-700/60 backdrop-blur-md pointer-events-none z-50 min-w-[145px]">
+        <div className="text-[11px] font-semibold text-slate-400 mb-1.5 font-mono flex items-center justify-between gap-2">
+          <span>{label}</span>
+          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-[#087443]/30 text-emerald-300 border border-emerald-500/30">
+            {status}
           </span>
+        </div>
+        <div className="space-y-1">
+          <div className="flex items-center justify-between gap-3 text-xs">
+            <span className="text-slate-300">{parameterLabel}:</span>
+            <span className="text-sm font-bold font-mono text-emerald-300">
+              {val}{unit}
+            </span>
+          </div>
+          <div className="flex items-center justify-between gap-3 text-[11px]">
+            <span className="text-slate-400">Change:</span>
+            <span className="font-mono text-cyan-300 font-semibold">{change}</span>
+          </div>
+          <div className="flex items-center justify-between gap-3 text-[10.5px]">
+            <span className="text-slate-400">Status:</span>
+            <span className="text-emerald-400 font-semibold">{status}</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
+// Tooltip for Vibration / Micro-seismic activity
+const VibrationTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    const val = payload[0]?.value;
+    const status = Number(val) >= 0.05 ? 'Warning' : 'Normal';
+    return (
+      <div className="bg-slate-900/95 dark:bg-slate-950/95 text-white px-3 py-2 rounded-xl shadow-xl border border-slate-700/60 backdrop-blur-md pointer-events-none z-50 min-w-[130px]">
+        <div className="text-[10.5px] font-mono text-slate-400 mb-1 flex items-center justify-between gap-2">
+          <span>{label}</span>
+          <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${Number(val) >= 0.05 ? 'bg-red-950/70 text-red-300 border border-red-500/30' : 'bg-emerald-950/70 text-emerald-300 border border-emerald-500/30'}`}>
+            {status}
+          </span>
+        </div>
+        <div className="flex items-center justify-between gap-2 text-xs">
+          <span className="text-slate-300">Vibration:</span>
+          <span className="font-bold font-mono text-cyan-300">{Number(val).toFixed(3)} g</span>
+        </div>
+        <div className="text-[9.5px] text-slate-400 mt-0.5">
+          {Number(val) < 0.03 ? 'Ambient baseline' : 'Elevated micro-tremor'}
         </div>
       </div>
     );
@@ -192,11 +222,11 @@ const CustomTooltip = ({ active, payload, label, unit, parameterLabel }) => {
 export const GroundStabilityCard = ({ stabilitySeries, sensorValues, className = "" }) => {
   const [activeTab, setActiveTab] = useState('tilt'); // 'tilt' | 'vibration'
 
-  // Dynamic telemetry bindings with exact defaults matching reference
+  // Dynamic telemetry bindings with exact defaults matching reference (Current Tilt 1.77°, Vib 0.033g)
   const currentTilt = useMemo(() => {
     if (sensorValues?.tilt?.value !== undefined) return Number(sensorValues.tilt.value).toFixed(2);
     if (typeof sensorValues?.tilt === 'number') return Number(sensorValues.tilt).toFixed(2);
-    return '1.81';
+    return '1.77';
   }, [sensorValues]);
 
   const currentVib = useMemo(() => {
@@ -216,9 +246,10 @@ export const GroundStabilityCard = ({ stabilitySeries, sensorValues, className =
     ? (activeTab === 'tilt' ? 'Tilt exceeded safety advisory threshold' : 'Micro-seismic tremor above baseline')
     : (activeTab === 'tilt' ? 'Ground movement within normal range' : 'Micro-seismic activity within normal limits');
 
-  // Chart data setup using deterministic curve with live telemetry at 'Now'
+  // Chart data setup using high-density 25-point 24H telemetry series
   const chartData = useMemo(() => {
-    return DEFAULT_STABILITY_SERIES.map(item => {
+    const base = stabilitySeries?.length ? stabilitySeries : DETAILED_STABILITY_SERIES_24H;
+    return base.map(item => {
       if (item.time === 'Now') {
         return {
           ...item,
@@ -230,7 +261,22 @@ export const GroundStabilityCard = ({ stabilitySeries, sensorValues, className =
       }
       return item;
     });
-  }, [currentTilt, currentVib]);
+  }, [stabilitySeries, currentTilt, currentVib]);
+
+  // Calculate dynamic average and peak from active dataset
+  const averageTilt = useMemo(() => {
+    const values = chartData.map(d => Number(d.tilt)).filter(v => !isNaN(v));
+    if (!values.length) return '1.54';
+    const sum = values.reduce((acc, v) => acc + v, 0);
+    return (sum / values.length).toFixed(2);
+  }, [chartData]);
+
+  const peakTilt = useMemo(() => {
+    const values = chartData.map(d => Number(d.tilt)).filter(v => !isNaN(v));
+    if (!values.length) return '1.92';
+    return Math.max(...values).toFixed(2);
+  }, [chartData]);
+
 
   // Stability Gauge SVG Calculation (circular progress ring)
   const gaugeRadius = 38;
@@ -493,110 +539,136 @@ export const GroundStabilityCard = ({ stabilitySeries, sensorValues, className =
 
         </div>
 
-        {/* 5. GROUND TILT / VIBRATION — 24 HOURS RECHARTS CHART */}
-        <div className="mt-4 p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-stone-900/60 border border-stone-200/80 dark:border-stone-800 shadow-xs">
+        {/* 5. GROUND TILT & VIBRATION — ADVANCED TELEMETRY CHARTS */}
+        <div className="mt-4 p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-stone-900/60 border border-stone-200/80 dark:border-stone-800 shadow-xs space-y-4">
           
-          {/* Chart Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2">
+          {/* Chart Header with Live Indicator & Analytics Strip */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-stone-100 dark:border-stone-800/70">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-[#E8F7EF] dark:bg-emerald-950/60 border border-emerald-500/20 flex items-center justify-center text-[#087443] dark:text-emerald-400 flex-shrink-0">
-                {activeTab === 'tilt' ? <MoveDiagonal className="w-4 h-4" /> : <Activity className="w-4 h-4" />}
+                <MoveDiagonal className="w-4 h-4" />
               </div>
               <div>
-                <h4 className="text-base sm:text-lg font-bold font-heading text-stone-900 dark:text-white tracking-tight leading-tight">
-                  {activeTab === 'tilt' ? 'Ground Tilt — 24 Hours' : 'Ground Vibration — 24 Hours'}
-                </h4>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h4 className="text-base sm:text-lg font-bold font-heading text-stone-900 dark:text-white tracking-tight leading-tight">
+                    Ground Tilt — 24 Hours
+                  </h4>
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#DDF3EA] text-[#087443] dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-500/30">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#087443] dark:bg-emerald-400 animate-pulse" />
+                    LIVE
+                  </span>
+                </div>
                 <p className="text-[11px] text-stone-500 dark:text-stone-400 font-sans">
-                  {activeTab === 'tilt' ? 'Surface tilt variation over the last 24 hours' : 'Micro-seismic ground motion over the last 24 hours'}
+                  High-precision inclinometer slope telemetry • 25 hourly data points
                 </p>
               </div>
             </div>
 
-            {/* Dropdown Button on Right */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-stone-100 dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700 text-xs font-semibold text-stone-700 dark:text-stone-300 self-start sm:self-auto cursor-default">
-              <Calendar className="w-3.5 h-3.5 text-stone-500" />
-              <span>Last 24 Hours</span>
-              <ChevronDown className="w-3.5 h-3.5 text-stone-400 ml-0.5" />
+            {/* Top Analytics Strip */}
+            <div className="flex items-center gap-2 sm:gap-3 px-3 py-1.5 rounded-xl bg-stone-50 dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 shadow-xs self-start sm:self-auto flex-wrap">
+              <div className="flex items-baseline gap-1">
+                <span className="text-[9px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">CURRENT</span>
+                <span className="text-xs font-mono font-bold text-[#087443] dark:text-emerald-400">
+                  {currentTilt}°
+                </span>
+              </div>
+              <span className="text-stone-300 dark:text-stone-700 text-xs">|</span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-[9px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">CHANGE</span>
+                <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                  +0.08°
+                </span>
+              </div>
+              <span className="text-stone-300 dark:text-stone-700 text-xs">|</span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-[9px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">PEAK</span>
+                <span className="text-xs font-mono font-bold text-stone-800 dark:text-stone-200">
+                  {peakTilt}°
+                </span>
+              </div>
+              <span className="text-stone-300 dark:text-stone-700 text-xs">|</span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-[9px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">AVG</span>
+                <span className="text-xs font-mono font-bold text-stone-800 dark:text-stone-200">
+                  ~{averageTilt}°
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Main AreaChart */}
-          <div className="relative w-full h-64 sm:h-72 min-w-0 mt-2">
+          {/* Primary Ground Tilt AreaChart */}
+          <div className="relative w-full h-56 sm:h-64 min-w-0">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData} margin={{ top: 22, right: 35, left: -5, bottom: 0 }}>
+              <AreaChart data={chartData} margin={{ top: 18, right: 48, left: -10, bottom: 0 }}>
                 <defs>
                   {/* Subtle Forest Green Area Gradient */}
                   <linearGradient id="groundStabilityGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#087443" stopOpacity={0.25} />
+                    <stop offset="5%" stopColor="#087443" stopOpacity={0.28} />
                     <stop offset="95%" stopColor="#087443" stopOpacity={0.02} />
                   </linearGradient>
                 </defs>
 
-                {/* Normal Range Shaded Area */}
+                {/* Normal Range Shaded Area (0° – 3.5°) */}
                 <ReferenceArea
                   y1={0}
-                  y2={warningThreshold}
+                  y2={3.5}
                   fill="#087443"
                   fillOpacity={0.035}
                 />
 
-                {/* Warning Zone Tint above threshold */}
+                {/* Warning Zone Tint above 3.5° */}
                 <ReferenceArea
-                  y1={warningThreshold}
-                  y2={activeTab === 'tilt' ? 4.0 : 0.06}
+                  y1={3.5}
+                  y2={4.0}
                   fill="#EF4444"
                   fillOpacity={0.06}
                 />
 
-                {/* Dashed Red Warning Threshold Line with clean custom label strictly above line */}
+                {/* Dashed Red Warning Threshold Line with right-aligned label */}
                 <ReferenceLine
-                  y={warningThreshold}
+                  y={3.5}
                   stroke="#EF4444"
                   strokeDasharray="4 4"
                   strokeWidth={1.4}
-                  label={(props) => {
-                    const { viewBox } = props;
-                    if (!viewBox) return null;
-                    return (
-                      <text
-                        x={viewBox.x + viewBox.width - 6}
-                        y={viewBox.y - 6}
-                        fill="#DC2626"
-                        fontSize={10.5}
-                        fontWeight={600}
-                        textAnchor="end"
-                      >
-                        Warning Threshold ({warningThreshold}{activeTab === 'tilt' ? '°' : 'g'})
-                      </text>
-                    );
+                  label={{
+                    value: 'Warning Threshold (3.5°)',
+                    position: 'insideTopRight',
+                    fill: '#DC2626',
+                    fontSize: 9.5,
+                    fontWeight: 600,
+                    dy: -6,
+                    dx: -2
                   }}
                 />
 
                 {/* Dotted Grid */}
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" className="dark:stroke-stone-800" vertical={false} />
 
-                {/* X-Axis */}
+                {/* X-Axis: 24 Hours (alternating 2-hour ticks) */}
                 <XAxis
                   dataKey="time"
+                  ticks={['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', 'Now']}
+                  interval={0}
                   stroke="#94a3b8"
                   className="dark:stroke-stone-600"
-                  fontSize={11}
+                  tick={{ fontSize: 9, fill: '#94a3b8' }}
+                  dy={3}
                   tickLine={false}
                   axisLine={{ stroke: '#cbd5e1' }}
                 />
 
                 {/* Y-Axis */}
                 <YAxis
-                  domain={activeTab === 'tilt' ? [0.0, 4.0] : [0.0, 0.06]}
-                  ticks={activeTab === 'tilt' ? [0.0, 1.0, 2.0, 3.0, 4.0] : [0.0, 0.02, 0.04, 0.06]}
+                  domain={[0.0, 4.0]}
+                  ticks={[0.0, 1.0, 2.0, 3.0, 3.5, 4.0]}
                   stroke="#94a3b8"
                   className="dark:stroke-stone-600"
-                  fontSize={11}
+                  fontSize={10.5}
                   tickLine={false}
                   axisLine={{ stroke: '#cbd5e1' }}
-                  tickFormatter={(val) => activeTab === 'tilt' ? `${val.toFixed(1)}°` : `${val.toFixed(2)}g`}
+                  tickFormatter={(val) => `${val.toFixed(1)}°`}
                   label={{
-                    value: activeTab === 'tilt' ? 'Tilt (°)' : 'Vibration (g)',
+                    value: 'Tilt (°)',
                     angle: -90,
                     position: 'insideLeft',
                     offset: 15,
@@ -605,52 +677,148 @@ export const GroundStabilityCard = ({ stabilitySeries, sensorValues, className =
                   }}
                 />
 
-                {/* Interactive Tooltip */}
+                {/* Interactive Tooltip showing Time, Tilt, Change, Status: Normal */}
                 <Tooltip
                   content={
                     <CustomTooltip
-                      unit={activeTab === 'tilt' ? '°' : ' g'}
-                      parameterLabel={activeTab === 'tilt' ? 'Tilt' : 'Vibration'}
+                      unit="°"
+                      parameterLabel="Ground Tilt"
                     />
                   }
                   cursor={{ stroke: '#64748b', strokeDasharray: '3 3', strokeWidth: 1.2 }}
                 />
 
-                {/* Smooth Green Curve and Data Points */}
+                {/* Smooth Green Curve, Area Fill, and Clear Data Point Markers */}
                 <Area
                   type="monotone"
-                  dataKey={activeTab}
+                  dataKey="tilt"
                   stroke="#087443"
                   strokeWidth={2.4}
                   fillOpacity={1}
                   fill="url(#groundStabilityGrad)"
-                  dot={{ r: 3.5, fill: "#ffffff", stroke: "#087443", strokeWidth: 2 }}
+                  dot={{ r: 3, fill: "#ffffff", stroke: "#087443", strokeWidth: 2 }}
                   activeDot={{ r: 5.5, fill: "#087443", stroke: "#ffffff", strokeWidth: 2 }}
                 />
               </AreaChart>
             </ResponsiveContainer>
 
             {/* Pinned Current Value Badge on the Right Margin */}
-            <div className="absolute right-0 sm:right-1 top-[56%] -translate-y-1/2 pointer-events-none z-10">
-              <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold font-mono bg-[#087443] text-white shadow-sm border border-emerald-400/40">
-                {activeTab === 'tilt' ? `${currentTilt}°` : `${currentVib} g`}
+            <div className="absolute right-0 sm:right-1 top-[52%] -translate-y-1/2 pointer-events-none z-10">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold font-mono bg-[#087443] text-white shadow-sm border border-emerald-400/40">
+                {currentTilt}°
               </span>
             </div>
           </div>
 
+          {/* DEDICATED COMPACT VIBRATION ACTIVITY — 24 HOURS */}
+          <div className="pt-3 border-t border-stone-100 dark:border-stone-800/70">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-lg bg-cyan-50 dark:bg-cyan-950/60 text-cyan-600 dark:text-cyan-400 flex items-center justify-center flex-shrink-0">
+                  <Activity className="w-3.5 h-3.5" />
+                </div>
+                <div>
+                  <span className="text-xs font-bold text-stone-900 dark:text-white font-heading">
+                    Vibration & Micro-Seismic Activity — 24 Hours
+                  </span>
+                  <span className="text-[10.5px] text-stone-500 dark:text-stone-400 ml-2 font-sans">
+                    Baseline: 0.024–0.029g • Warning Limit: 0.050g
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 text-[10.5px] font-mono text-stone-500 dark:text-stone-400 self-start sm:self-auto">
+                <span className="text-stone-600 dark:text-stone-300">Peak: <strong className="text-stone-800 dark:text-white">0.038g</strong></span>
+                <span>•</span>
+                <span className="text-cyan-600 dark:text-cyan-400 font-semibold">Current: <strong>{currentVib}g</strong></span>
+              </div>
+            </div>
+
+            {/* Compact Activity Bars Container */}
+            <div className="relative w-full h-24 sm:h-28 min-w-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData} margin={{ top: 12, right: 48, left: -10, bottom: 0 }}>
+                  {/* Normal operating band */}
+                  <ReferenceArea
+                    y1={0}
+                    y2={0.050}
+                    fill="#087443"
+                    fillOpacity={0.02}
+                  />
+
+                  {/* Warning line at 0.050g */}
+                  <ReferenceLine
+                    y={0.050}
+                    stroke="#EF4444"
+                    strokeDasharray="3 3"
+                    strokeWidth={1.2}
+                    label={{
+                      value: 'Warning 0.050g',
+                      position: 'insideTopRight',
+                      fill: '#DC2626',
+                      fontSize: 9,
+                      fontWeight: 600,
+                      dy: -6,
+                      dx: -2
+                    }}
+                  />
+
+                  <CartesianGrid strokeDasharray="2 2" stroke="#e2e8f0" className="dark:stroke-stone-800" vertical={false} />
+
+                  <XAxis
+                    dataKey="time"
+                    ticks={['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', 'Now']}
+                    interval={0}
+                    stroke="#94a3b8"
+                    className="dark:stroke-stone-600"
+                    tick={{ fontSize: 9, fill: '#94a3b8' }}
+                    dy={2}
+                    tickLine={false}
+                    axisLine={{ stroke: '#cbd5e1' }}
+                  />
+
+                  <YAxis
+                    domain={[0, 0.06]}
+                    ticks={[0, 0.025, 0.05]}
+                    stroke="#94a3b8"
+                    className="dark:stroke-stone-600"
+                    fontSize={9.5}
+                    tickLine={false}
+                    axisLine={{ stroke: '#cbd5e1' }}
+                    tickFormatter={(v) => `${v.toFixed(3)}g`}
+                  />
+
+                  <Tooltip
+                    content={<VibrationTooltip />}
+                    cursor={{ fill: 'rgba(56, 189, 248, 0.08)' }}
+                  />
+
+                  {/* Vertical Activity Bars */}
+                  <Bar
+                    dataKey="vibration"
+                    fill="#0284c7"
+                    fillOpacity={0.65}
+                    radius={[2, 2, 0, 0]}
+                    maxBarSize={8}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
           {/* Chart Legend below chart */}
-          <div className="mt-3 flex items-center justify-center gap-4 sm:gap-6 text-xs text-stone-500 dark:text-stone-400 flex-wrap pt-1 border-t border-stone-100 dark:border-stone-800/60">
+          <div className="flex items-center justify-center gap-4 sm:gap-6 text-xs text-stone-500 dark:text-stone-400 flex-wrap pt-2 border-t border-stone-100 dark:border-stone-800/60">
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-[#087443] inline-block" />
-              <span>{activeTab === 'tilt' ? 'Tilt (°)' : 'Vibration (g)'}</span>
+              <span>Ground Tilt (0°–3.5°)</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-xs bg-[#0284c7] inline-block" />
+              <span>Vibration (0.024–0.038g)</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-4 h-[2px] bg-red-500 inline-block border-t border-dashed border-red-500" />
-              <span>Warning Threshold ({warningThreshold}{activeTab === 'tilt' ? '°' : 'g'})</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-xs bg-[#087443]/15 inline-block" />
-              <span>Normal Range (0° – {warningThreshold}{activeTab === 'tilt' ? '°' : 'g'})</span>
+              <span>Warning Limits (3.5° / 0.050g)</span>
             </div>
           </div>
 
@@ -666,13 +834,13 @@ export const GroundStabilityCard = ({ stabilitySeries, sensorValues, className =
             </div>
             <div className="min-w-0 flex-1 pr-6">
               <span className="text-[10px] font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider block">
-                {activeTab === 'tilt' ? 'CURRENT TILT' : 'CURRENT VIBRATION'}
+                CURRENT TILT
               </span>
               <div className="text-xl font-bold font-mono text-stone-900 dark:text-white tracking-tight mt-0.5 leading-none">
-                {activeTab === 'tilt' ? `${currentTilt}°` : `${currentVib} g`}
+                {currentTilt}°
               </div>
               <span className="text-xs text-stone-500 dark:text-stone-400 block font-sans mt-1 leading-tight">
-                Within normal range
+                Within normal range (0° – 3.5°)
               </span>
             </div>
             {/* Mini upward sparkline graphic */}
@@ -693,7 +861,7 @@ export const GroundStabilityCard = ({ stabilitySeries, sensorValues, className =
                 24H CHANGE
               </span>
               <div className="text-xl font-bold font-mono text-emerald-600 dark:text-emerald-400 tracking-tight mt-0.5 leading-none flex items-center gap-1">
-                <span>{activeTab === 'tilt' ? '+0.08°' : '+0.002g'}</span>
+                <span>+0.08°</span>
                 <span className="text-sm">↗</span>
               </div>
               <span className="text-xs text-stone-500 dark:text-stone-400 block font-sans mt-1 leading-tight">
@@ -702,21 +870,21 @@ export const GroundStabilityCard = ({ stabilitySeries, sensorValues, className =
             </div>
           </div>
 
-          {/* Card 3: MOVEMENT TREND */}
+          {/* Card 3: AVERAGE TILT */}
           <div className="relative p-3.5 rounded-2xl bg-[#E8F7EF]/50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40 shadow-xs flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-emerald-100/60 dark:bg-emerald-950/50 border border-emerald-500/20 flex items-center justify-center text-[#087443] dark:text-emerald-400 flex-shrink-0">
               <TrendingUp className="w-5 h-5" />
             </div>
             <div className="min-w-0 flex-1 pr-5">
               <span className="text-[10px] font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider block">
-                {activeTab === 'tilt' ? 'MOVEMENT TREND' : 'SEISMIC TREND'}
+                AVERAGE TILT
               </span>
               <div className="text-xl font-bold text-emerald-700 dark:text-emerald-400 tracking-tight mt-0.5 leading-none flex items-center gap-1">
-                <span>Stable</span>
+                <span>~{averageTilt}°</span>
                 <span className="text-sm">→</span>
               </div>
               <span className="text-xs text-stone-500 dark:text-stone-400 block font-sans mt-1 leading-tight">
-                No significant movement
+                Mean baseline over 24 hours
               </span>
             </div>
           </div>
@@ -728,13 +896,13 @@ export const GroundStabilityCard = ({ stabilitySeries, sensorValues, className =
             </div>
             <div className="min-w-0 flex-1">
               <span className="text-[10px] font-bold text-stone-500 dark:text-stone-400 uppercase tracking-wider block">
-                {activeTab === 'tilt' ? 'PEAK TILT (24H)' : 'PEAK VIB (24H)'}
+                PEAK TILT (24H)
               </span>
               <div className="text-xl font-bold font-mono text-stone-900 dark:text-white tracking-tight mt-0.5 leading-none">
-                {activeTab === 'tilt' ? '1.92°' : '0.038 g'}
+                {peakTilt}°
               </div>
               <span className="text-xs text-stone-500 dark:text-stone-400 block font-sans mt-1 leading-tight">
-                Today, 14:30
+                Today, 14:00
               </span>
             </div>
           </div>

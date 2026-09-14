@@ -15,6 +15,9 @@ import {
   ResponsiveContainer,
   AreaChart,
   Area,
+  Bar,
+  Line,
+  ComposedChart,
   XAxis,
   YAxis,
   Tooltip,
@@ -22,6 +25,7 @@ import {
   ReferenceArea,
   ReferenceLine
 } from 'recharts';
+import { DETAILED_ENV_SERIES_24H } from '../../data/mockHistoricalData';
 
 // 1. Time-series historical datasets (24H default matching reference)
 const SERIES_24H = [
@@ -95,6 +99,8 @@ const PARAMETERS_CONFIG = {
       normalLabel: 'Normal  0% – 60%',
       elevatedLabel: 'Elevated  60% – 75%',
       highLabel: 'High Risk  > 75%',
+      normalMaxLabel: '60% Elevated',
+      elevatedMaxLabel: '75% High Risk',
       normalY: 53,
       elevatedY: 67,
       highY: 85
@@ -113,7 +119,7 @@ const PARAMETERS_CONFIG = {
     axisLabel: 'Precipitation (mm)',
     baseline: 12.0,
     range24h: '0.0 mm – 14.5 mm',
-    statusText: 'Moderate',
+    statusText: 'Low',
     changeText: '-18%',
     changeIsPositive: false,
     changeContext: 'vs peak downpour',
@@ -129,12 +135,14 @@ const PARAMETERS_CONFIG = {
       normalLabel: 'Normal  0 – 25mm',
       elevatedLabel: 'Elevated  25 – 50mm',
       highLabel: 'High Risk  > 50mm',
+      normalMaxLabel: '25mm Elevated',
+      elevatedMaxLabel: '50mm Threshold',
       normalY: 18,
       elevatedY: 38,
       highY: 55
     },
     yDomain: [0, 60],
-    yTicks: [0, 15, 25, 35, 50, 60]
+    yTicks: [0, 10, 25, 35, 50, 60]
   },
   temperature: {
     id: 'temperature',
@@ -163,12 +171,14 @@ const PARAMETERS_CONFIG = {
       normalLabel: 'Normal  10°C – 28°C',
       elevatedLabel: 'Elevated  28°C – 35°C',
       highLabel: 'Extreme  > 35°C',
+      normalMaxLabel: '28°C Elevated',
+      elevatedMaxLabel: '35°C Extreme',
       normalY: 22,
       elevatedY: 31,
       highY: 37
     },
     yDomain: [10, 40],
-    yTicks: [10, 18, 25, 28, 35, 40]
+    yTicks: [10, 15, 20, 25, 30, 35, 40]
   },
   humidity: {
     id: 'humidity',
@@ -179,16 +189,16 @@ const PARAMETERS_CONFIG = {
     color: '#0d9488',
     badgeBg: '#CCFBF1',
     axisLabel: 'Relative Humidity (%)',
-    baseline: 72.1,
+    baseline: 72.0,
     range24h: '68.5% – 79.0%',
-    statusText: 'High',
+    statusText: 'Normal',
     changeText: '+3.4%',
     changeIsPositive: true,
     changeContext: 'vs morning average',
-    changeComparison: 'Valley condensation rise',
-    trend: 'Increasing',
-    trendDesc: 'Moisture buildup along river gorge',
-    currentDesc: 'Elevated valley saturation',
+    changeComparison: 'Valley condensation normal',
+    trend: 'Stable',
+    trendDesc: 'Balanced alpine ambient moisture',
+    currentDesc: 'Optimal valley humidity',
     thresholds: {
       normalMax: 70,
       elevatedMax: 85,
@@ -197,33 +207,56 @@ const PARAMETERS_CONFIG = {
       normalLabel: 'Normal  30% – 70%',
       elevatedLabel: 'Elevated  70% – 85%',
       highLabel: 'Saturated  > 85%',
+      normalMaxLabel: '70% Normal Max',
+      elevatedMaxLabel: '85% Saturated',
       normalY: 52,
       elevatedY: 77,
       highY: 92
     },
-    yDomain: [0, 100],
-    yTicks: [0, 25, 50, 70, 85, 100]
+    yDomain: [30, 100],
+    yTicks: [30, 50, 70, 85, 100]
   }
 };
 
 // Clean Custom Tooltip matching reference dark popover card
-const CustomTooltip = ({ active, payload, label, unit, parameterLabel }) => {
+const CustomTooltip = ({ active, payload, label, unit, parameterLabel, isRainfall }) => {
   if (active && payload && payload.length) {
-    const val = payload[0].value;
+    const dataPoint = payload[0]?.payload;
+    const val = payload[0]?.value;
+    const status = dataPoint?.status || 'Normal';
     return (
-      <div className="bg-slate-900/95 dark:bg-slate-950/95 text-white px-3.5 py-2.5 rounded-xl shadow-xl border border-slate-700/60 backdrop-blur-md pointer-events-none z-50 min-w-[130px]">
-        <div className="text-[11px] font-semibold text-slate-400 mb-1 font-mono">
-          {label}
-        </div>
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-1.5 text-xs text-slate-200">
-            <span className="w-2 h-2 rounded-full bg-emerald-400" />
-            <span>{parameterLabel}</span>
-          </div>
-          <span className="text-sm font-bold font-mono text-emerald-300">
-            {val}{unit}
+      <div className="bg-slate-900/95 dark:bg-slate-950/95 text-white px-3.5 py-2.5 rounded-xl shadow-xl border border-slate-700/60 backdrop-blur-md pointer-events-none z-50 min-w-[145px]">
+        <div className="text-[11px] font-semibold text-slate-400 mb-1.5 font-mono flex items-center justify-between gap-2">
+          <span>{label}</span>
+          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9.5px] font-bold bg-[#0F6B4F]/30 text-emerald-300 border border-emerald-500/30">
+            {status}
           </span>
         </div>
+        {isRainfall ? (
+          <div className="space-y-1">
+            <div className="flex items-center justify-between gap-3 text-xs">
+              <span className="text-slate-300">Rate:</span>
+              <span className="font-bold font-mono text-cyan-300">{dataPoint?.rainfallIntensity ?? 0} mm/h</span>
+            </div>
+            <div className="flex items-center justify-between gap-3 text-xs">
+              <span className="text-slate-300">Total:</span>
+              <span className="font-bold font-mono text-white">{dataPoint?.rainfall ?? val} mm</span>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-1">
+            <div className="flex items-center justify-between gap-3 text-xs">
+              <span className="text-slate-300">{parameterLabel}:</span>
+              <span className="text-sm font-bold font-mono text-emerald-300">
+                {val}{unit}
+              </span>
+            </div>
+            <div className="text-[10px] text-slate-400 flex items-center gap-1">
+              <span>Status:</span>
+              <span className="text-emerald-400 font-semibold">{status}</span>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -282,13 +315,36 @@ export const EnvironmentalTrendsCard = ({ envSeries, sensorValues }) => {
     return sensorValues?.humidity?.value !== undefined ? Number(sensorValues.humidity.value).toFixed(0) : '72';
   }, [sensorValues]);
 
-  // Dataset per time range
+  // Dataset per time range (24H uses high-fidelity 25-point hourly series)
   const chartData = useMemo(() => {
-    if (timeRange === '1H') return SERIES_1H;
-    if (timeRange === '6H') return SERIES_6H;
     if (timeRange === '7D') return SERIES_7D;
-    return SERIES_24H;
-  }, [timeRange]);
+    return DETAILED_ENV_SERIES_24H.map(item => {
+      if (item.time === 'Now') {
+        return {
+          ...item,
+          [currentParam.dataKey]: Number(liveVal),
+          ...(currentParam.id === 'rainfall' ? { rainfall: Number(liveVal) } : {})
+        };
+      }
+      return item;
+    });
+  }, [timeRange, currentParam.dataKey, currentParam.id, liveVal]);
+
+  // Dynamically calculated Min / Avg / Max for active parameter across the series
+  const activeStats = useMemo(() => {
+    const key = currentParam.dataKey;
+    const values = chartData.map(d => Number(d[key])).filter(v => !isNaN(v));
+    if (!values.length) return { min: '0.0', max: '0.0', avg: '0.0' };
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const sum = values.reduce((acc, v) => acc + v, 0);
+    const avg = sum / values.length;
+    return {
+      min: min.toFixed(1),
+      max: max.toFixed(1),
+      avg: avg.toFixed(1)
+    };
+  }, [chartData, currentParam]);
 
   // Dynamic icon for current selected parameter
   const CurrentParamIcon = useMemo(() => {
@@ -511,152 +567,317 @@ export const EnvironmentalTrendsCard = ({ envSeries, sensorValues }) => {
 
         </div>
 
-        {/* 5. MAIN RECHARTS AREA CHART */}
-        <div className="mt-4 relative w-full h-64 sm:h-72 min-w-0">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 15, right: 40, left: -5, bottom: 0 }}>
-              <defs>
-                {/* Gradient Fill for Area */}
-                <linearGradient id="primaryEnvGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#0F6B4F" stopOpacity={0.35} />
-                  <stop offset="95%" stopColor="#0F6B4F" stopOpacity={0.02} />
-                </linearGradient>
-              </defs>
+        {/* 5. ADVANCED TELEMETRY GRAPH & CONTROLS */}
+        <div className="mt-4 p-3.5 sm:p-4 rounded-2xl bg-stone-50/60 dark:bg-stone-900/40 border border-stone-200/80 dark:border-stone-800/80">
+          
+          {/* Dedicated Chart Header with Live Indicator & Analytics Strip */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-stone-200/70 dark:border-stone-800/70">
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm font-bold text-stone-900 dark:text-white font-heading">
+                  {currentParam.label} Trend
+                </span>
+                <span className="text-[11px] px-2 py-0.5 rounded-md font-medium text-stone-500 dark:text-stone-400 bg-stone-200/70 dark:bg-stone-800 font-sans">
+                  {timeRange === '7D' ? '7 Days' : '24 Hours'}
+                </span>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#DDF3EA] text-[#0F6B4F] dark:bg-emerald-950/70 dark:text-emerald-300 border border-emerald-500/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0F6B4F] dark:bg-emerald-400 animate-pulse" />
+                  LIVE
+                </span>
+              </div>
+              <p className="text-[10.5px] text-stone-500 dark:text-stone-400 mt-0.5 font-sans">
+                {currentParam.trendDesc} • 24H telemetry stream
+              </p>
+            </div>
 
-              {/* Threshold Background Bands */}
-              <ReferenceArea 
-                y1={0} 
-                y2={currentParam.thresholds.normalMax} 
-                fill="#0F6B4F" 
-                fillOpacity={0.04} 
-              />
-              <ReferenceArea 
-                y1={currentParam.thresholds.normalMax} 
-                y2={currentParam.thresholds.elevatedMax} 
-                fill="#F59E0B" 
-                fillOpacity={0.06} 
-              />
-              <ReferenceArea 
-                y1={currentParam.thresholds.elevatedMax} 
-                y2={currentParam.thresholds.max} 
-                fill="#EF4444" 
-                fillOpacity={0.06} 
-              />
+            {/* Dynamic Analytics Strip: Min | Avg | Max */}
+            <div className="flex items-center gap-2 sm:gap-3 px-3 py-1.5 rounded-xl bg-white dark:bg-stone-800/90 border border-stone-200/80 dark:border-stone-700/80 shadow-xs self-start sm:self-auto">
+              <div className="flex items-baseline gap-1">
+                <span className="text-[9px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">MIN</span>
+                <span className="text-xs font-mono font-bold text-stone-800 dark:text-stone-200">
+                  {activeStats.min}{currentParam.unit.trim()}
+                </span>
+              </div>
+              <span className="text-stone-300 dark:text-stone-700 text-xs">|</span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-[9px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">AVG</span>
+                <span className="text-xs font-mono font-bold text-[#0F6B4F] dark:text-emerald-400">
+                  {activeStats.avg}{currentParam.unit.trim()}
+                </span>
+              </div>
+              <span className="text-stone-300 dark:text-stone-700 text-xs">|</span>
+              <div className="flex items-baseline gap-1">
+                <span className="text-[9px] font-bold text-stone-400 dark:text-stone-500 uppercase tracking-wider">MAX</span>
+                <span className="text-xs font-mono font-bold text-stone-800 dark:text-stone-200">
+                  {activeStats.max}{currentParam.unit.trim()}
+                </span>
+              </div>
+            </div>
+          </div>
 
-              {/* Threshold Horizontal Reference Lines */}
-              <ReferenceLine 
-                y={currentParam.thresholds.normalMax} 
-                stroke="#10b981" 
-                strokeDasharray="4 4" 
-                strokeOpacity={0.5} 
-              />
-              <ReferenceLine 
-                y={currentParam.thresholds.elevatedMax} 
-                stroke="#f59e0b" 
-                strokeDasharray="4 4" 
-                strokeOpacity={0.5} 
-              />
+          {/* Telemetry Chart */}
+          <div className="mt-3 relative w-full h-64 sm:h-72 min-w-0">
+            <ResponsiveContainer width="100%" height="100%">
+              {selectedParam === 'rainfall' ? (
+                <ComposedChart data={chartData} margin={{ top: 15, right: 48, left: -10, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="rainfallAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#0F6B4F" stopOpacity={0.35} />
+                      <stop offset="95%" stopColor="#0F6B4F" stopOpacity={0.02} />
+                    </linearGradient>
+                  </defs>
 
-              {/* Threshold Zone Text Labels rendered inside SVG coordinate space */}
-              <ReferenceLine 
-                y={currentParam.thresholds.highY} 
-                stroke="none"
-                label={{ 
-                  value: currentParam.thresholds.highLabel, 
-                  position: 'insideLeft', 
-                  fill: '#dc2626', 
-                  fontSize: 10.5, 
-                  fontWeight: 600,
-                  dx: 6
-                }} 
-              />
-              <ReferenceLine 
-                y={currentParam.thresholds.elevatedY} 
-                stroke="none"
-                label={{ 
-                  value: currentParam.thresholds.elevatedLabel, 
-                  position: 'insideLeft', 
-                  fill: '#d97706', 
-                  fontSize: 10.5, 
-                  fontWeight: 600,
-                  dx: 6
-                }} 
-              />
-              <ReferenceLine 
-                y={currentParam.thresholds.normalY} 
-                stroke="none"
-                label={{ 
-                  value: currentParam.thresholds.normalLabel, 
-                  position: 'insideLeft', 
-                  fill: '#0F6B4F', 
-                  fontSize: 10.5, 
-                  fontWeight: 600,
-                  dx: 6
-                }} 
-              />
-
-              {/* Dotted Grid */}
-              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" className="dark:stroke-stone-800" vertical={false} />
-
-              {/* X-Axis */}
-              <XAxis 
-                dataKey="time" 
-                stroke="#94a3b8" 
-                className="dark:stroke-stone-600"
-                fontSize={11} 
-                tickLine={false} 
-                axisLine={{ stroke: '#cbd5e1' }}
-              />
-
-              {/* Y-Axis */}
-              <YAxis 
-                domain={currentParam.yDomain} 
-                ticks={currentParam.yTicks}
-                stroke="#94a3b8" 
-                className="dark:stroke-stone-600"
-                fontSize={11} 
-                tickLine={false} 
-                axisLine={{ stroke: '#cbd5e1' }}
-                label={{ 
-                  value: currentParam.axisLabel, 
-                  angle: -90, 
-                  position: 'insideLeft', 
-                  offset: 15,
-                  fontSize: 10,
-                  fill: '#94a3b8' 
-                }}
-              />
-
-              {/* Interactive Tooltip */}
-              <Tooltip 
-                content={
-                  <CustomTooltip 
-                    unit={currentParam.unit} 
-                    parameterLabel={currentParam.label} 
+                  {/* Threshold Background Bands */}
+                  <ReferenceArea 
+                    y1={0} 
+                    y2={currentParam.thresholds.normalMax} 
+                    fill="#0F6B4F" 
+                    fillOpacity={0.03} 
                   />
-                }
-                cursor={{ stroke: '#64748b', strokeDasharray: '3 3', strokeWidth: 1.2 }}
-              />
+                  <ReferenceArea 
+                    y1={currentParam.thresholds.normalMax} 
+                    y2={currentParam.thresholds.elevatedMax} 
+                    fill="#F59E0B" 
+                    fillOpacity={0.05} 
+                  />
 
-              {/* Area & Line */}
-              <Area 
-                type="monotone" 
-                dataKey={currentParam.dataKey} 
-                stroke="#0F6B4F" 
-                strokeWidth={2.4} 
-                fillOpacity={1} 
-                fill="url(#primaryEnvGrad)" 
-                dot={{ r: 3.5, fill: "#ffffff", stroke: "#0F6B4F", strokeWidth: 2 }}
-                activeDot={{ r: 5.5, fill: "#0F6B4F", stroke: "#ffffff", strokeWidth: 2 }}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+                  {/* Threshold Lines with Right-side Labels */}
+                  <ReferenceLine 
+                    y={currentParam.thresholds.normalMax} 
+                    stroke="#10b981" 
+                    strokeDasharray="4 4" 
+                    strokeOpacity={0.6}
+                    label={{
+                      value: currentParam.thresholds.normalMaxLabel,
+                      position: 'insideTopRight',
+                      fill: '#10b981',
+                      fontSize: 9.5,
+                      fontWeight: 600,
+                      dy: -6,
+                      dx: -2
+                    }}
+                  />
+                  <ReferenceLine 
+                    y={currentParam.thresholds.elevatedMax} 
+                    stroke="#f59e0b" 
+                    strokeDasharray="4 4" 
+                    strokeOpacity={0.6}
+                    label={{
+                      value: currentParam.thresholds.elevatedMaxLabel,
+                      position: 'insideTopRight',
+                      fill: '#f59e0b',
+                      fontSize: 9.5,
+                      fontWeight: 600,
+                      dy: -6,
+                      dx: -2
+                    }}
+                  />
 
-          {/* Pinned Current Value Badge on the Right Margin (aligned near final data point) */}
-          <div className="absolute right-0 sm:right-1 top-[56%] -translate-y-1/2 pointer-events-none z-10">
-            <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold font-mono bg-[#0F6B4F] text-white shadow-sm border border-emerald-400/40">
-              {liveVal}{currentParam.unit.trim()}
-            </span>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" className="dark:stroke-stone-800" vertical={false} />
+
+                  <XAxis 
+                    dataKey="time" 
+                    ticks={timeRange === '7D' ? undefined : ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', 'Now']}
+                    interval={0}
+                    stroke="#94a3b8" 
+                    className="dark:stroke-stone-600"
+                    tick={{ fontSize: 9, fill: '#94a3b8' }}
+                    dy={3}
+                    tickLine={false} 
+                    axisLine={{ stroke: '#cbd5e1' }}
+                  />
+
+                  {/* Left Y-Axis for Cumulative Rainfall */}
+                  <YAxis 
+                    yAxisId="cumulative"
+                    domain={currentParam.yDomain} 
+                    ticks={currentParam.yTicks}
+                    stroke="#94a3b8" 
+                    className="dark:stroke-stone-600"
+                    fontSize={10.5} 
+                    tickLine={false} 
+                    axisLine={{ stroke: '#cbd5e1' }}
+                    label={{ 
+                      value: currentParam.axisLabel, 
+                      angle: -90, 
+                      position: 'insideLeft', 
+                      offset: 15,
+                      fontSize: 10,
+                      fill: '#94a3b8' 
+                    }}
+                  />
+
+                  {/* Right Y-Axis for Rain Intensity (bars) */}
+                  <YAxis 
+                    yAxisId="intensity"
+                    orientation="right"
+                    domain={[0, 8]}
+                    hide
+                  />
+
+                  <Tooltip 
+                    content={
+                      <CustomTooltip 
+                        unit={currentParam.unit} 
+                        parameterLabel={currentParam.label} 
+                        isRainfall={true}
+                      />
+                    }
+                    cursor={{ stroke: '#64748b', strokeDasharray: '3 3', strokeWidth: 1.2 }}
+                  />
+
+                  {/* Intensity Bars */}
+                  <Bar 
+                    yAxisId="intensity"
+                    dataKey="rainfallIntensity" 
+                    fill="#38bdf8" 
+                    fillOpacity={0.35} 
+                    radius={[2, 2, 0, 0]} 
+                    maxBarSize={12} 
+                  />
+
+                  {/* Cumulative Rainfall Line */}
+                  <Line 
+                    yAxisId="cumulative"
+                    type="monotone" 
+                    dataKey="rainfall" 
+                    stroke="#0F6B4F" 
+                    strokeWidth={2.4} 
+                    dot={{ r: 3, fill: "#ffffff", stroke: "#0F6B4F", strokeWidth: 2 }}
+                    activeDot={{ r: 5.5, fill: "#0F6B4F", stroke: "#ffffff", strokeWidth: 2 }}
+                  />
+                </ComposedChart>
+              ) : (
+                <AreaChart data={chartData} margin={{ top: 15, right: 48, left: -10, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="paramAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor={currentParam.color} stopOpacity={0.32} />
+                      <stop offset="95%" stopColor={currentParam.color} stopOpacity={0.02} />
+                    </linearGradient>
+                  </defs>
+
+                  {/* Threshold Background Bands */}
+                  <ReferenceArea 
+                    y1={currentParam.yDomain[0]} 
+                    y2={currentParam.thresholds.normalMax} 
+                    fill="#0F6B4F" 
+                    fillOpacity={0.035} 
+                  />
+                  <ReferenceArea 
+                    y1={currentParam.thresholds.normalMax} 
+                    y2={currentParam.thresholds.elevatedMax} 
+                    fill="#F59E0B" 
+                    fillOpacity={0.05} 
+                  />
+                  <ReferenceArea 
+                    y1={currentParam.thresholds.elevatedMax} 
+                    y2={currentParam.thresholds.max} 
+                    fill="#EF4444" 
+                    fillOpacity={0.05} 
+                  />
+
+                  {/* Threshold Horizontal Reference Lines with Right-side Labels */}
+                  <ReferenceLine 
+                    y={currentParam.thresholds.normalMax} 
+                    stroke="#10b981" 
+                    strokeDasharray="4 4" 
+                    strokeOpacity={0.65}
+                    label={{
+                      value: currentParam.thresholds.normalMaxLabel,
+                      position: 'insideTopRight',
+                      fill: '#10b981',
+                      fontSize: 9.5,
+                      fontWeight: 600,
+                      dy: -6,
+                      dx: -2
+                    }}
+                  />
+                  <ReferenceLine 
+                    y={currentParam.thresholds.elevatedMax} 
+                    stroke="#f59e0b" 
+                    strokeDasharray="4 4" 
+                    strokeOpacity={0.65}
+                    label={{
+                      value: currentParam.thresholds.elevatedMaxLabel,
+                      position: 'insideTopRight',
+                      fill: '#f59e0b',
+                      fontSize: 9.5,
+                      fontWeight: 600,
+                      dy: -6,
+                      dx: -2
+                    }}
+                  />
+
+                  {/* Dotted Grid */}
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" className="dark:stroke-stone-800" vertical={false} />
+
+                  {/* X-Axis */}
+                  <XAxis 
+                    dataKey="time" 
+                    ticks={timeRange === '7D' ? undefined : ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', 'Now']}
+                    interval={0}
+                    stroke="#94a3b8" 
+                    className="dark:stroke-stone-600"
+                    tick={{ fontSize: 9, fill: '#94a3b8' }}
+                    dy={3}
+                    tickLine={false} 
+                    axisLine={{ stroke: '#cbd5e1' }}
+                  />
+
+                  {/* Y-Axis */}
+                  <YAxis 
+                    domain={currentParam.yDomain} 
+                    ticks={currentParam.yTicks}
+                    stroke="#94a3b8" 
+                    className="dark:stroke-stone-600"
+                    fontSize={10.5} 
+                    tickLine={false} 
+                    axisLine={{ stroke: '#cbd5e1' }}
+                    label={{ 
+                      value: currentParam.axisLabel, 
+                      angle: -90, 
+                      position: 'insideLeft', 
+                      offset: 15,
+                      fontSize: 10,
+                      fill: '#94a3b8' 
+                    }}
+                  />
+
+                  {/* Interactive Tooltip */}
+                  <Tooltip 
+                    content={
+                      <CustomTooltip 
+                        unit={currentParam.unit} 
+                        parameterLabel={currentParam.label} 
+                      />
+                    }
+                    cursor={{ stroke: '#64748b', strokeDasharray: '3 3', strokeWidth: 1.2 }}
+                  />
+
+                  {/* Area & Line */}
+                  <Area 
+                    type="monotone" 
+                    dataKey={currentParam.dataKey} 
+                    stroke={currentParam.color} 
+                    strokeWidth={2.4} 
+                    fillOpacity={1} 
+                    fill="url(#paramAreaGrad)" 
+                    dot={{ r: 3, fill: "#ffffff", stroke: currentParam.color, strokeWidth: 2 }}
+                    activeDot={{ r: 5.5, fill: currentParam.color, stroke: "#ffffff", strokeWidth: 2 }}
+                  />
+                </AreaChart>
+              )}
+            </ResponsiveContainer>
+
+            {/* Pinned Current Value Badge on the Right Margin */}
+            <div className="absolute right-0 sm:right-1 top-[54%] -translate-y-1/2 pointer-events-none z-10">
+              <span 
+                className="px-2 py-0.5 rounded-full text-[10px] font-bold font-mono text-white shadow-sm border"
+                style={{ backgroundColor: currentParam.color, borderColor: `${currentParam.color}80` }}
+              >
+                {liveVal}{currentParam.unit.trim()}
+              </span>
+            </div>
           </div>
         </div>
 
