@@ -8,6 +8,8 @@ export const AppLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const isSensors = location.pathname === '/sensors';
+  const isRisk = location.pathname === '/risk-analysis';
+  const isStyledPage = isSensors || isRisk;
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#F7FAFC] dark:bg-[#060e16] text-[#2D3748] dark:text-[#E2E8F0] flex flex-col transition-colors duration-200 box-border">
@@ -21,7 +23,7 @@ export const AppLayout = () => {
 
         {/* Dynamic Page Content with Responsive Padding and 1440px Max-width Constraint */}
         <main className={`flex-1 w-full max-w-[1440px] mx-auto min-w-0 box-border overflow-x-hidden ${
-          isSensors ? 'p-3 sm:p-4 md:p-5 lg:p-6' : 'p-4 sm:p-5 md:p-6 lg:p-7 xl:p-8'
+          isStyledPage ? 'p-3 sm:p-4 md:p-5 lg:p-6' : 'p-4 sm:p-5 md:p-6 lg:p-7 xl:p-8'
         }`}>
           <Outlet context={{ onOpenSidebar: () => setSidebarOpen(true) }} />
         </main>

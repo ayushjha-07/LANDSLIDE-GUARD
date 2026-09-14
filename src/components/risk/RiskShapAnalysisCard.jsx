@@ -15,14 +15,12 @@ export const RiskShapAnalysisCard = () => {
   const [predictionSelection, setPredictionSelection] = useState('Current Prediction');
 
   return (
-    <div className="bg-white dark:bg-[#0c121e] border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between h-full">
+    <div className="bg-white dark:bg-[#0c121e] border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-4 shadow-xs flex flex-col justify-between h-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-900/60 text-emerald-500 flex items-center justify-center shrink-0">
-            <Network className="w-4 h-4 text-emerald-500" />
-          </div>
-          <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+      <div className="flex items-center justify-between gap-2 mb-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <Network className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <h2 className="text-xs sm:text-[12px] font-bold text-slate-900 dark:text-white truncate">
             Feature Contribution (SHAP Analysis)
           </h2>
         </div>
@@ -30,10 +28,10 @@ export const RiskShapAnalysisCard = () => {
         {/* Dropdown */}
         <button
           type="button"
-          className="flex items-center gap-1.5 px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/60 text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 transition-colors"
+          className="flex items-center gap-1 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/60 text-[11px] font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-100 transition-colors shrink-0 whitespace-nowrap"
         >
           <span>{predictionSelection}</span>
-          <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+          <ChevronDown className="w-3 h-3 text-slate-400" />
         </button>
       </div>
 

@@ -10,29 +10,27 @@ import {
 
 export const RiskSensorFactorsCard = () => {
   return (
-    <div className="bg-white dark:bg-[#0c121e] border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col justify-between h-full">
+    <div className="bg-white dark:bg-[#0c121e] border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-4 shadow-xs flex flex-col justify-between h-full">
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-900/60 text-emerald-500 flex items-center justify-center shrink-0">
-            <Gauge className="w-4 h-4 text-emerald-500" />
-          </div>
-          <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
+      <div className="flex items-center justify-between gap-2 mb-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <Gauge className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          <h2 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate">
             Current Sensor Factors
           </h2>
         </div>
 
         {/* Live Data Badge */}
-        <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold">
+        <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/60 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold shrink-0 whitespace-nowrap">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
           <span>Live Data</span>
         </div>
       </div>
 
-      {/* 2x3 Grid of Sensor Factors */}
-      <div className="grid grid-cols-2 gap-2.5 my-auto">
+      {/* 3x2 Grid of Sensor Factors matching reference */}
+      <div className="grid grid-cols-3 gap-2 my-auto">
         {/* 1. Soil Moisture */}
-        <div className="p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between min-h-[78px]">
+        <div className="p-2 sm:p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between min-h-[70px]">
           <div className="flex items-start gap-2">
             <div className="w-6 h-6 rounded-md bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
               <Droplets className="w-3.5 h-3.5 fill-sky-500/20" />
@@ -60,7 +58,7 @@ export const RiskSensorFactorsCard = () => {
         </div>
 
         {/* 2. Rainfall (24h) */}
-        <div className="p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between min-h-[78px]">
+        <div className="p-2 sm:p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between min-h-[70px]">
           <div className="flex items-start gap-2">
             <div className="w-6 h-6 rounded-md bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
               <CloudRain className="w-3.5 h-3.5" />
@@ -86,7 +84,7 @@ export const RiskSensorFactorsCard = () => {
         </div>
 
         {/* 3. Ground Tilt */}
-        <div className="p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between min-h-[78px]">
+        <div className="p-2 sm:p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between min-h-[70px]">
           <div className="flex items-start gap-2">
             <div className="w-6 h-6 rounded-md bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
               <AlertTriangle className="w-3.5 h-3.5" />
@@ -114,7 +112,7 @@ export const RiskSensorFactorsCard = () => {
         </div>
 
         {/* 4. Vibration */}
-        <div className="p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between min-h-[78px]">
+        <div className="p-2 sm:p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between min-h-[70px]">
           <div className="flex items-start gap-2">
             <div className="w-6 h-6 rounded-md bg-rose-100 dark:bg-rose-950/80 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
               <Activity className="w-3.5 h-3.5" />
@@ -142,7 +140,7 @@ export const RiskSensorFactorsCard = () => {
         </div>
 
         {/* 5. Temperature */}
-        <div className="p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between min-h-[78px]">
+        <div className="p-2 sm:p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between min-h-[70px]">
           <div className="flex items-start gap-2">
             <div className="w-6 h-6 rounded-md bg-orange-100 dark:bg-orange-950/80 text-orange-600 dark:text-orange-400 flex items-center justify-center shrink-0">
               <Thermometer className="w-3.5 h-3.5" />
@@ -170,7 +168,7 @@ export const RiskSensorFactorsCard = () => {
         </div>
 
         {/* 6. Humidity */}
-        <div className="p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between min-h-[78px]">
+        <div className="p-2 sm:p-2.5 rounded-xl bg-slate-50/80 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800/60 flex flex-col justify-between min-h-[70px]">
           <div className="flex items-start gap-2">
             <div className="w-6 h-6 rounded-md bg-sky-100 dark:bg-sky-950/80 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
               <Droplets className="w-3.5 h-3.5" />

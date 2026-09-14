@@ -19,27 +19,27 @@ export const RiskAnalysis = () => {
       <RiskKpiCards />
 
       {/* 3. Middle Section: Map + Overall Risk Gauge + AI Architecture */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 w-full min-w-0 items-stretch">
-        <div className="lg:col-span-5 min-w-0">
+      <div className="flex flex-col lg:flex-row gap-4 w-full min-w-0 items-stretch">
+        <div className="w-full min-w-0 flex flex-col" style={{ flex: '44 44 0%' }}>
           <RiskGeoMapCard />
         </div>
-        <div className="lg:col-span-3 min-w-0">
+        <div className="w-full min-w-0 flex flex-col" style={{ flex: '25 25 0%' }}>
           <RiskGaugeCard />
         </div>
-        <div className="lg:col-span-4 min-w-0">
+        <div className="w-full min-w-0 flex flex-col" style={{ flex: '31 31 0%' }}>
           <RiskModelArchitectureCard />
         </div>
       </div>
 
       {/* 4. Lower Middle Section: Risk Prediction Chart + SHAP Analysis + Sensor Factors */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 w-full min-w-0 items-stretch">
-        <div className="lg:col-span-5 min-w-0">
+      <div className="flex flex-col lg:flex-row gap-4 w-full min-w-0 items-stretch">
+        <div className="w-full min-w-0 flex flex-col" style={{ flex: '35 35 0%' }}>
           <RiskPredictionChartCard />
         </div>
-        <div className="lg:col-span-4 min-w-0">
+        <div className="w-full min-w-0 flex flex-col" style={{ flex: '36 36 0%' }}>
           <RiskShapAnalysisCard />
         </div>
-        <div className="lg:col-span-3 min-w-0">
+        <div className="w-full min-w-0 flex flex-col" style={{ flex: '29 29 0%' }}>
           <RiskSensorFactorsCard />
         </div>
       </div>
