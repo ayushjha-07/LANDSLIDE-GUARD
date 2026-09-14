@@ -135,8 +135,8 @@ export const SensorMiniChart = ({ node }) => {
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
                   return (
-                    <div className="px-2 py-1 rounded bg-slate-900/90 border border-slate-700 text-[10px] text-white font-mono shadow-md">
-                      <span className="text-slate-400">{payload[0].payload.time}: </span>
+                    <div className="px-2 py-1 rounded bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700 text-[10px] text-slate-900 dark:text-white font-mono shadow-md">
+                      <span className="text-slate-500 dark:text-slate-400">{payload[0].payload.time}: </span>
                       <strong style={{ color: theme.stroke }}>{payload[0].value}</strong>
                     </div>
                   );

@@ -24,25 +24,25 @@ export const SensorCardRedesigned = ({ node, onViewDetails }) => {
   
   // Risk display calculation
   let riskDisplay = 'SAFE';
-  let riskBadgeClass = 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40';
-  let cardBorderClass = 'border-slate-800/80 hover:border-slate-700/90';
-  let statusDotColor = 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]';
+  let riskBadgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-400 dark:border-emerald-500/40';
+  let cardBorderClass = 'border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700/90';
+  let statusDotColor = 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]';
 
   if (isOffline) {
     riskDisplay = 'OFFLINE';
-    riskBadgeClass = 'bg-slate-800 text-slate-400 border-slate-700';
-    cardBorderClass = 'border-slate-800/60 bg-[#08101a]/75';
-    statusDotColor = 'bg-slate-500';
+    riskBadgeClass = 'bg-slate-200 text-slate-700 border-slate-300 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700';
+    cardBorderClass = 'border-slate-200 dark:border-slate-800/60 bg-slate-50/40 dark:bg-[#08101a]/75';
+    statusDotColor = 'bg-slate-400';
   } else if (idStr === 'NODE-05' || node?.riskLevel?.toLowerCase() === 'high risk' || node?.risk?.level === 'high-risk') {
     riskDisplay = 'HIGH RISK';
-    riskBadgeClass = 'bg-rose-500/20 text-rose-400 border-rose-500/40 font-bold';
-    cardBorderClass = 'border-rose-500/40 shadow-[0_0_20px_rgba(244,63,94,0.12)] hover:border-rose-400/60';
+    riskBadgeClass = 'bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-500/20 dark:text-rose-400 dark:border-rose-500/40 font-bold';
+    cardBorderClass = 'border-rose-300 dark:border-rose-500/40 shadow-[0_0_15px_rgba(244,63,94,0.08)] hover:border-rose-400';
     statusDotColor = 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.7)]';
   } else if (idStr === 'NODE-03' || node?.riskLevel?.toLowerCase() === 'warning' || node?.risk?.level === 'warning') {
     riskDisplay = 'WARNING';
-    riskBadgeClass = 'bg-amber-500/20 text-amber-400 border-amber-500/40 font-bold';
-    cardBorderClass = 'border-amber-500/35 shadow-[0_0_18px_rgba(245,158,11,0.10)] hover:border-amber-400/50';
-    statusDotColor = 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]';
+    riskBadgeClass = 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-500/20 dark:text-amber-400 dark:border-amber-500/40 font-bold';
+    cardBorderClass = 'border-amber-300 dark:border-amber-500/35 shadow-[0_0_15px_rgba(245,158,11,0.08)] hover:border-amber-400';
+    statusDotColor = 'bg-amber-500 shadow-[0_0_8px_rgba(251,191,36,0.6)]';
   }
 
   // Telemetry metric values
@@ -64,16 +64,16 @@ export const SensorCardRedesigned = ({ node, onViewDetails }) => {
 
   return (
     <div 
-      className={`relative rounded-2xl overflow-hidden bg-[#0c1626]/90 backdrop-blur-md border ${cardBorderClass} shadow-xl transition-all duration-300 flex flex-col justify-between p-3.5 sm:p-4 text-white min-w-0`}
+      className={`relative rounded-2xl overflow-hidden bg-white dark:bg-[#0c1626]/90 backdrop-blur-md border ${cardBorderClass} shadow-xs dark:shadow-xl hover:shadow-md transition-all duration-300 flex flex-col justify-between p-3.5 sm:p-4 text-slate-900 dark:text-white min-w-0`}
     >
       {/* Subtle Mountain Slope Backdrop in Header */}
-      <div className="absolute top-0 inset-x-0 h-24 overflow-hidden pointer-events-none select-none z-0 opacity-20">
+      <div className="absolute top-0 inset-x-0 h-24 overflow-hidden pointer-events-none select-none z-0 opacity-15 dark:opacity-20">
         <img 
           src={slopeBgImg} 
           alt="" 
           className="w-full h-full object-cover object-top filter contrast-125"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0c1626]/40 via-[#0c1626]/85 to-[#0c1626]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/80 to-white dark:via-[#0c1626]/85 dark:to-[#0c1626]" />
       </div>
 
       {/* ========================================================================= */}
@@ -84,27 +84,27 @@ export const SensorCardRedesigned = ({ node, onViewDetails }) => {
           {/* Left: Indicator Dot + Node ID + Online Pill */}
           <div className="flex items-center gap-1.5 min-w-0">
             <span className={`w-2 h-2 rounded-full ${statusDotColor} flex-shrink-0`} />
-            <span className="font-mono font-bold text-sm sm:text-base tracking-tight text-white leading-none">
+            <span className="font-mono font-bold text-sm sm:text-base tracking-tight text-slate-900 dark:text-white leading-none">
               {idStr}
             </span>
             <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${
               isOffline 
-                ? 'bg-slate-800 text-slate-400 border border-slate-700' 
-                : 'bg-sky-950/70 text-sky-400 border border-sky-800/50'
+                ? 'bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700' 
+                : 'bg-sky-50 text-sky-700 border border-sky-200 dark:bg-sky-950/70 dark:text-sky-400 dark:border-sky-800/50'
             }`}>
-              <span className={`w-1 h-1 rounded-full ${isOffline ? 'bg-slate-400' : 'bg-sky-400 animate-pulse'}`} />
+              <span className={`w-1 h-1 rounded-full ${isOffline ? 'bg-slate-400' : 'bg-sky-500 animate-pulse'}`} />
               {isOffline ? 'Offline' : 'Online'}
             </span>
           </div>
 
           {/* Right: Risk Badge Pill */}
-          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border shadow-xs ${riskBadgeClass}`}>
+          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border shadow-2xs ${riskBadgeClass}`}>
             {riskDisplay}
           </span>
         </div>
 
         {/* Location Row */}
-        <div className="flex items-center gap-1 text-slate-400 text-[11px] pt-0.5">
+        <div className="flex items-center gap-1 text-slate-500 dark:text-slate-400 text-[11px] pt-0.5">
           <MapPin className="w-3 h-3 text-slate-400 flex-shrink-0" />
           <span className="truncate font-medium">{locationName}</span>
         </div>
@@ -115,30 +115,30 @@ export const SensorCardRedesigned = ({ node, onViewDetails }) => {
       {/* ========================================================================= */}
       <div className="relative z-10 my-1">
         {isOffline ? (
-          <div className="p-3 rounded-xl bg-slate-900/90 border border-slate-800 text-xs space-y-2 min-h-[110px] flex flex-col justify-center">
-            <div className="flex items-center gap-2 text-amber-400">
-              <AlertCircle className="w-4 h-4 flex-shrink-0 text-amber-400" />
+          <div className="p-3 rounded-xl bg-amber-50/60 dark:bg-slate-900/90 border border-amber-200/80 dark:border-slate-800 text-xs space-y-2 min-h-[110px] flex flex-col justify-center">
+            <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 text-amber-600 dark:text-amber-400" />
               <strong className="font-heading font-bold text-xs tracking-tight">Telemetry Link Lost</strong>
             </div>
-            <p className="text-[11px] text-slate-300 leading-snug">
+            <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug">
               No live signal received for 18 minutes.
             </p>
-            <p className="text-[10px] text-slate-400">
+            <p className="text-[10px] text-slate-500 dark:text-slate-400">
               Showing last confirmed geotechnical state.
             </p>
             
             {/* 3 Placeholder Telemetry Boxes */}
             <div className="grid grid-cols-3 gap-1.5 pt-1 text-center font-mono">
-              <div className="p-1.5 rounded-lg bg-slate-950/80 border border-slate-800">
-                <span className="text-[9px] text-slate-400 block font-sans">Moisture</span>
+              <div className="p-1.5 rounded-lg bg-white/80 dark:bg-slate-950/80 border border-amber-200/60 dark:border-slate-800">
+                <span className="text-[9px] text-slate-500 dark:text-slate-400 block font-sans">Moisture</span>
                 <span className="text-xs font-bold text-slate-400">-- %</span>
               </div>
-              <div className="p-1.5 rounded-lg bg-slate-950/80 border border-slate-800">
-                <span className="text-[9px] text-slate-400 block font-sans">Rain</span>
+              <div className="p-1.5 rounded-lg bg-white/80 dark:bg-slate-950/80 border border-amber-200/60 dark:border-slate-800">
+                <span className="text-[9px] text-slate-500 dark:text-slate-400 block font-sans">Rain</span>
                 <span className="text-xs font-bold text-slate-400">-- mm</span>
               </div>
-              <div className="p-1.5 rounded-lg bg-slate-950/80 border border-slate-800">
-                <span className="text-[9px] text-slate-400 block font-sans">Tilt</span>
+              <div className="p-1.5 rounded-lg bg-white/80 dark:bg-slate-950/80 border border-amber-200/60 dark:border-slate-800">
+                <span className="text-[9px] text-slate-500 dark:text-slate-400 block font-sans">Tilt</span>
                 <span className="text-xs font-bold text-slate-400">-- °</span>
               </div>
             </div>
@@ -148,10 +148,10 @@ export const SensorCardRedesigned = ({ node, onViewDetails }) => {
           <div className="grid grid-cols-3 gap-y-2.5 gap-x-2 text-xs py-1">
             {/* 1. Soil Moisture */}
             <div className="flex items-center gap-1.5 min-w-0">
-              <Droplets className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+              <Droplets className="w-3.5 h-3.5 text-sky-500 dark:text-sky-400 shrink-0" />
               <div className="min-w-0 leading-tight">
-                <span className="text-[10px] text-slate-400 font-medium block">Soil</span>
-                <span className="font-mono font-bold text-xs sm:text-[13px] text-white">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block">Soil</span>
+                <span className="font-mono font-bold text-xs sm:text-[13px] text-slate-900 dark:text-white">
                   {soilVal}<span className="text-[9px] font-normal text-slate-400 ml-0.5">%</span>
                 </span>
               </div>
@@ -159,10 +159,10 @@ export const SensorCardRedesigned = ({ node, onViewDetails }) => {
 
             {/* 2. Rainfall */}
             <div className="flex items-center gap-1.5 min-w-0">
-              <CloudRain className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+              <CloudRain className="w-3.5 h-3.5 text-sky-500 dark:text-sky-400 shrink-0" />
               <div className="min-w-0 leading-tight">
-                <span className="text-[10px] text-slate-400 font-medium block">Rain</span>
-                <span className="font-mono font-bold text-xs sm:text-[13px] text-white">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block">Rain</span>
+                <span className="font-mono font-bold text-xs sm:text-[13px] text-slate-900 dark:text-white">
                   {rainVal}<span className="text-[9px] font-normal text-slate-400 ml-0.5">mm</span>
                 </span>
               </div>
@@ -170,10 +170,10 @@ export const SensorCardRedesigned = ({ node, onViewDetails }) => {
 
             {/* 3. Ground Tilt */}
             <div className="flex items-center gap-1.5 min-w-0">
-              <Compass className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <Compass className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
               <div className="min-w-0 leading-tight">
-                <span className="text-[10px] text-slate-400 font-medium block">Tilt</span>
-                <span className="font-mono font-bold text-xs sm:text-[13px] text-white">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block">Tilt</span>
+                <span className="font-mono font-bold text-xs sm:text-[13px] text-slate-900 dark:text-white">
                   {tiltVal}<span className="text-[9px] font-normal text-slate-400 ml-0.5">°</span>
                 </span>
               </div>
@@ -181,10 +181,10 @@ export const SensorCardRedesigned = ({ node, onViewDetails }) => {
 
             {/* 4. Vibration */}
             <div className="flex items-center gap-1.5 min-w-0">
-              <Activity className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+              <Activity className="w-3.5 h-3.5 text-rose-500 dark:text-rose-400 shrink-0" />
               <div className="min-w-0 leading-tight">
-                <span className="text-[10px] text-slate-400 font-medium block">Vibration</span>
-                <span className="font-mono font-bold text-xs sm:text-[13px] text-white">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block">Vibration</span>
+                <span className="font-mono font-bold text-xs sm:text-[13px] text-slate-900 dark:text-white">
                   {vibVal}<span className="text-[9px] font-normal text-slate-400 ml-0.5">g</span>
                 </span>
               </div>
@@ -192,10 +192,10 @@ export const SensorCardRedesigned = ({ node, onViewDetails }) => {
 
             {/* 5. Temperature */}
             <div className="flex items-center gap-1.5 min-w-0">
-              <Thermometer className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+              <Thermometer className="w-3.5 h-3.5 text-rose-500 dark:text-rose-400 shrink-0" />
               <div className="min-w-0 leading-tight">
-                <span className="text-[10px] text-slate-400 font-medium block">Temp</span>
-                <span className="font-mono font-bold text-xs sm:text-[13px] text-white">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block">Temp</span>
+                <span className="font-mono font-bold text-xs sm:text-[13px] text-slate-900 dark:text-white">
                   {tempVal}<span className="text-[9px] font-normal text-slate-400 ml-0.5">°C</span>
                 </span>
               </div>
@@ -203,10 +203,10 @@ export const SensorCardRedesigned = ({ node, onViewDetails }) => {
 
             {/* 6. Humidity */}
             <div className="flex items-center gap-1.5 min-w-0">
-              <Droplets className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+              <Droplets className="w-3.5 h-3.5 text-sky-500 dark:text-sky-400 shrink-0" />
               <div className="min-w-0 leading-tight">
-                <span className="text-[10px] text-slate-400 font-medium block">Humidity</span>
-                <span className="font-mono font-bold text-xs sm:text-[13px] text-white">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block">Humidity</span>
+                <span className="font-mono font-bold text-xs sm:text-[13px] text-slate-900 dark:text-white">
                   {humVal}<span className="text-[9px] font-normal text-slate-400 ml-0.5">%</span>
                 </span>
               </div>
@@ -227,22 +227,22 @@ export const SensorCardRedesigned = ({ node, onViewDetails }) => {
       {/* ========================================================================= */}
       <div className="relative z-10 pt-2 space-y-2 select-none">
         {/* Device Stats Row */}
-        <div className="flex items-center justify-between text-[10.5px] text-slate-400 px-0.5">
+        <div className="flex items-center justify-between text-[10.5px] text-slate-500 dark:text-slate-400 px-0.5">
           {/* Battery */}
           <div className="flex items-center gap-1">
             <Battery className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-            <span className="font-mono font-semibold text-slate-200">{batteryVal}%</span>
+            <span className="font-mono font-semibold text-slate-700 dark:text-slate-200">{batteryVal}%</span>
           </div>
 
           {/* RSSI Signal with Mini Bars */}
           <div className="flex items-center gap-1">
             <div className="flex items-end gap-0.5 h-3">
-              <span className={`w-0.5 h-1.5 rounded-xs ${isOffline ? 'bg-slate-600' : 'bg-emerald-400'}`} />
-              <span className={`w-0.5 h-2 rounded-xs ${isOffline ? 'bg-slate-600' : 'bg-emerald-400'}`} />
-              <span className={`w-0.5 h-2.5 rounded-xs ${isOffline ? 'bg-slate-600' : 'bg-emerald-400'}`} />
-              <span className={`w-0.5 h-3 rounded-xs ${isOffline ? 'bg-slate-600' : 'bg-emerald-400'}`} />
+              <span className={`w-0.5 h-1.5 rounded-xs ${isOffline ? 'bg-slate-300 dark:bg-slate-600' : 'bg-emerald-500 dark:bg-emerald-400'}`} />
+              <span className={`w-0.5 h-2 rounded-xs ${isOffline ? 'bg-slate-300 dark:bg-slate-600' : 'bg-emerald-500 dark:bg-emerald-400'}`} />
+              <span className={`w-0.5 h-2.5 rounded-xs ${isOffline ? 'bg-slate-300 dark:bg-slate-600' : 'bg-emerald-500 dark:bg-emerald-400'}`} />
+              <span className={`w-0.5 h-3 rounded-xs ${isOffline ? 'bg-slate-300 dark:bg-slate-600' : 'bg-emerald-500 dark:bg-emerald-400'}`} />
             </div>
-            <span className={`font-mono font-semibold ${isOffline ? 'text-slate-400' : 'text-emerald-400'}`}>
+            <span className={`font-mono font-semibold ${isOffline ? 'text-slate-400' : 'text-teal-700 dark:text-emerald-400'}`}>
               {signalVal}
             </span>
           </div>
@@ -250,7 +250,7 @@ export const SensorCardRedesigned = ({ node, onViewDetails }) => {
           {/* Time */}
           <div className="flex items-center gap-1">
             <Clock className="w-3 h-3 text-slate-400 flex-shrink-0" />
-            <span className="text-slate-400">{lastSeenVal}</span>
+            <span className="text-slate-500 dark:text-slate-400">{lastSeenVal}</span>
           </div>
         </div>
 
@@ -258,11 +258,11 @@ export const SensorCardRedesigned = ({ node, onViewDetails }) => {
         <button
           type="button"
           onClick={() => onViewDetails(node)}
-          className="w-full py-2 px-3 rounded-xl bg-slate-900/90 hover:bg-slate-800/90 border border-slate-700/60 hover:border-slate-600 text-slate-200 hover:text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-sm cursor-pointer group"
+          className="w-full py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-900/90 dark:hover:bg-slate-800/90 border border-slate-200 dark:border-slate-700/60 hover:border-slate-300 dark:hover:border-slate-600 text-slate-700 hover:text-slate-900 dark:text-slate-200 dark:hover:text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition-all shadow-2xs cursor-pointer group"
           aria-label={`View detailed telemetry for ${idStr}`}
         >
           <span>View Details</span>
-          <ArrowRight className="w-3.5 h-3.5 text-emerald-400 group-hover:translate-x-0.5 transition-transform" />
+          <ArrowRight className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 group-hover:translate-x-0.5 transition-transform" />
         </button>
       </div>
     </div>
