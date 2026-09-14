@@ -19,7 +19,9 @@ import {
   AlertCircle, 
   HelpCircle, 
   MoveDiagonal,
-  ChevronDown
+  ChevronDown,
+  RotateCcw,
+  Check
 } from 'lucide-react';
 import { 
   ResponsiveContainer, 
@@ -29,7 +31,6 @@ import {
   Bar, 
   LineChart, 
   Line, 
-  XAxis, 
   YAxis, 
   Tooltip 
 } from 'recharts';
@@ -69,13 +70,13 @@ const NODE_METADATA = {
   'NODE-08': { alt: '3,450m', loc: 'Marhi Pass' }
 };
 
-// Prototype Risk Zones
+// Prototype Risk Zones (Conforming to spatial master reference)
 const HIGH_RISK_ZONE = [
-  [32.258, 77.165],
-  [32.255, 77.205],
-  [32.235, 77.215],
-  [32.228, 77.185],
-  [32.232, 77.160]
+  [32.256, 77.165],
+  [32.254, 77.208],
+  [32.234, 77.216],
+  [32.226, 77.185],
+  [32.231, 77.160]
 ];
 
 const MODERATE_RISK_ZONE = [
@@ -87,6 +88,17 @@ const MODERATE_RISK_ZONE = [
   [32.175, 77.135],
   [32.220, 77.110],
   [32.260, 77.115]
+];
+
+const MONITORING_PERIMETER = [
+  [32.310, 77.120],
+  [32.305, 77.230],
+  [32.260, 77.270],
+  [32.180, 77.260],
+  [32.140, 77.210],
+  [32.150, 77.120],
+  [32.210, 77.080],
+  [32.280, 77.090]
 ];
 
 // Custom Leaflet DivIcon: clean circular marker with drop shadow and attached dark pill
@@ -103,21 +115,21 @@ function createRiskMarkerIcon(node, isSelected) {
     dotColor = '#94a3b8'; // Slate: Offline
   } else if (isHighRisk) {
     dotColor = '#ef4444'; // Red: High Risk
-    pulseHtml = `<div class="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-red-500/50 animate-ping pointer-events-none"></div>`;
+    pulseHtml = `<div class="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-red-500/60 animate-ping pointer-events-none"></div>`;
   } else if (isWarning) {
     dotColor = '#f59e0b'; // Amber: Warning
-    pulseHtml = `<div class="absolute -top-0.5 -left-0.5 w-4 h-4 rounded-full bg-amber-500/35 animate-ping pointer-events-none"></div>`;
+    pulseHtml = `<div class="absolute -top-0.5 -left-0.5 w-4 h-4 rounded-full bg-amber-500/40 animate-ping pointer-events-none"></div>`;
   }
 
-  const selectRing = isSelected ? 'ring-2 ring-white ring-offset-2 ring-offset-slate-900 scale-105' : '';
+  const selectRing = isSelected ? 'ring-2 ring-emerald-400 ring-offset-2 ring-offset-slate-900 scale-110 shadow-lg' : 'hover:scale-105';
 
   const html = `
-    <div class="relative flex items-center cursor-pointer select-none group transition-transform ${selectRing}">
+    <div class="relative flex items-center cursor-pointer select-none group transition-all duration-200 ${selectRing}">
       ${pulseHtml}
       <div class="w-3.5 h-3.5 rounded-full border-2 border-white shadow-md flex items-center justify-center shrink-0 z-10" style="background-color: ${dotColor};">
         ${isWarning ? '<div class="w-1 h-1 rounded-full bg-black/50"></div>' : ''}
       </div>
-      <div class="-ml-1 pl-1.5 pr-1.5 py-0.5 rounded-r-md bg-slate-900/90 text-white border border-white/20 text-[9px] font-mono font-bold tracking-tight shadow-md flex items-center gap-1 backdrop-blur-xs whitespace-nowrap">
+      <div class="-ml-1 pl-1.5 pr-2 py-0.5 rounded-r-md bg-slate-900/95 text-white border border-white/20 text-[9px] font-mono font-bold tracking-tight shadow-md flex items-center gap-1 backdrop-blur-xs whitespace-nowrap">
         <span>${node.id}</span>
       </div>
     </div>
@@ -126,22 +138,23 @@ function createRiskMarkerIcon(node, isSelected) {
   return L.divIcon({
     html,
     className: 'custom-risk-marker',
-    iconSize: [72, 20],
+    iconSize: [76, 20],
     iconAnchor: [7, 10],
     popupAnchor: [0, -10]
   });
 }
 
-// Map Controls Controller (Zoom In, Zoom Out, Reset View, Toggle Labels)
-function MapOverlayControls({ onReset, onToggleLabels, showLabels }) {
+// Map Controls Controller (Zoom In, Zoom Out, Reset View, Multi-Basemap Switcher)
+function MapOverlayControls({ onReset, basemap, onSelectBasemap, showLabels, onToggleLabels }) {
   const map = useMap();
+  const [showMenu, setShowMenu] = useState(false);
 
   return (
     <div className="absolute top-12 left-2.5 z-[400] flex flex-col gap-1 shadow-md">
       <button
         type="button"
         onClick={() => map.zoomIn()}
-        className="w-7 h-7 rounded-md bg-slate-900/85 hover:bg-slate-800 text-white border border-white/15 flex items-center justify-center text-xs font-bold backdrop-blur-md transition-colors cursor-pointer"
+        className="w-7 h-7 rounded-md bg-slate-900/90 hover:bg-slate-800 text-white border border-white/15 flex items-center justify-center text-xs font-bold backdrop-blur-md transition-colors cursor-pointer"
         title="Zoom in"
         aria-label="Zoom in"
       >
@@ -150,7 +163,7 @@ function MapOverlayControls({ onReset, onToggleLabels, showLabels }) {
       <button
         type="button"
         onClick={() => map.zoomOut()}
-        className="w-7 h-7 rounded-md bg-slate-900/85 hover:bg-slate-800 text-white border border-white/15 flex items-center justify-center text-xs font-bold backdrop-blur-md transition-colors cursor-pointer"
+        className="w-7 h-7 rounded-md bg-slate-900/90 hover:bg-slate-800 text-white border border-white/15 flex items-center justify-center text-xs font-bold backdrop-blur-md transition-colors cursor-pointer"
         title="Zoom out"
         aria-label="Zoom out"
       >
@@ -159,26 +172,115 @@ function MapOverlayControls({ onReset, onToggleLabels, showLabels }) {
       <button
         type="button"
         onClick={onReset}
-        className="w-7 h-7 rounded-md bg-slate-900/85 hover:bg-slate-800 text-white border border-white/15 flex items-center justify-center text-xs backdrop-blur-md transition-colors cursor-pointer"
-        title="Reset map view"
-        aria-label="Reset map view"
+        className="w-7 h-7 rounded-md bg-slate-900/90 hover:bg-slate-800 text-white border border-white/15 flex items-center justify-center text-xs backdrop-blur-md transition-colors cursor-pointer"
+        title="Reset map extent"
+        aria-label="Reset map extent"
       >
         <Maximize2 className="w-3.5 h-3.5" />
       </button>
-      <button
-        type="button"
-        onClick={onToggleLabels}
-        className={`w-7 h-7 rounded-md text-white border border-white/15 flex items-center justify-center text-xs backdrop-blur-md transition-colors cursor-pointer ${
-          showLabels ? 'bg-emerald-600/90 hover:bg-emerald-500' : 'bg-slate-900/85 hover:bg-slate-800'
-        }`}
-        title="Toggle Map Labels"
-        aria-label="Toggle Map Labels"
-      >
-        <Layers className="w-3.5 h-3.5" />
-      </button>
+
+      {/* Layer Switcher Toggle */}
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setShowMenu(prev => !prev)}
+          className={`w-7 h-7 rounded-md text-white border border-white/15 flex items-center justify-center text-xs backdrop-blur-md transition-colors cursor-pointer ${
+            showMenu ? 'bg-emerald-600 hover:bg-emerald-500' : 'bg-slate-900/90 hover:bg-slate-800'
+          }`}
+          title="Basemap Layers"
+          aria-label="Basemap Layers"
+        >
+          <Layers className="w-3.5 h-3.5" />
+        </button>
+
+        {/* Basemap Switcher Dropdown */}
+        {showMenu && (
+          <div className="absolute left-8 top-0 bg-slate-900/95 border border-white/20 rounded-xl p-2 shadow-2xl backdrop-blur-md text-white w-40 space-y-1.5 z-[500] animate-in fade-in zoom-in-95 duration-150">
+            <div className="text-[9.5px] font-bold uppercase tracking-wider text-slate-400 px-1 border-b border-white/10 pb-1">
+              Basemap Layer
+            </div>
+
+            <button
+              type="button"
+              onClick={() => { onSelectBasemap('satellite'); setShowMenu(false); }}
+              className={`w-full flex items-center justify-between px-2 py-1 rounded-md text-[11px] font-medium transition-colors text-left ${
+                basemap === 'satellite' ? 'bg-emerald-600 text-white' : 'hover:bg-slate-800 text-slate-200'
+              }`}
+            >
+              <span>🛰 Satellite</span>
+              {basemap === 'satellite' && <Check className="w-3 h-3" />}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => { onSelectBasemap('terrain'); setShowMenu(false); }}
+              className={`w-full flex items-center justify-between px-2 py-1 rounded-md text-[11px] font-medium transition-colors text-left ${
+                basemap === 'terrain' ? 'bg-emerald-600 text-white' : 'hover:bg-slate-800 text-slate-200'
+              }`}
+            >
+              <span>⛰ Topo Terrain</span>
+              {basemap === 'terrain' && <Check className="w-3 h-3" />}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => { onSelectBasemap('streets'); setShowMenu(false); }}
+              className={`w-full flex items-center justify-between px-2 py-1 rounded-md text-[11px] font-medium transition-colors text-left ${
+                basemap === 'streets' ? 'bg-emerald-600 text-white' : 'hover:bg-slate-800 text-slate-200'
+              }`}
+            >
+              <span>🗺 Street Map</span>
+              {basemap === 'streets' && <Check className="w-3 h-3" />}
+            </button>
+
+            <div className="pt-1 border-t border-white/10">
+              <button
+                type="button"
+                onClick={onToggleLabels}
+                className="w-full flex items-center justify-between px-2 py-1 rounded-md text-[10.5px] font-medium hover:bg-slate-800 text-slate-300 transition-colors text-left"
+              >
+                <span>Show Labels</span>
+                <span className={`w-2 h-2 rounded-full ${showLabels ? 'bg-emerald-400' : 'bg-slate-600'}`} />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
+
+// Sleek Custom Tooltip for Mini Sparkline Charts
+const MiniChartTooltip = ({ active, payload, unit = '', label = 'Value' }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    const val = payload[0].value;
+    return (
+      <div className="bg-slate-900/95 text-white text-[10px] font-mono px-2 py-1 rounded-md border border-white/20 shadow-xl backdrop-blur-md pointer-events-none z-50">
+        <div className="text-slate-400 text-[9px]">{data.time || 'Timestamp'}</div>
+        <div className="font-bold text-emerald-400">
+          {label}: {val} {unit}
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
+// Tooltip for Prediction Window Chart
+const PredictionChartTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    return (
+      <div className="bg-slate-900/95 text-white text-[10px] font-mono px-2 py-1 rounded-md border border-white/20 shadow-xl backdrop-blur-md pointer-events-none z-50">
+        <div className="text-slate-400 text-[9px]">{data.time} Forecast</div>
+        <div className="text-sky-400 font-bold">Predicted: {data.moderate} / 100</div>
+        <div className="text-slate-400 text-[9px]">Range: {data.low} – {data.high}</div>
+      </div>
+    );
+  }
+  return null;
+};
 
 // Semicircular Risk Gauge Component conforming to visual reference
 const SemicircularRiskGauge = ({ score = 22, level = 'safe' }) => {
@@ -368,14 +470,14 @@ export const CurrentRiskCard = ({
 }) => {
   const context = useSensorContext();
 
-  const sensorValues = propSensorValues || context?.sensorValues || {
+  const baseSensorValues = propSensorValues || context?.sensorValues || {
     moisture: 42.3,
     rainfall: 12,
     tilt: 1.86,
     vibration: 0.033
   };
 
-  const riskAssessment = propRiskAssessment || context?.riskAssessment || {
+  const baseRiskAssessment = propRiskAssessment || context?.riskAssessment || {
     riskScore: 22,
     riskLevel: 'safe',
     factorOfSafety: 1.59,
@@ -386,8 +488,45 @@ export const CurrentRiskCard = ({
   const nodes = propNodes || context?.nodes || [];
 
   const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [basemap, setBasemap] = useState('satellite'); // 'satellite' | 'terrain' | 'streets'
   const [showLabels, setShowLabels] = useState(true);
   const mapRef = useRef(null);
+
+  // Selected node object if any
+  const selectedNode = useMemo(() => {
+    if (!selectedNodeId) return null;
+    return nodes.find(n => n.id === selectedNodeId) || null;
+  }, [selectedNodeId, nodes]);
+
+  // Reactive sensor values: dynamically bound to selected node if selected, otherwise regional aggregate
+  const activeSensorValues = useMemo(() => {
+    if (selectedNode && selectedNode.readings) {
+      return {
+        moisture: selectedNode.readings?.soilMoisture?.value ?? baseSensorValues.moisture,
+        rainfall: selectedNode.readings?.rainfall?.value ?? baseSensorValues.rainfall,
+        tilt: selectedNode.readings?.tilt?.value ?? baseSensorValues.tilt,
+        vibration: selectedNode.readings?.vibration?.value ?? baseSensorValues.vibration
+      };
+    }
+    return baseSensorValues;
+  }, [selectedNode, baseSensorValues]);
+
+  // Reactive risk assessment: dynamically bound to selected node if selected
+  const activeRiskAssessment = useMemo(() => {
+    if (selectedNode) {
+      const nodeScore = selectedNode.risk?.score ?? (selectedNode.id === 'NODE-05' ? 68 : selectedNode.id === 'NODE-03' ? 46 : 22);
+      const nodeLevel = selectedNode.risk?.level ?? (selectedNode.id === 'NODE-05' ? 'high-risk' : selectedNode.id === 'NODE-03' ? 'warning' : 'safe');
+      const fos = nodeScore > 50 ? 1.08 : (nodeScore > 30 ? 1.34 : 1.59);
+      return {
+        riskScore: nodeScore,
+        riskLevel: nodeLevel,
+        factorOfSafety: fos,
+        trend: selectedNode.risk?.trend ? (selectedNode.risk.trend.charAt(0).toUpperCase() + selectedNode.risk.trend.slice(1)) : 'Stable',
+        predictionWindow: 'Next 6 Hours'
+      };
+    }
+    return baseRiskAssessment;
+  }, [selectedNode, baseRiskAssessment]);
 
   // Formatted timestamp
   const formattedTimestamp = useMemo(() => {
@@ -395,20 +534,20 @@ export const CurrentRiskCard = ({
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const pad = (n) => String(n).padStart(2, '0');
     return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-  }, [sensorValues]);
+  }, [activeSensorValues]);
 
   // Capitalized trend & formatted prediction window
   const displayTrend = useMemo(() => {
-    const t = riskAssessment.trend || 'Stable';
+    const t = activeRiskAssessment.trend || 'Stable';
     return t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
-  }, [riskAssessment.trend]);
+  }, [activeRiskAssessment.trend]);
 
   const displayPredictionWindow = useMemo(() => {
-    const p = riskAssessment.predictionWindow || 'Next 6 Hours';
+    const p = activeRiskAssessment.predictionWindow || 'Next 6 Hours';
     if (p === '6h' || p === 'Next 6h') return 'Next 6 Hours';
     if (p === '8h' || p === 'Next 8h') return 'Next 8 Hours';
     return p;
-  }, [riskAssessment.predictionWindow]);
+  }, [activeRiskAssessment.predictionWindow]);
 
   // Center on Kullu / Beas Valley corridor (Manali Gorge)
   const initialCenter = [32.225, 77.165];
@@ -420,12 +559,12 @@ export const CurrentRiskCard = ({
     }
   };
 
-  // Assessment copy based on risk level
+  // Assessment copy based on active risk level
   const assessmentMeta = useMemo(() => {
-    const lvl = (riskAssessment.riskLevel || 'safe').toLowerCase();
+    const lvl = (activeRiskAssessment.riskLevel || 'safe').toLowerCase();
     if (lvl === 'safe') {
       return {
-        title: 'Environmental conditions are currently stable.',
+        title: selectedNode ? `${selectedNode.id} status is stable.` : 'Environmental conditions are currently stable.',
         desc: 'No immediate risk detected based on multi-sensor analysis.',
         icon: ShieldCheck,
         container: 'bg-emerald-500/10 border-emerald-500/25 dark:bg-emerald-950/40 dark:border-emerald-800/60',
@@ -434,7 +573,7 @@ export const CurrentRiskCard = ({
     }
     if (lvl === 'warning') {
       return {
-        title: 'Environmental conditions require increased attention.',
+        title: selectedNode ? `${selectedNode.id} requires increased attention.` : 'Environmental conditions require increased attention.',
         desc: 'Elevated rainfall and soil moisture indicators observed in localized slopes.',
         icon: AlertTriangle,
         container: 'bg-amber-500/10 border-amber-500/25 dark:bg-amber-950/40 dark:border-amber-800/60',
@@ -443,7 +582,7 @@ export const CurrentRiskCard = ({
     }
     if (lvl === 'high-risk' || lvl === 'high risk' || lvl === 'critical') {
       return {
-        title: 'Elevated indicators suggest increased slope instability risk.',
+        title: selectedNode ? `Elevated instability risk detected at ${selectedNode.id}.` : 'Elevated indicators suggest increased slope instability risk.',
         desc: 'Critical shear threshold approaching in active monitoring zones. Review required.',
         icon: AlertCircle,
         container: 'bg-rose-500/10 border-rose-500/25 dark:bg-rose-950/40 dark:border-rose-800/60',
@@ -457,9 +596,22 @@ export const CurrentRiskCard = ({
       container: 'bg-slate-500/10 border-slate-500/20 dark:bg-slate-800/40 dark:border-slate-700',
       iconBg: 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
     };
-  }, [riskAssessment.riskLevel]);
+  }, [activeRiskAssessment.riskLevel, selectedNode]);
 
   const AssessmentIcon = assessmentMeta.icon;
+
+  // Active Tile Layer URL based on basemap state
+  const basemapUrl = useMemo(() => {
+    switch (basemap) {
+      case 'terrain':
+        return 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}';
+      case 'streets':
+        return 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      case 'satellite':
+      default:
+        return 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+    }
+  }, [basemap]);
 
   return (
     <div 
@@ -468,19 +620,19 @@ export const CurrentRiskCard = ({
     >
       
       {/* ========================================================================= */}
-      {/* 1. HEADER SECTION (Conforms strictly to reference visual) */}
+      {/* 1. HEADER SECTION (Strictly matching reference visual) */}
       {/* ========================================================================= */}
-      <div className="relative rounded-2xl overflow-hidden mb-4 bg-gradient-to-r from-emerald-50/60 via-slate-50/40 to-sky-50/30 dark:from-slate-800/80 dark:via-slate-850 dark:to-slate-800/60 border border-slate-100 dark:border-slate-800 p-3.5 sm:p-4">
+      <div className="relative rounded-2xl overflow-hidden mb-4 bg-gradient-to-r from-emerald-50/60 via-slate-50/40 to-sky-50/30 dark:from-slate-900/90 dark:via-slate-850/80 dark:to-slate-800/70 border border-slate-100 dark:border-slate-800 p-3.5 sm:p-4">
         
-        {/* Himalayan Mountain Panorama Backdrop (Right fading into content) */}
+        {/* Himalayan Mountain Panorama Backdrop (Seamless blending into right side) */}
         <div className="absolute right-0 top-0 bottom-0 w-2/5 sm:w-1/2 pointer-events-none overflow-hidden select-none">
           <img 
             src={heroHimalayasImg} 
             alt="" 
-            className="w-full h-full object-cover object-right opacity-30 dark:opacity-20 mix-blend-multiply dark:mix-blend-luminosity"
+            className="w-full h-full object-cover object-right opacity-35 dark:opacity-25 mix-blend-multiply dark:mix-blend-luminosity"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent dark:from-slate-900 dark:via-slate-900/80 dark:to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-white/90 via-transparent to-transparent dark:from-slate-900/90 dark:via-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-50/90 via-slate-50/70 to-transparent dark:from-slate-900 dark:via-slate-900/80 dark:to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-emerald-50/80 via-transparent to-transparent dark:from-slate-900/90 dark:via-transparent" />
         </div>
 
         <div className="relative z-10 flex flex-col gap-2">
@@ -607,8 +759,8 @@ export const CurrentRiskCard = ({
                 <span className="text-slate-300 truncate">Moderate Risk Zone</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-0.5 bg-white/70 rounded-full shrink-0" />
-                <span className="text-slate-400 truncate">Road / Infrastructure</span>
+                <span className="w-2.5 h-0.5 bg-emerald-400/80 rounded-full shrink-0" />
+                <span className="text-slate-300 truncate">Monitoring Perimeter</span>
               </div>
             </div>
 
@@ -624,14 +776,15 @@ export const CurrentRiskCard = ({
               attributionControl={false}
               className="w-full h-full z-10"
             >
-              {/* Esri World Imagery (Bright, high-contrast photographic terrain of Himachal Pradesh) */}
+              {/* Dynamic Basemap TileLayer */}
               <TileLayer
-                url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                key={basemap}
+                url={basemapUrl}
                 maxZoom={18}
               />
               
-              {/* Places, Roads & Boundaries Overlay */}
-              {showLabels && (
+              {/* Places, Roads & Boundaries Overlay for Satellite and Topo */}
+              {showLabels && basemap !== 'streets' && (
                 <TileLayer
                   url="https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
                   maxZoom={18}
@@ -642,9 +795,32 @@ export const CurrentRiskCard = ({
               {/* Map Interactive Overlay Controls */}
               <MapOverlayControls 
                 onReset={handleResetMapView} 
-                onToggleLabels={() => setShowLabels(prev => !prev)}
+                basemap={basemap}
+                onSelectBasemap={setBasemap}
                 showLabels={showLabels}
+                onToggleLabels={() => setShowLabels(prev => !prev)}
               />
+
+              {/* Safe Regional Monitoring Perimeter (Green Dashed) */}
+              <Polygon
+                positions={MONITORING_PERIMETER}
+                pathOptions={{
+                  color: '#10b981',
+                  fillColor: '#10b981',
+                  fillOpacity: 0.08,
+                  weight: 1.5,
+                  dashArray: '6, 6'
+                }}
+              >
+                <Popup>
+                  <div className="text-xs p-1.5 text-slate-800 dark:text-slate-100">
+                    <strong className="text-emerald-500 block font-semibold">Active Monitoring Perimeter</strong>
+                    <span className="text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed">
+                      Beas River Basin & Kullu–Manali slope surveillance zone.
+                    </span>
+                  </div>
+                </Popup>
+              </Polygon>
 
               {/* Prototype Moderate Risk Influence Zone (Amber) */}
               <Polygon
@@ -652,7 +828,7 @@ export const CurrentRiskCard = ({
                 pathOptions={{
                   color: '#f59e0b',
                   fillColor: '#f59e0b',
-                  fillOpacity: 0.24,
+                  fillOpacity: 0.22,
                   weight: 1.8,
                   dashArray: '5, 5'
                 }}
@@ -702,7 +878,9 @@ export const CurrentRiskCard = ({
                     position={[lat, lng]}
                     icon={icon}
                     eventHandlers={{
-                      click: () => setSelectedNodeId(node.id)
+                      click: () => {
+                        setSelectedNodeId(prev => prev === node.id ? null : node.id);
+                      }
                     }}
                   >
                     <Popup>
@@ -741,15 +919,30 @@ export const CurrentRiskCard = ({
                                 <span className="text-slate-400">Ground Tilt:</span>
                                 <strong className="font-mono text-slate-800 dark:text-white">{node.readings?.tilt?.value ?? 1.86}°</strong>
                               </div>
+                              <div className="flex justify-between">
+                                <span className="text-slate-400">Rainfall:</span>
+                                <strong className="font-mono text-slate-800 dark:text-white">{node.readings?.rainfall?.value ?? 12} mm</strong>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-slate-400">Vibration:</span>
+                                <strong className="font-mono text-slate-800 dark:text-white">{node.readings?.vibration?.value ?? 0.033} g</strong>
+                              </div>
                             </>
                           )}
                         </div>
-                        <div className="mt-2.5 pt-2 border-t border-slate-200 dark:border-slate-700 flex justify-end">
+                        <div className="mt-2.5 pt-2 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedNodeId(node.id)}
+                            className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-600 text-white hover:bg-emerald-500 transition-colors"
+                          >
+                            Filter Telemetry
+                          </button>
                           <Link 
                             to={`/sensor-nodes?node=${node.id}`} 
-                            className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-1"
+                            className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 hover:underline inline-flex items-center gap-0.5"
                           >
-                            View Details <ArrowRight className="w-3 h-3" />
+                            Details <ArrowRight className="w-3 h-3" />
                           </Link>
                         </div>
                       </div>
@@ -768,9 +961,22 @@ export const CurrentRiskCard = ({
           
           {/* 1. Risk Level Header & Link */}
           <div className="flex items-center justify-between pb-0.5">
-            <span className="text-xs font-bold font-mono tracking-wider text-slate-500 dark:text-slate-400 uppercase">
-              RISK LEVEL
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold font-mono tracking-wider text-slate-500 dark:text-slate-400 uppercase">
+                RISK LEVEL
+              </span>
+              {selectedNode && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedNodeId(null)}
+                  className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-slate-700 transition-colors cursor-pointer"
+                  title="Reset to regional overview"
+                >
+                  <RotateCcw className="w-2.5 h-2.5" />
+                  <span>Reset ({selectedNode.id})</span>
+                </button>
+              )}
+            </div>
             <Link 
               to="/risk-analysis" 
               className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 inline-flex items-center gap-1 transition-colors group"
@@ -783,8 +989,8 @@ export const CurrentRiskCard = ({
           {/* 2. Semicircular Risk Gauge */}
           <div className="py-1">
             <SemicircularRiskGauge 
-              score={riskAssessment.riskScore ?? 22} 
-              level={riskAssessment.riskLevel ?? 'safe'} 
+              score={activeRiskAssessment.riskScore ?? 22} 
+              level={activeRiskAssessment.riskLevel ?? 'safe'} 
             />
           </div>
 
@@ -805,13 +1011,20 @@ export const CurrentRiskCard = ({
 
           {/* 4. Key Measurements Header & 2x2 Grid with Mini Sparkline Graphs */}
           <div>
-            <div className="flex items-center gap-1.5 mb-2">
-              <span className="text-xs font-bold font-mono tracking-wider text-slate-500 dark:text-slate-400 uppercase">
-                KEY MEASUREMENTS
-              </span>
-              <span className="text-[10.5px] font-bold text-emerald-600 dark:text-emerald-400">
-                (LIVE)
-              </span>
+            <div className="flex items-center justify-between gap-1.5 mb-2">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-bold font-mono tracking-wider text-slate-500 dark:text-slate-400 uppercase">
+                  KEY MEASUREMENTS
+                </span>
+                <span className="text-[10.5px] font-bold text-emerald-600 dark:text-emerald-400">
+                  (LIVE)
+                </span>
+              </div>
+              {selectedNode && (
+                <span className="text-[10px] font-mono font-bold text-emerald-600 dark:text-emerald-400 truncate">
+                  Node: {selectedNode.id}
+                </span>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-2.5">
@@ -831,23 +1044,25 @@ export const CurrentRiskCard = ({
 
                 <div className="flex items-baseline gap-1 my-1">
                   <span className="text-sm sm:text-base font-bold font-mono text-slate-900 dark:text-white leading-none">
-                    {sensorValues.moisture ?? 42.3}
+                    {activeSensorValues.moisture ?? 42.3}
                   </span>
                   <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
                     %
                   </span>
                 </div>
 
-                {/* Mini Recharts AreaChart Sparkline (Detailed Zig-Zag) */}
+                {/* Mini Recharts AreaChart Sparkline (Detailed Zig-Zag with Dynamic Domain) */}
                 <div className="w-full h-9 my-0.5">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={KEY_MEASUREMENTS_SPARKLINES_24H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
                       <defs>
                         <linearGradient id="moistureGradMini" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#06b6d4" stopOpacity={0.45} />
+                          <stop offset="0%" stopColor="#06b6d4" stopOpacity={0.5} />
                           <stop offset="100%" stopColor="#06b6d4" stopOpacity={0.0} />
                         </linearGradient>
                       </defs>
+                      <YAxis domain={['dataMin - 1.2', 'dataMax + 1.2']} hide />
+                      <Tooltip content={<MiniChartTooltip unit="%" label="Moisture" />} />
                       <Area 
                         type="linear" 
                         dataKey="moisture" 
@@ -861,8 +1076,10 @@ export const CurrentRiskCard = ({
                 </div>
 
                 <div className="flex items-center gap-1 text-[9.5px] font-medium text-slate-600 dark:text-slate-300 pt-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                  <span>Normal</span>
+                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                    (activeSensorValues.moisture || 0) > 60 ? 'bg-rose-500' : (activeSensorValues.moisture || 0) > 48 ? 'bg-amber-500' : 'bg-emerald-500'
+                  }`} />
+                  <span>{(activeSensorValues.moisture || 0) > 60 ? 'Critical' : (activeSensorValues.moisture || 0) > 48 ? 'Elevated' : 'Normal'}</span>
                 </div>
               </div>
 
@@ -881,17 +1098,18 @@ export const CurrentRiskCard = ({
 
                 <div className="flex items-baseline gap-1 my-1">
                   <span className="text-sm sm:text-base font-bold font-mono text-slate-900 dark:text-white leading-none">
-                    {sensorValues.rainfall ?? 12}
+                    {activeSensorValues.rainfall ?? 12}
                   </span>
                   <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
                     mm
                   </span>
                 </div>
 
-                {/* Mini Recharts BarChart Sparkline (Detailed Hyetograph Teeth) */}
+                {/* Mini Recharts BarChart Sparkline (Discrete Hyetograph Bars with Tooltip) */}
                 <div className="w-full h-9 my-0.5">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={KEY_MEASUREMENTS_SPARKLINES_24H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
+                      <Tooltip content={<MiniChartTooltip unit="mm" label="Rain Rate" />} />
                       <Bar 
                         dataKey="rainBar" 
                         fill="#38bdf8" 
@@ -903,8 +1121,10 @@ export const CurrentRiskCard = ({
                 </div>
 
                 <div className="flex items-center gap-1 text-[9.5px] font-medium text-slate-600 dark:text-slate-300 pt-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                  <span>Normal</span>
+                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                    (activeSensorValues.rainfall || 0) > 30 ? 'bg-rose-500' : (activeSensorValues.rainfall || 0) > 20 ? 'bg-amber-500' : 'bg-emerald-500'
+                  }`} />
+                  <span>{(activeSensorValues.rainfall || 0) > 30 ? 'Heavy' : (activeSensorValues.rainfall || 0) > 20 ? 'Moderate' : 'Normal'}</span>
                 </div>
               </div>
 
@@ -923,20 +1143,22 @@ export const CurrentRiskCard = ({
 
                 <div className="flex items-baseline gap-0.5 my-1">
                   <span className="text-sm sm:text-base font-bold font-mono text-slate-900 dark:text-white leading-none">
-                    {sensorValues.tilt ?? 1.86}°
+                    {activeSensorValues.tilt ?? 1.86}°
                   </span>
                 </div>
 
-                {/* Mini Recharts AreaChart Sparkline (Detailed Inclinometer Zig-Zag) */}
+                {/* Mini Recharts AreaChart Sparkline (Detailed Inclinometer Zig-Zag with Dynamic Domain) */}
                 <div className="w-full h-9 my-0.5">
                   <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={KEY_MEASUREMENTS_SPARKLINES_24H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
                       <defs>
                         <linearGradient id="tiltGradMini" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.45} />
+                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.5} />
                           <stop offset="100%" stopColor="#10b981" stopOpacity={0.0} />
                         </linearGradient>
                       </defs>
+                      <YAxis domain={['dataMin - 0.2', 'dataMax + 0.2']} hide />
+                      <Tooltip content={<MiniChartTooltip unit="°" label="Incline" />} />
                       <Area 
                         type="linear" 
                         dataKey="tilt" 
@@ -950,8 +1172,10 @@ export const CurrentRiskCard = ({
                 </div>
 
                 <div className="flex items-center gap-1 text-[9.5px] font-medium text-slate-600 dark:text-slate-300 pt-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                  <span>Stable</span>
+                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                    (activeSensorValues.tilt || 0) > 4.0 ? 'bg-rose-500' : (activeSensorValues.tilt || 0) > 3.0 ? 'bg-amber-500' : 'bg-emerald-500'
+                  }`} />
+                  <span>{(activeSensorValues.tilt || 0) > 4.0 ? 'Displacement' : (activeSensorValues.tilt || 0) > 3.0 ? 'Shift' : 'Stable'}</span>
                 </div>
               </div>
 
@@ -970,17 +1194,19 @@ export const CurrentRiskCard = ({
 
                 <div className="flex items-baseline gap-1 my-1">
                   <span className="text-sm sm:text-base font-bold font-mono text-slate-900 dark:text-white leading-none">
-                    {sensorValues.vibration ?? 0.033}
+                    {activeSensorValues.vibration ?? 0.033}
                   </span>
                   <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
                     g
                   </span>
                 </div>
 
-                {/* Mini Recharts LineChart Sparkline (Detailed Seismic Waveform Zig-Zag) */}
+                {/* Mini Recharts LineChart Sparkline (Detailed Seismic Waveform Zig-Zag with Dynamic Domain) */}
                 <div className="w-full h-9 my-0.5">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={KEY_MEASUREMENTS_SPARKLINES_24H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
+                      <YAxis domain={['dataMin - 0.005', 'dataMax + 0.008']} hide />
+                      <Tooltip content={<MiniChartTooltip unit="g" label="Vibration" />} />
                       <Line 
                         type="linear" 
                         dataKey="vibration" 
@@ -994,8 +1220,10 @@ export const CurrentRiskCard = ({
                 </div>
 
                 <div className="flex items-center gap-1 text-[9.5px] font-medium text-slate-600 dark:text-slate-300 pt-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                  <span>Normal</span>
+                  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                    (activeSensorValues.vibration || 0) > 0.08 ? 'bg-rose-500' : (activeSensorValues.vibration || 0) > 0.05 ? 'bg-amber-500' : 'bg-emerald-500'
+                  }`} />
+                  <span>{(activeSensorValues.vibration || 0) > 0.08 ? 'Micro-Tremors' : 'Normal'}</span>
                 </div>
               </div>
 
@@ -1028,21 +1256,25 @@ export const CurrentRiskCard = ({
             <div className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">
               {displayTrend}
             </div>
-            <div className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
-              ↓ -2.4% net slope strain
+            <div className={`text-[10px] font-semibold ${
+              displayTrend === 'Increasing' ? 'text-rose-500' : 'text-emerald-600 dark:text-emerald-400'
+            }`}>
+              {displayTrend === 'Increasing' ? '↑ +12.8% strain accumulation' : '↓ -2.4% net slope strain'}
             </div>
           </div>
 
-          {/* 24H Risk Score Area Chart (Detailed Zig-Zag Net Slope Strain) */}
+          {/* 24H Risk Score Area Chart (Detailed Zig-Zag Net Slope Strain with Tooltip) */}
           <div className="w-full h-11 mt-1">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={RISK_SCORE_HISTORY_24H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="trendCardGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
+                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.45} />
                     <stop offset="100%" stopColor="#10b981" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
+                <YAxis domain={['dataMin - 3', 'dataMax + 3']} hide />
+                <Tooltip content={<MiniChartTooltip unit="/100" label="Risk Index" />} />
                 <Area 
                   type="linear" 
                   dataKey="score" 
@@ -1084,10 +1316,12 @@ export const CurrentRiskCard = ({
               <AreaChart data={RISK_PREDICTION_SERIES_8H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="predCardGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#0ea5e9" stopOpacity={0.35} />
+                    <stop offset="0%" stopColor="#0ea5e9" stopOpacity={0.4} />
                     <stop offset="100%" stopColor="#0ea5e9" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
+                <YAxis domain={['dataMin - 2', 'dataMax + 2']} hide />
+                <Tooltip content={<PredictionChartTooltip />} />
                 <Area 
                   type="linear" 
                   dataKey="high" 
@@ -1126,20 +1360,22 @@ export const CurrentRiskCard = ({
           <div className="mt-2 mb-1 flex items-center justify-between">
             <div>
               <div className="text-base sm:text-lg font-black font-mono text-slate-900 dark:text-white leading-none">
-                {riskAssessment.factorOfSafety ?? 1.59}
+                {activeRiskAssessment.factorOfSafety ?? 1.59}
               </div>
-              <div className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 mt-1">
-                Safe Range (&gt; 1.30)
+              <div className={`text-[10px] font-semibold mt-1 ${
+                (activeRiskAssessment.factorOfSafety ?? 1.59) > 1.30 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'
+              }`}>
+                {(activeRiskAssessment.factorOfSafety ?? 1.59) > 1.30 ? 'Safe Range (> 1.30)' : 'Critical Range (< 1.30)'}
               </div>
             </div>
             
             {/* Miniature Semicircular Dial */}
-            <MiniSafetyFactorDial value={riskAssessment.factorOfSafety ?? 1.59} />
+            <MiniSafetyFactorDial value={activeRiskAssessment.factorOfSafety ?? 1.59} />
           </div>
 
           <div className="text-[9.5px] text-slate-400 dark:text-slate-500 pt-1 border-t border-slate-200/60 dark:border-slate-800/80 flex items-center justify-between">
             <span>Critical: 1.00</span>
-            <span>Current: 1.59</span>
+            <span>Current: {activeRiskAssessment.factorOfSafety ?? 1.59}</span>
             <span>Target: &gt; 1.50</span>
           </div>
         </div>
