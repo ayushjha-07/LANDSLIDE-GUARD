@@ -21,7 +21,13 @@ import {
   MoveDiagonal,
   ChevronDown,
   RotateCcw,
-  Check
+  Check,
+  User,
+  Users,
+  Compass,
+  Shield,
+  Map as MapIcon,
+  X
 } from 'lucide-react';
 import { 
   ResponsiveContainer, 
@@ -32,6 +38,8 @@ import {
   LineChart, 
   Line, 
   YAxis, 
+  XAxis,
+  CartesianGrid,
   Tooltip 
 } from 'recharts';
 import { MapContainer, TileLayer, Polygon, Marker, Popup, useMap } from 'react-leaflet';
@@ -46,60 +54,200 @@ import {
   KEY_MEASUREMENTS_SPARKLINES_24H 
 } from '../../data/mockHistoricalData';
 
-// Canonical cluster coordinates in the Kullu - Manali - Beas Valley monitoring corridor
+// Canonical cluster coordinates in the Kullu - Manali - Beas Valley monitoring corridor (Calibrated to Master Reference)
 const LOCAL_GEO_COORDS = {
-  'NODE-01': [32.220, 77.100], // Solang Valley / West
-  'NODE-02': [32.200, 77.135], // Dhundi Slope
-  'NODE-03': [32.260, 77.170], // Gulaba Ridge (Moderate Risk)
-  'NODE-04': [32.215, 77.225], // Vashisht Cliffs
-  'NODE-05': [32.2417, 77.1892], // Mountain Zone C / Rohtang Approach (High Risk)
-  'NODE-06': [32.160, 77.185], // Aleo Basin (Offline)
-  'NODE-07': [32.185, 77.165], // Beas Riverbank
-  'NODE-08': [32.290, 77.175]  // Marhi Pass
+  'NODE-01': [32.228, 77.098], // Solang Valley / West Slope (Safe - Green)
+  'NODE-02': [32.195, 77.115], // Dhundi Slope / Southwest (Safe - Green)
+  'NODE-03': [32.246, 77.152], // Inside Watch Zone (Warning - Amber)
+  'NODE-04': [32.208, 77.228], // Vashisht Cliffs / Southeast (Safe - Green)
+  'NODE-05': [32.228, 77.195], // Inside Prototype Risk Zone (High Risk - Red with ping ring)
+  'NODE-06': [32.160, 77.170], // Inside Monitoring Boundary South (Safe - Green)
+  'NODE-07': [32.185, 77.158], // Inside Monitoring Boundary North (Warning - Amber)
+  'NODE-08': [32.176, 77.225]  // Parvati Valley Approach / East (Offline - Slate)
 };
 
 // Altitudes and descriptive details for popups
 const NODE_METADATA = {
-  'NODE-01': { alt: '2,480m', loc: 'Solang Valley West' },
+  'NODE-01': { alt: '2,480m', loc: 'West Ridge Slope' },
   'NODE-02': { alt: '2,850m', loc: 'Dhundi Incline' },
-  'NODE-03': { alt: '3,100m', loc: 'Gulaba Ridge' },
+  'NODE-03': { alt: '3,100m', loc: 'Upper Watch Zone' },
   'NODE-04': { alt: '2,150m', loc: 'Vashisht Cliffs' },
-  'NODE-05': { alt: '3,320m', loc: 'Mountain Zone C' },
+  'NODE-05': { alt: '2,560m', loc: 'Solang Valley' },
   'NODE-06': { alt: '1,920m', loc: 'Aleo Basin' },
   'NODE-07': { alt: '1,890m', loc: 'Beas Riverbank' },
-  'NODE-08': { alt: '3,450m', loc: 'Marhi Pass' }
+  'NODE-08': { alt: '3,450m', loc: 'Parvati Pass' }
 };
 
-// Prototype Risk Zones (Conforming to spatial master reference)
-const HIGH_RISK_ZONE = [
-  [32.256, 77.165],
-  [32.254, 77.208],
-  [32.234, 77.216],
-  [32.226, 77.185],
-  [32.231, 77.160]
+// 1. Watch Zone (Yellow/Amber Dashed - Upper Left around NODE-03 and Kasol)
+const WATCH_ZONE = [
+  [32.262, 77.168],
+  [32.256, 77.140],
+  [32.242, 77.118],
+  [32.220, 77.122],
+  [32.206, 77.145],
+  [32.215, 77.164],
+  [32.240, 77.174]
 ];
 
-const MODERATE_RISK_ZONE = [
-  [32.285, 77.140],
-  [32.280, 77.210],
-  [32.250, 77.245],
-  [32.200, 77.240],
-  [32.170, 77.200],
-  [32.175, 77.135],
-  [32.220, 77.110],
-  [32.260, 77.115]
+// 2. Prototype Risk Zone (Red Dashed - Upper Right around NODE-05 and Solang)
+const PROTOTYPE_RISK_ZONE = [
+  [32.250, 77.185],
+  [32.244, 77.218],
+  [32.228, 77.234],
+  [32.210, 77.218],
+  [32.206, 77.182],
+  [32.218, 77.170],
+  [32.238, 77.176]
 ];
 
-const MONITORING_PERIMETER = [
-  [32.310, 77.120],
-  [32.305, 77.230],
-  [32.260, 77.270],
-  [32.180, 77.260],
-  [32.140, 77.210],
-  [32.150, 77.120],
-  [32.210, 77.080],
-  [32.280, 77.090]
+// 3. Monitoring Boundary (Prototype) (Green Dashed - South around Naggar, NODE-07, NODE-06)
+const MONITORING_BOUNDARY = [
+  [32.198, 77.165],
+  [32.194, 77.195],
+  [32.170, 77.206],
+  [32.146, 77.196],
+  [32.140, 77.165],
+  [32.154, 77.140],
+  [32.178, 77.144]
 ];
+
+// Regional Geographic Landmark Labels on Terrain (Strictly conforming to Master Reference)
+const REGIONAL_LANDMARKS = [
+  { name: 'Rohtang Pass', elev: '3,978 m', pos: [32.268, 77.210], type: 'pass' },
+  { name: 'Manali', pos: [32.256, 77.168], type: 'town_bold' },
+  { name: 'Solang', pos: [32.246, 77.195], type: 'town' },
+  { name: 'Kasol', pos: [32.215, 77.145], type: 'town' },
+  { name: 'Naggar', pos: [32.195, 77.168], type: 'town' },
+  { name: 'Mandi', pos: [32.152, 77.135], type: 'town_bold' },
+  { name: 'Bhuntar', pos: [32.128, 77.160], type: 'town' },
+  { name: 'Parvati Valley', pos: [32.175, 77.240], type: 'valley' },
+  { name: 'Beas River', pos: [32.220, 77.105], type: 'river' },
+  { name: '↑ To Lahaul (Leh)', pos: [32.265, 77.140], type: 'route' },
+  { name: '← To Mandi', pos: [32.165, 77.085], type: 'route' },
+  { name: '↓ To Shimla', pos: [32.130, 77.100], type: 'route' }
+];
+
+function createLandmarkIcon(landmark) {
+  let innerHtml = '';
+  if (landmark.type === 'pass') {
+    innerHtml = `
+      <div class="text-center drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] whitespace-nowrap pointer-events-none select-none">
+        <div class="text-white font-bold text-[11px] leading-tight">${landmark.name}</div>
+        <div class="text-slate-200 text-[9.5px] font-mono leading-tight">⛰ ${landmark.elev}</div>
+      </div>
+    `;
+  } else if (landmark.type === 'town_bold') {
+    innerHtml = `
+      <div class="text-white font-black text-xs tracking-wider drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)] whitespace-nowrap pointer-events-none select-none">
+        ${landmark.name}
+      </div>
+    `;
+  } else if (landmark.type === 'town') {
+    innerHtml = `
+      <div class="text-white/95 font-bold text-[10.5px] tracking-wide drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] whitespace-nowrap pointer-events-none select-none">
+        ${landmark.name}
+      </div>
+    `;
+  } else if (landmark.type === 'valley') {
+    innerHtml = `
+      <div class="text-cyan-300 font-semibold text-[10.5px] tracking-wide drop-shadow-[0_1px_3px_rgba(0,0,0,0.95)] whitespace-nowrap pointer-events-none select-none">
+        ${landmark.name}
+      </div>
+    `;
+  } else if (landmark.type === 'river') {
+    innerHtml = `
+      <div class="text-sky-300/95 italic font-medium text-[10px] tracking-wider drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] whitespace-nowrap pointer-events-none select-none">
+        ${landmark.name}
+      </div>
+    `;
+  } else if (landmark.type === 'route') {
+    innerHtml = `
+      <div class="text-slate-200/90 font-medium text-[9px] tracking-tight drop-shadow-[0_1px_3px_rgba(0,0,0,0.95)] whitespace-nowrap pointer-events-none select-none">
+        ${landmark.name}
+      </div>
+    `;
+  }
+
+  return L.divIcon({
+    html: innerHtml,
+    className: 'custom-map-landmark',
+    iconSize: [120, 24],
+    iconAnchor: [60, 12]
+  });
+}
+
+// Custom Pinned Callout DivIcon for NODE-05 (Positioned to upper-right matching Master Reference)
+function createCalloutDivIcon(node) {
+  const html = `
+    <div class="relative select-none pointer-events-auto" style="transform: translate(52px, -125px); width: 200px;">
+      <!-- Callout Glass Container -->
+      <div class="rounded-xl bg-slate-950/95 border border-white/20 p-2.5 shadow-2xl backdrop-blur-md text-white">
+        <!-- Top Bar: Red Pulsing Dot + NODE-05 + Close Button -->
+        <div class="flex items-center justify-between pb-1 mb-1 border-b border-white/10">
+          <div class="flex items-center gap-1.5">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-80"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+            </span>
+            <span class="font-mono font-bold text-xs text-white">${node.id || 'NODE-05'}</span>
+          </div>
+          <button 
+            type="button" 
+            onclick="window.__closeLandslideCallout && window.__closeLandslideCallout(event)" 
+            class="text-slate-400 hover:text-white transition-colors text-xs px-1 cursor-pointer leading-none"
+            title="Close Callout"
+          >
+            ✕
+          </button>
+        </div>
+
+        <!-- Risk Level Subtitle -->
+        <div class="text-rose-500 font-bold text-[10.5px] mb-1.5 leading-none">
+          High Risk
+        </div>
+
+        <!-- Metric Rows -->
+        <div class="space-y-1 text-[9px] leading-tight text-slate-300">
+          <div class="flex justify-between">
+            <span class="text-slate-400">Location</span>
+            <span class="font-medium text-white">Solang Valley</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Altitude</span>
+            <span class="font-medium text-white">2,560 m</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Last Update</span>
+            <span class="font-medium text-slate-300">2 min ago</span>
+          </div>
+        </div>
+
+        <!-- Footer Link -->
+        <div class="mt-2 pt-1 border-t border-white/10 flex items-center justify-between">
+          <a 
+            href="/sensor-nodes?node=NODE-05" 
+            class="text-[9.5px] font-semibold text-sky-400 hover:text-sky-300 hover:underline inline-flex items-center gap-1"
+          >
+            <span>View Details</span>
+            <span>→</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Pointing tail extending from bottom-left toward NODE-05 -->
+      <div class="absolute -left-2.5 bottom-4 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[10px] border-r-slate-950"></div>
+    </div>
+  `;
+
+  return L.divIcon({
+    html,
+    className: 'custom-pinned-callout-marker',
+    iconSize: [200, 140],
+    iconAnchor: [0, 0]
+  });
+}
+
+
 
 // Custom Leaflet DivIcon: clean circular marker with drop shadow and attached dark pill
 function createRiskMarkerIcon(node, isSelected) {
@@ -115,7 +263,7 @@ function createRiskMarkerIcon(node, isSelected) {
     dotColor = '#94a3b8'; // Slate: Offline
   } else if (isHighRisk) {
     dotColor = '#ef4444'; // Red: High Risk
-    pulseHtml = `<div class="absolute -top-1 -left-1 w-5 h-5 rounded-full bg-red-500/60 animate-ping pointer-events-none"></div>`;
+    pulseHtml = `<div class="absolute -top-1.5 -left-1.5 w-6 h-6 rounded-full bg-red-500/60 animate-ping pointer-events-none"></div>`;
   } else if (isWarning) {
     dotColor = '#f59e0b'; // Amber: Warning
     pulseHtml = `<div class="absolute -top-0.5 -left-0.5 w-4 h-4 rounded-full bg-amber-500/40 animate-ping pointer-events-none"></div>`;
@@ -415,52 +563,145 @@ const SemicircularRiskGauge = ({ score = 22, level = 'safe' }) => {
   );
 };
 
-// Miniature Semicircular Dial for Safety Factor Card
-const MiniSafetyFactorDial = ({ value = 1.59 }) => {
-  const min = 1.0;
-  const max = 2.0;
-  const clamped = Math.min(max, Math.max(min, value));
-  const pct = (clamped - min) / (max - min); // 0 to 1
+// Full Semicircular Safety Factor Gauge matching Master Reference (hires_safety_factor.png)
+const SafetyFactorGauge = ({ value = 1.59 }) => {
+  const numVal = typeof value === 'number' ? value : 1.59;
+  const clampedVal = Math.min(2.5, Math.max(0, numVal));
   
-  const r = 24;
-  const cx = 32;
-  const cy = 28;
+  // Dimensions calibrated to fit the card container
+  const r = 48;
+  const cx = 85;
+  const cy = 68;
+  const strokeWidth = 9;
+
+  // Arc runs 180 degrees from 180° (Math.PI, left) to 0° (0, right)
   const arcLength = Math.PI * r;
-  const progressLength = pct * arcLength;
+  // Scale is 0.0 to 2.5
+  const progressRatio = clampedVal / 2.5;
+  const progressLength = progressRatio * arcLength;
+
+  // Scale ticks and labels around perimeter (0.5, 1.0, 1.5, 2.0, 2.5)
+  const scaleMarks = [
+    { label: '0.5', pct: 0.20, xOffset: -5, yOffset: 4 },
+    { label: '1.0', pct: 0.40, xOffset: -6, yOffset: -5 },
+    { label: '1.5', pct: 0.60, xOffset: 5, yOffset: -5 },
+    { label: '2.0', pct: 0.80, xOffset: 6, yOffset: 4 },
+    { label: '2.5', pct: 1.00, xOffset: 12, yOffset: 12 }
+  ];
 
   return (
-    <div className="relative w-16 h-9 flex items-center justify-center shrink-0">
-      <svg viewBox="0 0 64 36" className="w-full h-full overflow-visible">
-        {/* Background track */}
-        <path
-          d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
-          fill="none"
-          stroke="rgba(148, 163, 184, 0.25)"
-          strokeWidth="4"
-          strokeLinecap="round"
-        />
-        {/* Safe threshold mark (> 1.30 = pct 0.3) */}
-        <line
-          x1={cx + (r - 3) * Math.cos(Math.PI * (1 - 0.3))}
-          y1={cy - (r - 3) * Math.sin(Math.PI * (1 - 0.3))}
-          x2={cx + (r + 3) * Math.cos(Math.PI * (1 - 0.3))}
-          y2={cy - (r + 3) * Math.sin(Math.PI * (1 - 0.3))}
-          stroke="#10b981"
-          strokeWidth="1.5"
-        />
-        {/* Active arc */}
-        <path
-          d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
-          fill="none"
-          stroke="#10b981"
-          strokeWidth="4.5"
-          strokeDasharray={`${progressLength} ${arcLength}`}
-          strokeLinecap="round"
-        />
-      </svg>
+    <div className="flex flex-col items-center justify-center w-full select-none">
+      <div className="relative w-full max-w-[190px] h-[92px] flex items-center justify-center">
+        <svg viewBox="0 0 170 94" className="w-full h-full overflow-visible">
+          <defs>
+            <linearGradient id="safetyFactorGreenGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#10b981" />
+              <stop offset="60%" stopColor="#34d399" />
+              <stop offset="100%" stopColor="#10b981" />
+            </linearGradient>
+            <filter id="safetyGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="0" stdDeviation="1.5" floodColor="#10b981" floodOpacity="0.4" />
+            </filter>
+          </defs>
+
+          {/* Inactive background track */}
+          <path
+            d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
+            fill="none"
+            stroke="#1e293b"
+            strokeWidth={strokeWidth}
+            strokeLinecap="round"
+          />
+
+          {/* Active green progress arc */}
+          <path
+            d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
+            fill="none"
+            stroke="url(#safetyFactorGreenGrad)"
+            strokeWidth={strokeWidth}
+            strokeDasharray={`${progressLength} ${arcLength}`}
+            strokeLinecap="round"
+            filter="url(#safetyGlow)"
+            className="transition-all duration-700 ease-out"
+          />
+
+          {/* Perimeter scale dividing tick marks */}
+          {[0.20, 0.40, 0.60, 0.80].map((pct, idx) => {
+            const angle = Math.PI * (1 - pct);
+            const x1 = cx + (r - strokeWidth / 2 - 1) * Math.cos(angle);
+            const y1 = cy - (r - strokeWidth / 2 - 1) * Math.sin(angle);
+            const x2 = cx + (r + strokeWidth / 2 + 1) * Math.cos(angle);
+            const y2 = cy - (r + strokeWidth / 2 + 1) * Math.sin(angle);
+            return (
+              <line
+                key={idx}
+                x1={x1}
+                y1={y1}
+                x2={x2}
+                y2={y2}
+                stroke="#ffffff"
+                strokeWidth="1.2"
+                className="opacity-40"
+              />
+            );
+          })}
+
+          {/* Perimeter scale labels */}
+          {/* Bottom-left start label 0.5 */}
+          <text
+            x={cx - r - 8}
+            y={cy + 13}
+            fill="#94a3b8"
+            fontSize="8.5"
+            fontWeight="bold"
+            fontFamily="monospace"
+            textAnchor="middle"
+          >
+            0.5
+          </text>
+
+          {/* Arc perimeter labels */}
+          {scaleMarks.map((mark, idx) => {
+            const angle = Math.PI * (1 - mark.pct);
+            const dist = r + 12;
+            const x = cx + dist * Math.cos(angle) + mark.xOffset;
+            const y = cy - dist * Math.sin(angle) + mark.yOffset;
+            return (
+              <text
+                key={idx}
+                x={x}
+                y={y}
+                fill="#94a3b8"
+                fontSize="8.5"
+                fontWeight="bold"
+                fontFamily="monospace"
+                textAnchor="middle"
+              >
+                {mark.label}
+              </text>
+            );
+          })}
+        </svg>
+
+        {/* Centered Inside Text: 1.59 + Safe Range */}
+        <div className="absolute inset-x-0 bottom-0.5 flex flex-col items-center justify-center text-center pointer-events-none">
+          <span className="text-2xl font-black font-sans tracking-tight text-white leading-none drop-shadow-sm">
+            {numVal.toFixed(2)}
+          </span>
+          <span className="text-[10.5px] font-medium text-slate-300 dark:text-slate-300 mt-1 leading-none">
+            Safe Range
+          </span>
+        </div>
+      </div>
+
+      {/* Footnote below Gauge */}
+      <div className="text-[10px] text-slate-400 dark:text-slate-500 text-center leading-tight mt-2 px-1">
+        Higher values indicate more stable conditions (prototype metric).
+      </div>
     </div>
   );
 };
+
 
 export const CurrentRiskCard = ({ 
   sensorValues: propSensorValues, 
@@ -488,9 +729,21 @@ export const CurrentRiskCard = ({
   const nodes = propNodes || context?.nodes || [];
 
   const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [calloutOpen, setCalloutOpen] = useState(true);
   const [basemap, setBasemap] = useState('satellite'); // 'satellite' | 'terrain' | 'streets'
   const [showLabels, setShowLabels] = useState(true);
   const mapRef = useRef(null);
+
+  // Global handler for HTML callout close button inside Leaflet divIcon
+  React.useEffect(() => {
+    window.__closeLandslideCallout = (e) => {
+      if (e && e.stopPropagation) e.stopPropagation();
+      setCalloutOpen(false);
+    };
+    return () => {
+      delete window.__closeLandslideCallout;
+    };
+  }, []);
 
   // Selected node object if any
   const selectedNode = useMemo(() => {
@@ -522,7 +775,7 @@ export const CurrentRiskCard = ({
         riskLevel: nodeLevel,
         factorOfSafety: fos,
         trend: selectedNode.risk?.trend ? (selectedNode.risk.trend.charAt(0).toUpperCase() + selectedNode.risk.trend.slice(1)) : 'Stable',
-        predictionWindow: 'Next 6 Hours'
+        predictionWindow: 'Next 8 Hours'
       };
     }
     return baseRiskAssessment;
@@ -543,21 +796,22 @@ export const CurrentRiskCard = ({
   }, [activeRiskAssessment.trend]);
 
   const displayPredictionWindow = useMemo(() => {
-    const p = activeRiskAssessment.predictionWindow || 'Next 6 Hours';
-    if (p === '6h' || p === 'Next 6h') return 'Next 6 Hours';
+    const p = activeRiskAssessment.predictionWindow || 'Next 8 Hours';
+    if (p === '6h' || p === 'Next 6h') return 'Next 8 Hours';
     if (p === '8h' || p === 'Next 8h') return 'Next 8 Hours';
     return p;
   }, [activeRiskAssessment.predictionWindow]);
 
-  // Center on Kullu / Beas Valley corridor (Manali Gorge)
-  const initialCenter = [32.225, 77.165];
-  const initialZoom = 11.2;
+  // Center on Kullu / Beas Valley corridor (Calibrated to Master Reference)
+  const initialCenter = [32.205, 77.170];
+  const initialZoom = 11.0;
 
   const handleResetMapView = () => {
     if (mapRef.current) {
       mapRef.current.setView(initialCenter, initialZoom, { animate: true });
     }
   };
+
 
   // Assessment copy based on active risk level
   const assessmentMeta = useMemo(() => {
@@ -729,38 +983,37 @@ export const CurrentRiskCard = ({
               <span>20 km</span>
             </div>
 
-            {/* Bottom-Right: Semi-Transparent Dark Glass Map Legend */}
-            <div className="absolute bottom-3 right-3 z-[400] p-2.5 rounded-xl bg-slate-900/90 text-white backdrop-blur-md border border-white/15 shadow-xl text-[8.5px] space-y-1 select-none pointer-events-none max-w-[155px]">
-              <div className="font-bold text-[9px] text-slate-300 uppercase tracking-wider pb-0.5 border-b border-white/10">
-                Map Legend
-              </div>
-              <div className="flex items-center gap-1.5">
+            {/* Bottom-Right: Semi-Transparent Dark Glass Map Legend (Strictly Matching Master Reference) */}
+            <div className="absolute bottom-3 right-3 z-[400] p-2.5 rounded-xl bg-slate-950/90 text-white backdrop-blur-md border border-white/15 shadow-xl text-[8.5px] space-y-1.5 select-none pointer-events-none min-w-[155px]">
+              <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 border border-white/60 shrink-0" />
-                <span className="text-slate-200 truncate">Sensor Node (Normal)</span>
+                <span className="text-slate-200">Sensor Node (Safe)</span>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-amber-500 border border-white/60 shrink-0" />
-                <span className="text-slate-200 truncate">Sensor Node (Warning)</span>
+                <span className="text-slate-200">Sensor Node (Warning)</span>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-rose-500 border border-white/60 shrink-0" />
-                <span className="text-slate-200 truncate">Sensor Node (High Risk)</span>
+                <span className="text-slate-200">Sensor Node (High Risk)</span>
               </div>
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-slate-400 border border-white/60 shrink-0" />
-                <span className="text-slate-200 truncate">Sensor Node (Offline)</span>
+                <span className="text-slate-200">Sensor Node (Offline)</span>
               </div>
-              <div className="flex items-center gap-1.5 pt-0.5 border-t border-white/10">
-                <span className="w-2.5 h-1.5 rounded-xs bg-red-500/40 border border-red-500/90 shrink-0" />
-                <span className="text-slate-300 truncate">High Risk Zone</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-1.5 rounded-xs bg-amber-500/35 border border-amber-500/90 shrink-0" />
-                <span className="text-slate-300 truncate">Moderate Risk Zone</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="w-2.5 h-0.5 bg-emerald-400/80 rounded-full shrink-0" />
-                <span className="text-slate-300 truncate">Monitoring Perimeter</span>
+              <div className="pt-1 border-t border-white/10 space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-4 h-0 border-t-2 border-dashed border-rose-500 shrink-0" />
+                  <span className="text-slate-300">Prototype Risk Zone</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-4 h-0 border-t-2 border-dashed border-amber-400 shrink-0" />
+                  <span className="text-slate-300">Watch Zone</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="w-4 h-0 border-t-2 border-dashed border-emerald-400 shrink-0" />
+                  <span className="text-slate-300">Monitoring Boundary (Prototype)</span>
+                </div>
               </div>
             </div>
 
@@ -801,67 +1054,91 @@ export const CurrentRiskCard = ({
                 onToggleLabels={() => setShowLabels(prev => !prev)}
               />
 
-              {/* Safe Regional Monitoring Perimeter (Green Dashed) */}
+              {/* 1. Watch Zone (Yellow/Amber Dashed - Upper Left around NODE-03 and Kasol) */}
               <Polygon
-                positions={MONITORING_PERIMETER}
+                positions={WATCH_ZONE}
                 pathOptions={{
-                  color: '#10b981',
-                  fillColor: '#10b981',
-                  fillOpacity: 0.08,
-                  weight: 1.5,
-                  dashArray: '6, 6'
-                }}
-              >
-                <Popup>
-                  <div className="text-xs p-1.5 text-slate-800 dark:text-slate-100">
-                    <strong className="text-emerald-500 block font-semibold">Active Monitoring Perimeter</strong>
-                    <span className="text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed">
-                      Beas River Basin & Kullu–Manali slope surveillance zone.
-                    </span>
-                  </div>
-                </Popup>
-              </Polygon>
-
-              {/* Prototype Moderate Risk Influence Zone (Amber) */}
-              <Polygon
-                positions={MODERATE_RISK_ZONE}
-                pathOptions={{
-                  color: '#f59e0b',
-                  fillColor: '#f59e0b',
+                  color: '#eab308',
+                  fillColor: '#eab308',
                   fillOpacity: 0.22,
-                  weight: 1.8,
+                  weight: 2,
                   dashArray: '5, 5'
                 }}
               >
                 <Popup>
                   <div className="text-xs p-1.5 text-slate-800 dark:text-slate-100">
-                    <strong className="text-amber-500 block font-semibold">Prototype Moderate Risk Zone</strong>
+                    <strong className="text-amber-500 block font-semibold">Watch Zone</strong>
                     <span className="text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed">
-                      Simulated spatial hazard zone based on slope topography and localized moisture accumulation.
+                      Elevated surveillance zone around Kasol and NODE-03.
                     </span>
                   </div>
                 </Popup>
               </Polygon>
 
-              {/* Prototype High Risk Influence Zone (Red - Centered around NODE-05) */}
+              {/* 2. Prototype Risk Zone (Red Dashed - Upper Right around NODE-05 and Solang) */}
               <Polygon
-                positions={HIGH_RISK_ZONE}
+                positions={PROTOTYPE_RISK_ZONE}
                 pathOptions={{
                   color: '#ef4444',
                   fillColor: '#ef4444',
-                  fillOpacity: 0.38,
-                  weight: 2
+                  fillOpacity: 0.32,
+                  weight: 2,
+                  dashArray: '5, 5'
                 }}
               >
                 <Popup>
                   <div className="text-xs p-1.5 text-slate-800 dark:text-slate-100">
-                    <strong className="text-rose-500 block font-semibold">Prototype High Risk Zone</strong>
+                    <strong className="text-rose-500 block font-semibold">Prototype Risk Zone</strong>
                     <span className="text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed">
-                      Concentrated slope instability potential near Mountain Zone C (NODE-05).
+                      Concentrated slope instability potential near Solang Valley (NODE-05).
                     </span>
                   </div>
                 </Popup>
               </Polygon>
+
+              {/* 3. Monitoring Boundary (Prototype) (Green Dashed - South around Naggar, NODE-07, NODE-06) */}
+              <Polygon
+                positions={MONITORING_BOUNDARY}
+                pathOptions={{
+                  color: '#10b981',
+                  fillColor: '#10b981',
+                  fillOpacity: 0.18,
+                  weight: 2,
+                  dashArray: '5, 5'
+                }}
+              >
+                <Popup>
+                  <div className="text-xs p-1.5 text-slate-800 dark:text-slate-100">
+                    <strong className="text-emerald-500 block font-semibold">Monitoring Boundary (Prototype)</strong>
+                    <span className="text-slate-500 dark:text-slate-400 text-[11px] leading-relaxed">
+                      Active baseline perimeter covering Naggar and downstream Beas Valley slopes.
+                    </span>
+                  </div>
+                </Popup>
+              </Polygon>
+
+              {/* Regional Geographic Landmark Labels on Terrain (Matching Master Reference) */}
+              {REGIONAL_LANDMARKS.map((landmark, idx) => (
+                <Marker
+                  key={`landmark-${idx}`}
+                  position={landmark.pos}
+                  icon={createLandmarkIcon(landmark)}
+                  interactive={false}
+                />
+              ))}
+
+              {/* Pinned Callout Box directly above NODE-05 (Matching Master Reference) */}
+              {calloutOpen && (
+                <Marker
+                  position={LOCAL_GEO_COORDS['NODE-05']}
+                  icon={createCalloutDivIcon(
+                    nodes.find(n => n.id === 'NODE-05') || { id: 'NODE-05' }
+                  )}
+                  interactive={true}
+                  zIndexOffset={1000}
+                />
+              )}
+
 
               {/* 8 Canonical Monitoring Node Markers */}
               {nodes.map(node => {
@@ -1235,52 +1512,60 @@ export const CurrentRiskCard = ({
       </div>
 
       {/* ========================================================================= */}
-      {/* 3. BOTTOM ANALYTICS CARDS (4 EQUAL CARDS CONFORMING TO REFERENCE) */}
+      {/* 3. BOTTOM ANALYTICS CARDS (4 EQUAL CARDS STRICTLY MATCHING MASTER REFERENCE) */}
       {/* ========================================================================= */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-4 pt-1">
         
         {/* Card 1: Trend (Last 24 Hours) */}
         <div className="p-3 rounded-2xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between min-w-0">
-          <div className="flex items-center justify-between gap-2">
+          <div>
             <div className="flex items-center gap-2 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-emerald-100/80 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/40 flex items-center justify-center shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-emerald-100/80 dark:bg-emerald-950/70 border border-emerald-200/60 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                 <TrendingUp className="w-3.5 h-3.5" />
               </div>
-              <div className="text-[10px] sm:text-[10.5px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                Trend (Last 24 Hours)
+              <div className="text-xs font-bold text-slate-900 dark:text-white">
+                Trend <span className="text-slate-400 font-normal text-xs">(Last 24 Hours)</span>
+              </div>
+            </div>
+
+            <div className="mt-2.5 mb-1">
+              <div className="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 leading-none">
+                Stable
+              </div>
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 leading-tight">
+                No significant change in overall risk level
               </div>
             </div>
           </div>
 
-          <div className="mt-2 mb-1 flex items-baseline justify-between">
-            <div className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">
-              {displayTrend}
-            </div>
-            <div className={`text-[10px] font-semibold ${
-              displayTrend === 'Increasing' ? 'text-rose-500' : 'text-emerald-600 dark:text-emerald-400'
-            }`}>
-              {displayTrend === 'Increasing' ? '↑ +12.8% strain accumulation' : '↓ -2.4% net slope strain'}
-            </div>
-          </div>
-
-          {/* 24H Risk Score Area Chart (Detailed Zig-Zag Net Slope Strain with Tooltip) */}
-          <div className="w-full h-11 mt-1">
+          {/* Detailed 24H Sparkline with Grid & X-Axis */}
+          <div className="w-full h-14 mt-1.5">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={RISK_SCORE_HISTORY_24H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
+              <AreaChart data={RISK_SCORE_HISTORY_24H} margin={{ top: 2, right: 4, left: 4, bottom: 0 }}>
                 <defs>
                   <linearGradient id="trendCardGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.45} />
+                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
                     <stop offset="100%" stopColor="#10b981" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
+                <CartesianGrid stroke="#334155" strokeDasharray="2 2" strokeOpacity={0.35} vertical={false} />
                 <YAxis domain={['dataMin - 3', 'dataMax + 3']} hide />
+                <XAxis 
+                  dataKey="time" 
+                  ticks={['00:00', '06:00', '12:00', '18:00', 'Now']} 
+                  stroke="#475569" 
+                  tick={{ fill: '#94a3b8', fontSize: 8.5 }} 
+                  axisLine={{ stroke: '#334155', strokeWidth: 0.8 }} 
+                  tickLine={false} 
+                />
                 <Tooltip content={<MiniChartTooltip unit="/100" label="Risk Index" />} />
                 <Area 
                   type="linear" 
                   dataKey="score" 
                   stroke="#10b981" 
-                  strokeWidth={2} 
+                  strokeWidth={1.8} 
                   fill="url(#trendCardGrad)" 
+                  dot={{ r: 1.5, fill: '#10b981', strokeWidth: 0 }}
                   isAnimationActive={false} 
                 />
               </AreaChart>
@@ -1290,53 +1575,96 @@ export const CurrentRiskCard = ({
 
         {/* Card 2: Prediction Window (Prototype) */}
         <div className="p-3 rounded-2xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between min-w-0">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-sky-100/80 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 border border-sky-200/60 dark:border-sky-800/40 flex items-center justify-center shrink-0">
-                <Calendar className="w-3.5 h-3.5" />
+          <div>
+            <div className="flex items-start justify-between gap-1 min-w-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-7 h-7 rounded-lg bg-sky-100/80 dark:bg-sky-950/70 border border-sky-200/60 dark:border-sky-500/30 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0">
+                  <Clock className="w-3.5 h-3.5" />
+                </div>
+                <div className="leading-tight min-w-0">
+                  <div className="text-xs font-bold text-slate-900 dark:text-white">
+                    Prediction Window
+                  </div>
+                  <div className="text-[10px] text-slate-400">
+                    (Prototype)
+                  </div>
+                </div>
               </div>
-              <div className="text-[10px] sm:text-[10.5px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                Prediction Window (Prototype)
+              <span className="text-rose-500 dark:text-rose-400 font-semibold text-[11px] shrink-0">
+                Next 8 hours
+              </span>
+            </div>
+
+            <div className="mt-1.5 text-[10px] text-slate-600 dark:text-slate-300 leading-tight">
+              <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Low probability</span> of increased risk based on current trends
+            </div>
+
+            {/* Legend Dots */}
+            <div className="flex items-center gap-3 mt-1.5 text-[9.5px] font-medium text-slate-600 dark:text-slate-300">
+              <div className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span>Low</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                <span>Moderate</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                <span>High</span>
               </div>
             </div>
           </div>
 
-          <div className="mt-2 mb-1 flex items-baseline justify-between">
-            <div className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white">
-              {displayPredictionWindow}
-            </div>
-            <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
-              Confidence: 94.2%
-            </div>
-          </div>
-
-          {/* Multi-Horizon Risk Prediction Area Chart (Detailed Multi-Step Forecast Envelope) */}
-          <div className="w-full h-11 mt-1">
+          {/* Multi-Horizon Risk Prediction Area Chart */}
+          <div className="w-full h-14 mt-1.5">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={RISK_PREDICTION_SERIES_8H} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
+              <AreaChart data={RISK_PREDICTION_SERIES_8H} margin={{ top: 2, right: 4, left: 4, bottom: 0 }}>
                 <defs>
-                  <linearGradient id="predCardGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#0ea5e9" stopOpacity={0.4} />
-                    <stop offset="100%" stopColor="#0ea5e9" stopOpacity={0.0} />
+                  <linearGradient id="predLowGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
+                    <stop offset="100%" stopColor="#10b981" stopOpacity={0.0} />
+                  </linearGradient>
+                  <linearGradient id="predModGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#f59e0b" stopOpacity={0.0} />
                   </linearGradient>
                 </defs>
-                <YAxis domain={['dataMin - 2', 'dataMax + 2']} hide />
+                <CartesianGrid stroke="#334155" strokeDasharray="2 2" strokeOpacity={0.3} vertical={false} />
+                <YAxis domain={['dataMin - 3', 'dataMax + 4']} hide />
+                <XAxis 
+                  dataKey="time" 
+                  ticks={['Now', '+2h', '+4h', '+6h', '+8h']} 
+                  tickFormatter={(val) => val.replace('+', '')}
+                  stroke="#475569" 
+                  tick={{ fill: '#94a3b8', fontSize: 8.5 }} 
+                  axisLine={{ stroke: '#334155', strokeWidth: 0.8 }} 
+                  tickLine={false} 
+                />
                 <Tooltip content={<PredictionChartTooltip />} />
                 <Area 
-                  type="linear" 
+                  type="monotone" 
                   dataKey="high" 
-                  stroke="#38bdf8" 
+                  stroke="#ef4444" 
                   strokeWidth={1} 
-                  strokeDasharray="2, 2"
+                  strokeDasharray="2 2"
                   fill="transparent" 
                   isAnimationActive={false} 
                 />
                 <Area 
-                  type="linear" 
+                  type="monotone" 
                   dataKey="moderate" 
-                  stroke="#0ea5e9" 
-                  strokeWidth={2} 
-                  fill="url(#predCardGrad)" 
+                  stroke="#f59e0b" 
+                  strokeWidth={1.5} 
+                  fill="url(#predModGrad)" 
+                  isAnimationActive={false} 
+                />
+                <Area 
+                  type="monotone" 
+                  dataKey="low" 
+                  stroke="#10b981" 
+                  strokeWidth={1.8} 
+                  fill="url(#predLowGrad)" 
                   isAnimationActive={false} 
                 />
               </AreaChart>
@@ -1346,69 +1674,74 @@ export const CurrentRiskCard = ({
 
         {/* Card 3: Safety Factor (Prototype) */}
         <div className="p-3 rounded-2xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between min-w-0">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-emerald-100/80 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/40 flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-3.5 h-3.5" />
-              </div>
-              <div className="text-[10px] sm:text-[10.5px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                Safety Factor (Prototype)
-              </div>
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-7 h-7 rounded-lg bg-emerald-100/80 dark:bg-emerald-950/70 border border-emerald-200/60 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-3.5 h-3.5" />
+            </div>
+            <div className="text-xs font-bold text-slate-900 dark:text-white">
+              Safety Factor <span className="text-rose-500 dark:text-rose-400 font-normal text-xs">(Prototype)</span>
             </div>
           </div>
 
-          <div className="mt-2 mb-1 flex items-center justify-between">
-            <div>
-              <div className="text-base sm:text-lg font-black font-mono text-slate-900 dark:text-white leading-none">
-                {activeRiskAssessment.factorOfSafety ?? 1.59}
-              </div>
-              <div className={`text-[10px] font-semibold mt-1 ${
-                (activeRiskAssessment.factorOfSafety ?? 1.59) > 1.30 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'
-              }`}>
-                {(activeRiskAssessment.factorOfSafety ?? 1.59) > 1.30 ? 'Safe Range (> 1.30)' : 'Critical Range (< 1.30)'}
-              </div>
-            </div>
-            
-            {/* Miniature Semicircular Dial */}
-            <MiniSafetyFactorDial value={activeRiskAssessment.factorOfSafety ?? 1.59} />
-          </div>
-
-          <div className="text-[9.5px] text-slate-400 dark:text-slate-500 pt-1 border-t border-slate-200/60 dark:border-slate-800/80 flex items-center justify-between">
-            <span>Critical: 1.00</span>
-            <span>Current: {activeRiskAssessment.factorOfSafety ?? 1.59}</span>
-            <span>Target: &gt; 1.50</span>
+          <div className="mt-1 flex items-center justify-center w-full">
+            <SafetyFactorGauge value={activeRiskAssessment.factorOfSafety ?? 1.59} />
           </div>
         </div>
 
         {/* Card 4: Area Information */}
         <div className="p-3 rounded-2xl bg-slate-50/90 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between min-w-0">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-emerald-100/80 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/40 flex items-center justify-center shrink-0">
+          <div>
+            <div className="flex items-start gap-2.5 min-w-0 mb-2.5">
+              <div className="w-7 h-7 rounded-lg bg-emerald-100/80 dark:bg-emerald-950/70 border border-emerald-200/60 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
                 <Mountain className="w-3.5 h-3.5" />
               </div>
-              <div className="text-[10px] sm:text-[10.5px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                Area Information
+              <div className="min-w-0 leading-tight">
+                <div className="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider">
+                  Area Information
+                </div>
+                <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                  Himachal Pradesh
+                </div>
+                <div className="text-[10px] text-slate-500 dark:text-slate-400">
+                  Kullu – Manali Region
+                </div>
+              </div>
+            </div>
+
+            {/* 3 Metric Rows matching Master Reference */}
+            <div className="space-y-2 pt-1 border-t border-slate-200/60 dark:border-slate-800">
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-md border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <User className="w-3 h-3" />
+                </div>
+                <div className="leading-tight">
+                  <span className="font-bold text-xs text-slate-900 dark:text-white mr-1.5">8</span>
+                  <span className="text-[10.5px] text-slate-500 dark:text-slate-400">Monitoring Nodes</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-md border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                  <Compass className="w-3 h-3" />
+                </div>
+                <div className="leading-tight">
+                  <span className="font-bold text-xs text-slate-900 dark:text-white mr-1.5">~120 km²</span>
+                  <span className="text-[10.5px] text-slate-500 dark:text-slate-400">Monitored Area (Prototype)</span>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-2">
+                <div className="w-5 h-5 rounded-md border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+                  <Shield className="w-3 h-3" />
+                </div>
+                <div className="text-[10.5px] text-slate-600 dark:text-slate-300 leading-snug">
+                  Multiple high-risk slopes under observation
+                </div>
               </div>
             </div>
           </div>
-
-          <div className="mt-2 mb-1">
-            <div className="text-base sm:text-lg font-extrabold text-slate-900 dark:text-white leading-tight">
-              Himachal Pradesh
-            </div>
-            <div className="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">
-              8 Nodes Deployed (7 Online)
-            </div>
-          </div>
-
-          <div className="mt-1 pt-1.5 border-t border-slate-200/60 dark:border-slate-800/80 flex items-center justify-between text-[10px]">
-            <span className="font-semibold text-slate-600 dark:text-slate-300">~120 km² Monitored</span>
-            <span className="px-1.5 py-0.5 rounded-md bg-slate-200/70 dark:bg-slate-700/60 font-mono text-[9px] text-slate-700 dark:text-slate-300">
-              1,850m – 3,450m MSL
-            </span>
-          </div>
         </div>
+
 
       </div>
 
