@@ -6,7 +6,8 @@ import {
   Flame, 
   CloudRain, 
   CheckCircle2, 
-  ArrowUpRight
+  ArrowUpRight,
+  Thermometer
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -21,30 +22,55 @@ import {
 } from 'recharts';
 import { Link } from 'react-router-dom';
 
+// Exact 24-hour time series matching reference image (ref_trends_chart.png)
 const TREND_DATA_24H = [
-  { time: '00:00', temp: 18.6 },
-  { time: '02:00', temp: 17.5, isMin: true }, // Min 17.5°C
-  { time: '04:00', temp: 17.8 },
-  { time: '06:00', temp: 18.2 },
-  { time: '08:00', temp: 19.4 },
-  { time: '10:00', temp: 21.0 },
-  { time: '12:00', temp: 22.3 },
-  { time: '14:00', temp: 22.8, isMax: true }, // Max 22.8°C
-  { time: '16:00', temp: 22.5 },
-  { time: '18:00', temp: 22.1 },
-  { time: '20:00', temp: 21.8 },
-  { time: '22:00', temp: 21.6 },
-  { time: 'Now',   temp: 21.6, isNow: true }  // Now 21.6°C
+  { time: '00:00', temp: 19.3, displayTime: '00:00' },
+  { time: '01:00', temp: 18.5 },
+  { time: '02:00', temp: 17.8, displayTime: '02:00' },
+  { time: '03:00', temp: 17.5, isMin: true }, // Min 17.5°C dip
+  { time: '04:00', temp: 17.4, displayTime: '04:00' },
+  { time: '05:00', temp: 18.0 },
+  { time: '06:00', temp: 18.8, displayTime: '06:00' },
+  { time: '07:00', temp: 19.6 },
+  { time: '08:00', temp: 20.6, displayTime: '08:00' },
+  { time: '09:00', temp: 21.4 },
+  { time: '10:00', temp: 21.8, displayTime: '10:00' },
+  { time: '11:00', temp: 22.0 },
+  { time: '12:00', temp: 22.0, displayTime: '12:00' },
+  { time: '13:00', temp: 22.4 },
+  { time: '14:00', temp: 22.6, displayTime: '14:00' },
+  { time: '15:00', temp: 22.8, isMax: true }, // Max 22.8°C peak
+  { time: '16:00', temp: 22.5, displayTime: '16:00' },
+  { time: '17:00', temp: 21.8 },
+  { time: '18:00', temp: 21.2, displayTime: '18:00' },
+  { time: '19:00', temp: 20.8 },
+  { time: '20:00', temp: 20.2, displayTime: '20:00' },
+  { time: '21:00', temp: 19.6 },
+  { time: '22:00', temp: 20.2, displayTime: '22:00' },
+  { time: '23:00', temp: 21.0 },
+  { time: 'Now',   temp: 21.6, isNow: true, displayTime: 'Now' }  // Now 21.6°C
 ];
 
 const PARAMETERS = [
-  { id: 'temperature', label: 'Temperature (°C)' },
-  { id: 'soil', label: 'Soil Moisture (%)' },
-  { id: 'rainfall', label: 'Rainfall (mm)' },
-  { id: 'tilt', label: 'Ground Tilt (°)' },
-  { id: 'vibration', label: 'Vibration (g)' },
-  { id: 'humidity', label: 'Humidity (%)' }
+  { id: 'temperature', label: 'Temperature' },
+  { id: 'soil', label: 'Soil Moisture' },
+  { id: 'rainfall', label: 'Rainfall' },
+  { id: 'tilt', label: 'Ground Tilt' },
+  { id: 'vibration', label: 'Vibration' },
+  { id: 'humidity', label: 'Humidity' }
 ];
+
+// Custom Dot rendering to produce white-centered glowing dots as seen in the reference
+const renderCustomDot = (props) => {
+  const { cx, cy } = props;
+  if (!cx || !cy) return null;
+  return (
+    <g key={`dot-${cx}-${cy}`}>
+      <circle cx={cx} cy={cy} r={4.5} fill="#0d9488" fillOpacity={0.6} />
+      <circle cx={cx} cy={cy} r={2.5} fill="#ffffff" stroke="#14b8a6" strokeWidth={1} />
+    </g>
+  );
+};
 
 export const SensorTrendsAndAlerts = () => {
   const [selectedParam, setSelectedParam] = useState('temperature');
@@ -55,12 +81,12 @@ export const SensorTrendsAndAlerts = () => {
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-3.5 select-none">
       
       {/* ========================================================================= */}
-      {/* LEFT COLUMN: SENSOR DATA TRENDS (24H WITH NORMAL RANGE BAND)              */}
+      {/* LEFT COLUMN: SENSOR DATA TRENDS (EXACT 24H GRAPH MATCHING REFERENCE)      */}
       {/* ========================================================================= */}
-      <div className="lg:col-span-8 rounded-2xl bg-[#09131d] border border-slate-800/80 p-4 shadow-md flex flex-col justify-between">
+      <div className="lg:col-span-8 rounded-2xl bg-[#07131d] border border-slate-800/80 p-4 shadow-md flex flex-col justify-between">
         
-        {/* Header: Parameter Dropdown + Time Controls */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-2.5 pb-2 border-b border-slate-800/70">
+        {/* Header: Title + Parameter Dropdown + 1H/6H/24H/7D Selector */}
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-800/70">
           <div className="flex items-center gap-3">
             <h2 className="text-base font-black font-heading text-white tracking-tight">
               Sensor Data Trends
@@ -71,14 +97,15 @@ export const SensorTrendsAndAlerts = () => {
               <button
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700/80 text-white text-xs font-medium flex items-center gap-1.5 hover:bg-slate-800 transition-colors"
+                className="px-2.5 py-1 rounded-lg bg-[#0a1826] border border-slate-700/80 text-white text-xs font-medium flex items-center gap-1.5 hover:bg-slate-800 transition-colors"
               >
-                <span>🌡 {PARAMETERS.find(p => p.id === selectedParam)?.label.split(' ')[0]}</span>
+                <Thermometer className="w-3.5 h-3.5 text-cyan-400" />
+                <span>{PARAMETERS.find(p => p.id === selectedParam)?.label}</span>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
               </button>
 
               {dropdownOpen && (
-                <div className="absolute left-0 mt-1 w-44 rounded-xl bg-slate-900 border border-slate-700 shadow-xl py-1 z-30">
+                <div className="absolute left-0 mt-1 w-44 rounded-xl bg-[#0a1826] border border-slate-700 shadow-xl py-1 z-30">
                   {PARAMETERS.map((p) => (
                     <button
                       key={p.id}
@@ -100,15 +127,15 @@ export const SensorTrendsAndAlerts = () => {
             </div>
           </div>
 
-          {/* Time Range Pills */}
-          <div className="flex items-center gap-1 bg-[#060c13] p-1 rounded-xl border border-slate-800">
+          {/* Time Range Pills (24H highlighted in bright teal) */}
+          <div className="flex items-center gap-1 bg-[#050c14] p-0.5 rounded-xl border border-slate-800">
             {['1H', '6H', '24H', '7D'].map((range) => (
               <button
                 key={range}
                 onClick={() => setTimeRange(range)}
                 className={`px-2.5 py-0.5 rounded-lg text-xs font-semibold transition-all ${
                   timeRange === range
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-xs'
+                    ? 'bg-[#10b981] text-white shadow-xs'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -118,67 +145,80 @@ export const SensorTrendsAndAlerts = () => {
           </div>
         </div>
 
-        {/* Legend Row */}
-        <div className="flex flex-wrap items-center gap-4 text-xs mb-2 text-slate-300">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-xs" />
-            <span className="font-semibold text-white text-[11px]">Temperature</span>
+        {/* Legend Row matching ref_trends_chart.png */}
+        <div className="flex flex-wrap items-center gap-4 text-xs mb-1.5 text-slate-300">
+          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-300 font-semibold text-[11px]">
+            <span className="w-2 h-2 rounded-full bg-teal-400" />
+            <span>Temperature</span>
           </div>
           <div className="flex items-center gap-1.5 text-slate-400 text-[11px]">
-            <span className="w-3.5 h-0.5 border-t-2 border-dashed border-cyan-400/80" />
+            <span className="w-4 h-0.5 border-t-2 border-dashed border-sky-400" />
             <span>Min (17.5°C)</span>
           </div>
           <div className="flex items-center gap-1.5 text-slate-400 text-[11px]">
-            <span className="w-3.5 h-0.5 border-t-2 border-dashed border-amber-400/80" />
+            <span className="w-4 h-0.5 border-t-2 border-dashed border-amber-400" />
             <span>Max (22.8°C)</span>
           </div>
           <div className="flex items-center gap-1.5 text-slate-400 text-[11px]">
-            <span className="w-3 h-3 rounded bg-emerald-500/15 border border-emerald-500/30" />
+            <span className="w-3.5 h-3 rounded bg-emerald-950/80 border border-emerald-500/40" />
             <span>Normal Range (10–28°C)</span>
           </div>
         </div>
 
-        {/* Recharts Chart with Callout Markers */}
+        {/* Recharts Chart with Exact Markers & Overlays */}
         <div className="relative h-60 sm:h-64 w-full pt-1">
-          {/* Min Marker */}
-          <div className="absolute top-[68%] left-[16%] z-20 pointer-events-none transform -translate-x-1/2 -translate-y-full">
-            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9.5px] font-mono font-bold bg-[#060c13]/90 text-cyan-300 border border-cyan-500/40 shadow-md">
-              Min 17.5°C
-            </span>
+          
+          {/* Min Callout Pill (Below the curve at 03:00) */}
+          <div className="absolute top-[67%] left-[16.5%] z-20 pointer-events-none transform -translate-x-1/2">
+            <div className="relative flex flex-col items-center">
+              {/* Pointer Triangle pointing UP to dot */}
+              <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[4px] border-b-sky-500" />
+              <div className="px-2 py-1 rounded-md bg-[#0b1c2e] border border-sky-500/70 text-white text-center leading-tight shadow-lg">
+                <div className="text-[8.5px] text-sky-400 font-medium uppercase">Min</div>
+                <div className="text-[11px] font-mono font-bold text-white">17.5°C</div>
+              </div>
+            </div>
           </div>
 
-          {/* Max Marker */}
-          <div className="absolute top-[22%] left-[63%] z-20 pointer-events-none transform -translate-x-1/2 -translate-y-full">
-            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9.5px] font-mono font-bold bg-[#060c13]/90 text-amber-300 border border-amber-500/40 shadow-md">
-              Max 22.8°C
-            </span>
+          {/* Max Callout Pill (Above the curve at 15:00) */}
+          <div className="absolute top-[16%] left-[62.5%] z-20 pointer-events-none transform -translate-x-1/2 -translate-y-full">
+            <div className="relative flex flex-col items-center">
+              <div className="px-2 py-1 rounded-md bg-[#2a1705] border border-amber-500/70 text-white text-center leading-tight shadow-lg">
+                <div className="text-[8.5px] text-amber-400 font-medium uppercase">Max</div>
+                <div className="text-[11px] font-mono font-bold text-white">22.8°C</div>
+              </div>
+              {/* Pointer Triangle pointing DOWN to dot */}
+              <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[4px] border-t-amber-500" />
+            </div>
           </div>
 
-          {/* Now Marker */}
-          <div className="absolute top-[32%] right-[12px] z-20 pointer-events-none transform translate-y-[-50%]">
-            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9.5px] font-mono font-bold bg-emerald-500 text-white shadow-md">
-              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-              Now 21.6°C
-            </span>
+          {/* Now Callout Pill (At far right end at Now) */}
+          <div className="absolute top-[28%] right-[10px] z-20 pointer-events-none transform translate-y-[-50%]">
+            <div className="px-2 py-1 rounded-md bg-[#10b981] text-white text-center leading-tight shadow-lg">
+              <div className="text-[8.5px] font-medium uppercase opacity-90">Now</div>
+              <div className="text-[11px] font-mono font-bold">21.6°C</div>
+            </div>
           </div>
 
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart
               data={TREND_DATA_24H}
-              margin={{ top: 15, right: 25, left: 0, bottom: 5 }}
+              margin={{ top: 15, right: 28, left: 2, bottom: 5 }}
             >
               <defs>
-                <linearGradient id="trends-temp-fill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#10b981" stopOpacity={0.35} />
-                  <stop offset="100%" stopColor="#10b981" stopOpacity={0.02} />
+                <linearGradient id="trends-teal-gradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#14b8a6" stopOpacity={0.35} />
+                  <stop offset="100%" stopColor="#14b8a6" stopOpacity={0.02} />
                 </linearGradient>
               </defs>
 
-              <CartesianGrid strokeDasharray="3 3" stroke="#1b2533" vertical={false} />
+              {/* Grid: dashed lines as seen in reference */}
+              <CartesianGrid strokeDasharray="2 2" stroke="#172230" vertical={true} />
 
               <XAxis 
                 dataKey="time" 
                 stroke="#64748b" 
+                ticks={['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', 'Now']}
                 tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'monospace' }}
                 axisLine={{ stroke: '#2b3648' }}
                 tickLine={false}
@@ -197,13 +237,13 @@ export const SensorTrendsAndAlerts = () => {
                   position: 'insideLeft', 
                   fill: '#64748b', 
                   fontSize: 10,
-                  offset: 10
+                  offset: 8
                 }}
               />
 
               <Tooltip 
                 contentStyle={{
-                  backgroundColor: '#060c13',
+                  backgroundColor: '#050c14',
                   borderColor: '#2b3648',
                   borderRadius: '8px',
                   color: '#f8fafc',
@@ -212,42 +252,47 @@ export const SensorTrendsAndAlerts = () => {
                 formatter={(val) => [`${val} °C`, 'Temperature']}
               />
 
-              {/* Shaded Normal Range Band (10 - 28°C) */}
+              {/* Shaded Normal Range Band between 16.8 and 28.0 */}
               <ReferenceArea 
-                y1={10} 
-                y2={28} 
-                fill="#10b981" 
-                fillOpacity={0.05} 
-                stroke="#10b981" 
-                strokeOpacity={0.15} 
-                strokeDasharray="4 4"
+                y1={16.8} 
+                y2={28.0} 
+                fill="#047857" 
+                fillOpacity={0.12} 
               />
 
-              {/* Min Reference Line */}
+              {/* Red/Orange Upper Limit Reference Line at Y=28 */}
               <ReferenceLine 
-                y={17.5} 
-                stroke="#06b6d4" 
+                y={28.0} 
+                stroke="#ef4444" 
                 strokeDasharray="3 3" 
-                strokeOpacity={0.6} 
+                strokeOpacity={0.65} 
               />
 
-              {/* Max Reference Line */}
+              {/* Yellow/Amber Warning Reference Line at Y=20.8 */}
               <ReferenceLine 
-                y={22.8} 
-                stroke="#f59e0b" 
+                y={20.8} 
+                stroke="#eab308" 
                 strokeDasharray="3 3" 
-                strokeOpacity={0.6} 
+                strokeOpacity={0.65} 
               />
 
-              {/* Main Temperature Area / Curve */}
+              {/* Blue/Cyan Min Reference Line at Y=16.8 */}
+              <ReferenceLine 
+                y={16.8} 
+                stroke="#0284c7" 
+                strokeDasharray="3 3" 
+                strokeOpacity={0.65} 
+              />
+
+              {/* Main Temperature Spline Curve with Custom Halo Dots */}
               <Area 
                 type="monotone" 
                 dataKey="temp" 
-                stroke="#10b981" 
-                strokeWidth={2.4} 
-                fill="url(#trends-temp-fill)" 
-                dot={{ r: 3.5, fill: '#10b981', stroke: '#060c13', strokeWidth: 1.5 }}
-                activeDot={{ r: 5.5, fill: '#34d399', stroke: '#fff', strokeWidth: 2 }}
+                stroke="#14b8a6" 
+                strokeWidth={2} 
+                fill="url(#trends-teal-gradient)" 
+                dot={renderCustomDot}
+                activeDot={{ r: 6, fill: '#34d399', stroke: '#fff', strokeWidth: 2 }}
                 isAnimationActive={false}
               />
             </ComposedChart>
@@ -257,12 +302,12 @@ export const SensorTrendsAndAlerts = () => {
       </div>
 
       {/* ========================================================================= */}
-      {/* RIGHT COLUMN: ACTIVE ALERTS (4 ALERTS COLOR-CODED)                       */}
+      {/* RIGHT COLUMN: ACTIVE ALERTS (4 ALERTS MATCHING REFERENCE EXACTLY)         */}
       {/* ========================================================================= */}
-      <div className="lg:col-span-4 rounded-2xl bg-[#09131d] border border-slate-800/80 p-4 shadow-md flex flex-col justify-between">
+      <div className="lg:col-span-4 rounded-2xl bg-[#07131d] border border-slate-800/80 p-4 shadow-md flex flex-col justify-between">
         
         {/* Card Header */}
-        <div className="flex items-center justify-between gap-2 mb-2.5 pb-2 border-b border-slate-800/70">
+        <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-800/70">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 rounded-lg bg-rose-500/15 text-rose-400 flex items-center justify-center">
               <Bell className="w-3.5 h-3.5" />
