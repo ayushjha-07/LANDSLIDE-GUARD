@@ -60,7 +60,6 @@ const PARAMETERS = [
   { id: 'humidity', label: 'Humidity' }
 ];
 
-// Custom Dot rendering to produce white-centered glowing dots as seen in the reference
 const renderCustomDot = (props) => {
   const { cx, cy } = props;
   if (!cx || !cy) return null;
@@ -83,12 +82,12 @@ export const SensorTrendsAndAlerts = () => {
       {/* ========================================================================= */}
       {/* LEFT COLUMN: SENSOR DATA TRENDS (EXACT 24H GRAPH MATCHING REFERENCE)      */}
       {/* ========================================================================= */}
-      <div className="lg:col-span-8 rounded-2xl bg-[#07131d] border border-slate-800/80 p-4 shadow-md flex flex-col justify-between">
+      <div className="lg:col-span-8 rounded-2xl bg-white dark:bg-[#07131d] border border-slate-200 dark:border-slate-800/80 p-4 shadow-xs dark:shadow-md flex flex-col justify-between transition-colors duration-200">
         
-        {/* Header: Title + Parameter Dropdown + 1H/6H/24H/7D Selector */}
-        <div className="flex flex-wrap items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-800/70">
+        {/* Header */}
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-100 dark:border-slate-800/70">
           <div className="flex items-center gap-3">
-            <h2 className="text-base font-black font-heading text-white tracking-tight">
+            <h2 className="text-base font-black font-heading text-slate-900 dark:text-white tracking-tight">
               Sensor Data Trends
             </h2>
 
@@ -97,15 +96,15 @@ export const SensorTrendsAndAlerts = () => {
               <button
                 type="button"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="px-2.5 py-1 rounded-lg bg-[#0a1826] border border-slate-700/80 text-white text-xs font-medium flex items-center gap-1.5 hover:bg-slate-800 transition-colors"
+                className="px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-[#0a1826] border border-slate-200 dark:border-slate-700/80 text-slate-800 dark:text-white text-xs font-medium flex items-center gap-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               >
-                <Thermometer className="w-3.5 h-3.5 text-cyan-400" />
+                <Thermometer className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
                 <span>{PARAMETERS.find(p => p.id === selectedParam)?.label}</span>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                <ChevronDown className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
               </button>
 
               {dropdownOpen && (
-                <div className="absolute left-0 mt-1 w-44 rounded-xl bg-[#0a1826] border border-slate-700 shadow-xl py-1 z-30">
+                <div className="absolute left-0 mt-1 w-44 rounded-xl bg-white dark:bg-[#0a1826] border border-slate-200 dark:border-slate-700 shadow-xl py-1 z-30">
                   {PARAMETERS.map((p) => (
                     <button
                       key={p.id}
@@ -115,8 +114,8 @@ export const SensorTrendsAndAlerts = () => {
                       }}
                       className={`w-full text-left px-3 py-1.5 text-xs transition-colors flex items-center justify-between ${
                         selectedParam === p.id 
-                          ? 'bg-emerald-500/20 text-emerald-400 font-semibold' 
-                          : 'text-slate-300 hover:bg-slate-800'
+                          ? 'bg-emerald-50 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-semibold' 
+                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                       }`}
                     >
                       <span>{p.label}</span>
@@ -127,8 +126,8 @@ export const SensorTrendsAndAlerts = () => {
             </div>
           </div>
 
-          {/* Time Range Pills (24H highlighted in bright teal) */}
-          <div className="flex items-center gap-1 bg-[#050c14] p-0.5 rounded-xl border border-slate-800">
+          {/* Time Range Pills */}
+          <div className="flex items-center gap-1 bg-slate-100 dark:bg-[#050c14] p-0.5 rounded-xl border border-slate-200 dark:border-slate-800">
             {['1H', '6H', '24H', '7D'].map((range) => (
               <button
                 key={range}
@@ -136,7 +135,7 @@ export const SensorTrendsAndAlerts = () => {
                 className={`px-2.5 py-0.5 rounded-lg text-xs font-semibold transition-all ${
                   timeRange === range
                     ? 'bg-[#10b981] text-white shadow-xs'
-                    : 'text-slate-400 hover:text-white'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 {range}
@@ -145,22 +144,22 @@ export const SensorTrendsAndAlerts = () => {
           </div>
         </div>
 
-        {/* Legend Row matching ref_trends_chart.png */}
-        <div className="flex flex-wrap items-center gap-4 text-xs mb-1.5 text-slate-300">
-          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-300 font-semibold text-[11px]">
-            <span className="w-2 h-2 rounded-full bg-teal-400" />
+        {/* Legend Row */}
+        <div className="flex flex-wrap items-center gap-4 text-xs mb-1.5 text-slate-600 dark:text-slate-300">
+          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-500/20 text-teal-700 dark:text-teal-300 font-semibold text-[11px]">
+            <span className="w-2 h-2 rounded-full bg-teal-500" />
             <span>Temperature</span>
           </div>
-          <div className="flex items-center gap-1.5 text-slate-400 text-[11px]">
-            <span className="w-4 h-0.5 border-t-2 border-dashed border-sky-400" />
+          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-[11px]">
+            <span className="w-4 h-0.5 border-t-2 border-dashed border-sky-500 dark:border-sky-400" />
             <span>Min (17.5°C)</span>
           </div>
-          <div className="flex items-center gap-1.5 text-slate-400 text-[11px]">
-            <span className="w-4 h-0.5 border-t-2 border-dashed border-amber-400" />
+          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-[11px]">
+            <span className="w-4 h-0.5 border-t-2 border-dashed border-amber-500 dark:border-amber-400" />
             <span>Max (22.8°C)</span>
           </div>
-          <div className="flex items-center gap-1.5 text-slate-400 text-[11px]">
-            <span className="w-3.5 h-3 rounded bg-emerald-950/80 border border-emerald-500/40" />
+          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-[11px]">
+            <span className="w-3.5 h-3 rounded bg-emerald-100 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-500/40" />
             <span>Normal Range (10–28°C)</span>
           </div>
         </div>
@@ -168,10 +167,9 @@ export const SensorTrendsAndAlerts = () => {
         {/* Recharts Chart with Exact Markers & Overlays */}
         <div className="relative h-60 sm:h-64 w-full pt-1">
           
-          {/* Min Callout Pill (Below the curve at 03:00) */}
+          {/* Min Callout Pill */}
           <div className="absolute top-[67%] left-[16.5%] z-20 pointer-events-none transform -translate-x-1/2">
             <div className="relative flex flex-col items-center">
-              {/* Pointer Triangle pointing UP to dot */}
               <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-b-[4px] border-b-sky-500" />
               <div className="px-2 py-1 rounded-md bg-[#0b1c2e] border border-sky-500/70 text-white text-center leading-tight shadow-lg">
                 <div className="text-[8.5px] text-sky-400 font-medium uppercase">Min</div>
@@ -180,19 +178,18 @@ export const SensorTrendsAndAlerts = () => {
             </div>
           </div>
 
-          {/* Max Callout Pill (Above the curve at 15:00) */}
+          {/* Max Callout Pill */}
           <div className="absolute top-[16%] left-[62.5%] z-20 pointer-events-none transform -translate-x-1/2 -translate-y-full">
             <div className="relative flex flex-col items-center">
               <div className="px-2 py-1 rounded-md bg-[#2a1705] border border-amber-500/70 text-white text-center leading-tight shadow-lg">
                 <div className="text-[8.5px] text-amber-400 font-medium uppercase">Max</div>
                 <div className="text-[11px] font-mono font-bold text-white">22.8°C</div>
               </div>
-              {/* Pointer Triangle pointing DOWN to dot */}
               <div className="w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[4px] border-t-amber-500" />
             </div>
           </div>
 
-          {/* Now Callout Pill (At far right end at Now) */}
+          {/* Now Callout Pill */}
           <div className="absolute top-[28%] right-[10px] z-20 pointer-events-none transform translate-y-[-50%]">
             <div className="px-2 py-1 rounded-md bg-[#10b981] text-white text-center leading-tight shadow-lg">
               <div className="text-[8.5px] font-medium uppercase opacity-90">Now</div>
@@ -212,15 +209,14 @@ export const SensorTrendsAndAlerts = () => {
                 </linearGradient>
               </defs>
 
-              {/* Grid: dashed lines as seen in reference */}
-              <CartesianGrid strokeDasharray="2 2" stroke="#172230" vertical={true} />
+              <CartesianGrid strokeDasharray="2 2" stroke="#334155" strokeOpacity={0.4} vertical={true} />
 
               <XAxis 
                 dataKey="time" 
                 stroke="#64748b" 
                 ticks={['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00', 'Now']}
-                tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'monospace' }}
-                axisLine={{ stroke: '#2b3648' }}
+                tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'monospace' }}
+                axisLine={{ stroke: '#94a3b8', strokeOpacity: 0.3 }}
                 tickLine={false}
               />
 
@@ -228,7 +224,7 @@ export const SensorTrendsAndAlerts = () => {
                 domain={[10, 30]} 
                 ticks={[10, 15, 20, 25, 30]}
                 stroke="#64748b" 
-                tick={{ fill: '#94a3b8', fontSize: 10, fontFamily: 'monospace' }}
+                tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'monospace' }}
                 axisLine={false}
                 tickLine={false}
                 label={{ 
@@ -252,7 +248,6 @@ export const SensorTrendsAndAlerts = () => {
                 formatter={(val) => [`${val} °C`, 'Temperature']}
               />
 
-              {/* Shaded Normal Range Band between 16.8 and 28.0 */}
               <ReferenceArea 
                 y1={16.8} 
                 y2={28.0} 
@@ -260,7 +255,6 @@ export const SensorTrendsAndAlerts = () => {
                 fillOpacity={0.12} 
               />
 
-              {/* Red/Orange Upper Limit Reference Line at Y=28 */}
               <ReferenceLine 
                 y={28.0} 
                 stroke="#ef4444" 
@@ -268,7 +262,6 @@ export const SensorTrendsAndAlerts = () => {
                 strokeOpacity={0.65} 
               />
 
-              {/* Yellow/Amber Warning Reference Line at Y=20.8 */}
               <ReferenceLine 
                 y={20.8} 
                 stroke="#eab308" 
@@ -276,7 +269,6 @@ export const SensorTrendsAndAlerts = () => {
                 strokeOpacity={0.65} 
               />
 
-              {/* Blue/Cyan Min Reference Line at Y=16.8 */}
               <ReferenceLine 
                 y={16.8} 
                 stroke="#0284c7" 
@@ -284,7 +276,6 @@ export const SensorTrendsAndAlerts = () => {
                 strokeOpacity={0.65} 
               />
 
-              {/* Main Temperature Spline Curve with Custom Halo Dots */}
               <Area 
                 type="monotone" 
                 dataKey="temp" 
@@ -302,23 +293,23 @@ export const SensorTrendsAndAlerts = () => {
       </div>
 
       {/* ========================================================================= */}
-      {/* RIGHT COLUMN: ACTIVE ALERTS (4 ALERTS MATCHING REFERENCE EXACTLY)         */}
+      {/* RIGHT COLUMN: ACTIVE ALERTS                                              */}
       {/* ========================================================================= */}
-      <div className="lg:col-span-4 rounded-2xl bg-[#07131d] border border-slate-800/80 p-4 shadow-md flex flex-col justify-between">
+      <div className="lg:col-span-4 rounded-2xl bg-white dark:bg-[#07131d] border border-slate-200 dark:border-slate-800/80 p-4 shadow-xs dark:shadow-md flex flex-col justify-between transition-colors duration-200">
         
         {/* Card Header */}
-        <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-800/70">
+        <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-100 dark:border-slate-800/70">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg bg-rose-500/15 text-rose-400 flex items-center justify-center">
+            <div className="w-6 h-6 rounded-lg bg-rose-50 dark:bg-rose-500/15 text-rose-600 dark:text-rose-400 flex items-center justify-center">
               <Bell className="w-3.5 h-3.5" />
             </div>
-            <h2 className="text-base font-black font-heading text-white tracking-tight">
+            <h2 className="text-base font-black font-heading text-slate-900 dark:text-white tracking-tight">
               Active Alerts
             </h2>
           </div>
           <Link 
             to="/alerts" 
-            className="text-emerald-400 hover:text-emerald-300 text-xs font-semibold flex items-center gap-0.5 transition-colors"
+            className="text-emerald-600 dark:text-emerald-400 hover:underline text-xs font-semibold flex items-center gap-0.5 transition-colors"
           >
             <span>View All</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -328,80 +319,80 @@ export const SensorTrendsAndAlerts = () => {
         {/* 4 Alerts List */}
         <div className="space-y-2 flex-1 flex flex-col justify-between">
           
-          {/* 1. HIGH VIBRATION DETECTED (RED) */}
-          <div className="p-2.5 rounded-xl bg-rose-950/25 border border-rose-500/30 flex items-start justify-between gap-2 transition-all hover:bg-rose-950/35">
+          {/* 1. HIGH VIBRATION DETECTED */}
+          <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/25 border border-rose-200 dark:border-rose-500/30 flex items-start justify-between gap-2 transition-all hover:bg-rose-100 dark:hover:bg-rose-950/35">
             <div className="flex items-start gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0 mt-0.5">
+              <div className="w-7 h-7 rounded-lg bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 mt-0.5">
                 <Flame className="w-3.5 h-3.5" />
               </div>
               <div className="min-w-0 leading-tight">
-                <div className="text-xs font-bold text-white truncate">High Vibration Detected</div>
-                <div className="text-[10.5px] font-mono text-rose-400 mt-0.5 flex items-center gap-1.5">
+                <div className="text-xs font-bold text-slate-900 dark:text-white truncate">High Vibration Detected</div>
+                <div className="text-[10.5px] font-mono text-rose-600 dark:text-rose-400 mt-0.5 flex items-center gap-1.5">
                   <span className="font-semibold">NODE-05</span>
-                  <span className="text-slate-500">&bull;</span>
+                  <span className="text-slate-400">&bull;</span>
                   <span>0.11 g</span>
                 </div>
               </div>
             </div>
-            <span className="text-[10px] font-medium text-slate-500 shrink-0 whitespace-nowrap">
+            <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 shrink-0 whitespace-nowrap">
               2 min ago
             </span>
           </div>
 
-          {/* 2. TILT INCREASING (AMBER) */}
-          <div className="p-2.5 rounded-xl bg-amber-950/25 border border-amber-500/30 flex items-start justify-between gap-2 transition-all hover:bg-amber-950/35">
+          {/* 2. TILT INCREASING */}
+          <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/25 border border-amber-200 dark:border-amber-500/30 flex items-start justify-between gap-2 transition-all hover:bg-amber-100 dark:hover:bg-amber-950/35">
             <div className="flex items-start gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
+              <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
                 <AlertTriangle className="w-3.5 h-3.5" />
               </div>
               <div className="min-w-0 leading-tight">
-                <div className="text-xs font-bold text-white truncate">Tilt Increasing</div>
-                <div className="text-[10.5px] font-mono text-amber-400 mt-0.5 flex items-center gap-1.5">
+                <div className="text-xs font-bold text-slate-900 dark:text-white truncate">Tilt Increasing</div>
+                <div className="text-[10.5px] font-mono text-amber-600 dark:text-amber-400 mt-0.5 flex items-center gap-1.5">
                   <span className="font-semibold">NODE-03</span>
-                  <span className="text-slate-500">&bull;</span>
+                  <span className="text-slate-400">&bull;</span>
                   <span>1.4°</span>
                 </div>
               </div>
             </div>
-            <span className="text-[10px] font-medium text-slate-500 shrink-0 whitespace-nowrap">
+            <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 shrink-0 whitespace-nowrap">
               12 min ago
             </span>
           </div>
 
-          {/* 3. HEAVY RAINFALL (BLUE) */}
-          <div className="p-2.5 rounded-xl bg-sky-950/25 border border-sky-500/30 flex items-start justify-between gap-2 transition-all hover:bg-sky-950/35">
+          {/* 3. HEAVY RAINFALL */}
+          <div className="p-2.5 rounded-xl bg-sky-50 dark:bg-sky-950/25 border border-sky-200 dark:border-sky-500/30 flex items-start justify-between gap-2 transition-all hover:bg-sky-100 dark:hover:bg-sky-950/35">
             <div className="flex items-start gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center shrink-0 mt-0.5">
+              <div className="w-7 h-7 rounded-lg bg-sky-100 dark:bg-sky-500/20 text-sky-600 dark:text-sky-400 flex items-center justify-center shrink-0 mt-0.5">
                 <CloudRain className="w-3.5 h-3.5" />
               </div>
               <div className="min-w-0 leading-tight">
-                <div className="text-xs font-bold text-white truncate">Heavy Rainfall</div>
-                <div className="text-[10.5px] font-mono text-sky-400 mt-0.5 flex items-center gap-1.5">
+                <div className="text-xs font-bold text-slate-900 dark:text-white truncate">Heavy Rainfall</div>
+                <div className="text-[10.5px] font-mono text-sky-600 dark:text-sky-400 mt-0.5 flex items-center gap-1.5">
                   <span className="font-semibold">NODE-02</span>
-                  <span className="text-slate-500">&bull;</span>
+                  <span className="text-slate-400">&bull;</span>
                   <span>12 mm (24h)</span>
                 </div>
               </div>
             </div>
-            <span className="text-[10px] font-medium text-slate-500 shrink-0 whitespace-nowrap">
+            <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400 shrink-0 whitespace-nowrap">
               28 min ago
             </span>
           </div>
 
-          {/* 4. ALL OTHER NODES NORMAL (GREEN) */}
-          <div className="p-2.5 rounded-xl bg-emerald-950/25 border border-emerald-500/30 flex items-start justify-between gap-2 transition-all hover:bg-emerald-950/35">
+          {/* 4. ALL OTHER NODES NORMAL */}
+          <div className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/25 border border-emerald-200 dark:border-emerald-500/30 flex items-start justify-between gap-2 transition-all hover:bg-emerald-100 dark:hover:bg-emerald-950/35">
             <div className="flex items-start gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
+              <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
                 <CheckCircle2 className="w-3.5 h-3.5" />
               </div>
               <div className="min-w-0 leading-tight">
-                <div className="text-xs font-bold text-white truncate">All Other Nodes Normal</div>
-                <div className="text-[10.5px] text-emerald-400 mt-0.5">
+                <div className="text-xs font-bold text-slate-900 dark:text-white truncate">All Other Nodes Normal</div>
+                <div className="text-[10.5px] text-emerald-600 dark:text-emerald-400 mt-0.5">
                   5 nodes operating normally
                 </div>
               </div>
             </div>
-            <span className="text-[10px] font-medium text-slate-500 shrink-0 whitespace-nowrap">
+            <span className="text-[10px] font-medium text-slate-400 shrink-0 whitespace-nowrap">
               &mdash;
             </span>
           </div>

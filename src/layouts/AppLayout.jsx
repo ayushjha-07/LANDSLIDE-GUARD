@@ -16,8 +16,8 @@ export const AppLayout = () => {
 
       {/* Main Content Area: Offset adapts to Mobile (0), Tablet (80px / md:pl-20), and Desktop (256px / lg:pl-64) */}
       <div className="flex flex-col flex-1 min-h-screen w-full min-w-0 md:pl-20 lg:pl-64 transition-all duration-300">
-        {/* Header: Hidden on /sensors to match exact reference image composition */}
-        {!isSensors && <Header onOpenSidebar={() => setSidebarOpen(true)} />}
+        {/* Sticky Header: Contains Notifications, Light/Dark Theme Toggle, Search & User Profile */}
+        <Header onOpenSidebar={() => setSidebarOpen(true)} />
 
         {/* Dynamic Page Content with Responsive Padding and 1440px Max-width Constraint */}
         <main className={`flex-1 w-full max-w-[1440px] mx-auto min-w-0 box-border overflow-x-hidden ${

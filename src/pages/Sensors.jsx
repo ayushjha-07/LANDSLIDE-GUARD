@@ -21,7 +21,7 @@ export const Sensors = () => {
   } = useLiveSensorData();
 
   return (
-    <div className="relative w-full max-w-[1440px] mx-auto text-white space-y-3.5 sm:space-y-4">
+    <div className="relative w-full max-w-[1440px] mx-auto text-slate-900 dark:text-white space-y-3.5 sm:space-y-4 transition-colors duration-200">
       {/* 2. Top Himalayan hero/header */}
       <HimalayanHeroHeader onOpenSidebar={onOpenSidebar} />
 
